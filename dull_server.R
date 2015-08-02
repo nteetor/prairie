@@ -3,22 +3,31 @@ library(magrittr)
 library(stringr)
 library(R6)
 
-dull_server <- R6::R6Class(
-  'dull_server',
+dull_class <- R6::R6Class(
+  'dull_class',
   public = list(
-    initialize = function(host, port) {
-      private$host <- host
-      private$port <- port
+    initialize = function() {
+      private$routes <- list()
+      invisible(self)
     },
     
-    add_controller = function(f) {
-      return()
+    add_route = function(url, on_request) {
+      private$routes[[url]] = on_request
+      invisible(self)
     },
     
-    start = function(timeout = getOption('timeout')) {
+    print_routes = function() {
+      print(private$routes)
+    },
+    
+    run = function(host, port, timeout = getOption('timeout')) {
+      on.exit({
+        close(conn)
+      })
+      
       while (T) {
-        conn <- socketConnection(host = private$host,
-                                 port = private$port,
+        conn <- socketConnection(host = host,
+                                 port = port,
                                  timeout = timeout,
                                  server = TRUE,
                                  blocking = TRUE,
@@ -26,44 +35,61 @@ dull_server <- R6::R6Class(
         )
         req <- readLines(conn, 1)
         cat(req,'\n')
-        req_method <- req %>% str_extract('^\\w+')
-        cat('HTTP method: ', req_method, '\n')
-        req_uri <- req %>% str_extract('/\\w+')
-        cat('URI: ', req_uri, '\n')
+        
+        req_parsed <- req %>% str_split('\\s+') %>% extract2(1)
+        # cat(req_parsed, '\n')
+        
+        req_method <- req_parsed[1]
+        req_url <- req_parsed[2]
+        req_version <- req_parsed[3]
+        
+        # cat('HTTP method: ', req_method, '\n')
+        # cat('URI: ', req_url, '\n')
+        # cat('Version:', req_version, '\n')
+        
+        handler <- private$get_handler(req_url)
+        # cat(paste('Handler:', handler, '\n'))
+        
+        if (handler %>% is.null) {
+          res_header <- private$http_header('404 Not Found',
+                                            version = req_version)
+          res_body <- NULL
+        } else {
+          res_header <- private$http_header('200 OK',
+                                            version = req_version)
+          res_body <- handler()
+        }
         
         res <- paste(
-          private$generate_header('200'),
-          'Hello, world!',
-          sep = '',
-          collapse = '\n'
+          res_header,
+          res_body,
+          '',
+          sep = '\n',
+          collapse = ''
         )
+        
+        cat(res)
+        
         writeLines(res, conn)
         close(conn)
       }
     }
   ),
   private = list(
-    host = NULL,
-    port = NULL,
-    urls = NULL,
+    routes = NULL,
     
-    view = NULL,
-    controllers = NULL,
+    get_handler = function(url) {
+      private$routes[[url]]
+    },
     
-    generate_header = function(status, content_type = 'text/plain', char_set = 'utf-8') {
-      full_status <- switch(status,
-                            '200' = '200 OK',
-                            '404' = '404 Not Found',
-                            stop(paste('Unknown status "', status, '"'))
-      )
-      
+    http_header = function(status, version = 'HTTP/1.1', content_type = 'text/plain', char_set = 'utf-8') {
       return(
         paste(
-          paste('HTTP/1.1', full_status),
+          paste(version, status),
           paste('Content-Type:', content_type, ';', 'charset=', char_set),
-          '\n\n',
-          sep = '',
-          collapse = '\n'
+          '',
+          sep = '\n',
+          collapse = ''
         )
       )
     }
