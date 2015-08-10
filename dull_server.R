@@ -1,7 +1,11 @@
 
 library(magrittr)
 library(stringr)
-library(R6)
+
+#
+# The comments throughout this file indicate future plans
+# for this project
+#
 
 dull_class <- R6::R6Class(
   'dull_class',
@@ -11,8 +15,11 @@ dull_class <- R6::R6Class(
       invisible(self)
     },
     
-    add_route = function(url, on_request) {
-      private$routes[[url]] = on_request
+    add_route = function(method, url, on_request) {
+      if (private$routes[[url]] %>% is.null) {
+        private$routes[[url]] <- list()
+      }
+      private$routes[[url]][[method]] <- on_request
       invisible(self)
     },
     
@@ -20,79 +27,59 @@ dull_class <- R6::R6Class(
       print(private$routes)
     },
     
-    run = function(host, port, timeout = getOption('timeout')) {
-      on.exit({
-        close(conn)
-      })
-      
-      while (T) {
-        conn <- socketConnection(host = host,
-                                 port = port,
-                                 timeout = timeout,
-                                 server = TRUE,
-                                 blocking = TRUE,
-                                 open = 'r+'
-        )
-        req <- readLines(conn, 1)
-        cat(req,'\n')
-        
-        req_parsed <- req %>% str_split('\\s+') %>% extract2(1)
-        # cat(req_parsed, '\n')
-        
-        req_method <- req_parsed[1]
-        req_url <- req_parsed[2]
-        req_version <- req_parsed[3]
-        
-        # cat('HTTP method: ', req_method, '\n')
-        # cat('URI: ', req_url, '\n')
-        # cat('Version:', req_version, '\n')
-        
-        handler <- private$get_handler(req_url)
-        # cat(paste('Handler:', handler, '\n'))
-        
-        if (handler %>% is.null) {
-          res_header <- private$http_header('404 Not Found',
-                                            version = req_version)
-          res_body <- NULL
-        } else {
-          res_header <- private$http_header('200 OK',
-                                            version = req_version)
-          res_body <- handler()
-        }
-        
-        res <- paste(
-          res_header,
-          res_body,
-          '',
-          sep = '\n',
-          collapse = ''
-        )
-        
-        cat(res)
-        
-        writeLines(res, conn)
-        close(conn)
-      }
+    call = function(req) {
+      private$route_for(req[['PATH_INFO']], req[['REQUEST_METHOD']])
+    },
+    
+    run = function(host = '0.0.0.0', port = '3000') {
+      httpuv::runServer(host, port, self)
     }
   ),
   private = list(
     routes = NULL,
     
-    get_handler = function(url) {
-      private$routes[[url]]
-    },
-    
-    http_header = function(status, version = 'HTTP/1.1', content_type = 'text/plain', char_set = 'utf-8') {
-      return(
-        paste(
-          paste(version, status),
-          paste('Content-Type:', content_type, ';', 'charset=', char_set),
-          '',
-          sep = '\n',
-          collapse = ''
+    route_for = function(url, method) {
+      route <- private$routes[[url]][[method]]
+      
+      if (route %>% is.null) {
+        return(
+          list(
+            status = 404,
+            headers = list(
+              'Content-Type' = 'text/html'
+            ),
+            body = paste('Could not find', url, 'for method', method)
+          )
         )
-      )
+      }
+      
+      # req <- dull_requst$new(...)
+      # res <- dull_response$new()
+      # route(req, res)
+      res <- route()
+      if (res$status %>% is.null) res$status <- 200
+      
+      # necessary formatting for httpuv::runServer() -> app::call() return value
+      # res %>% as_Rook_response
+      res
     }
-    
   )
 )
+
+dull <- function() {
+  dull_class$new()
+}
+
+get <- function(.app, url, f) {
+  .app$add_route('GET', url, f)
+}
+
+# To be implemented
+# post <- function(.app, url, f) {
+#   .app$add_route('POST', url, f)
+# }
+
+listen <- function(.app, host, port) {
+  .app$run(host, port)
+}
+
