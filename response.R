@@ -12,17 +12,12 @@ dull_response <- R6::R6Class(
       invisible(self)
     },
     
-    add_headers = function(...) {
-      new_headers <- list(...)
-      if (new_headers %>% names %>% is.null) 
-        stop('headers must be named')
-      if (new_headers %>% names %>% length %>% is_less_than(length(new_headers)))
-        stop('all headers must be named')
-      
-      private$headers %<>% append(new_headers)
+    add_headers = function(headers) {
+      private$headers %<>% append(headers)
+      invisible(self)
     },
     set_body = function(expr) {
-      self$add_headers('Content-Type' = 'text/html')
+      self$add_headers(list('Content-Type' = 'text/html'))
       private$body <- expr
       invisible(self)
     },
@@ -30,6 +25,18 @@ dull_response <- R6::R6Class(
       stopifnot(n %>% is.numeric)
       private$status <- n
       invisible(self)
+    },
+    
+    as_HTTP_response = function() {
+      cat(
+        paste0('HTTP/1.1 ', private$status),
+        '\r\n',
+        paste0(names(private$headers), ': ', private$headers, collapse = '\r\n'),
+        '\r\n\r\n',
+        paste0(private$body),
+        '\r\n',
+        sep = ''
+      )
     },
     as_Rook_response = function() {
       list(

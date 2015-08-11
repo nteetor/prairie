@@ -50,11 +50,28 @@ dull_class <- R6::R6Class(
         .r$set_status(status)
       }
     },
+    headers = function(.r, ...) {
+      if (.r %>% inherits('dull_response')) {
+        args <- list(...)
+        
+        if (length(names(args)) != length(args)) {
+          stop('Not all arguments are named')
+        }
+        
+        sapply(names(args), function(field_name) {
+          field_value <- args[[field_name]]
+          .r$add_headers(setNames(field_value, rep(field_name, times = length(field_value))))
+        })
+        
+        invisible(.r)
+      }
+    },
     assign_utils = function(route_env) {
       new_env <- new.env(parent = route_env)
       
       assign('body', private$body, envir = new_env)
       assign('status', private$status, envir = new_env)
+      assign('headers', private$headers, envir = new_env)
       
       new_env
     },    
