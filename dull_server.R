@@ -29,7 +29,8 @@ dull_class <- R6::R6Class(
     },
     
     call = function(req) {
-      private$route_for(req[['PATH_INFO']], req[['REQUEST_METHOD']])
+      response <- private$route_for(req[['PATH_INFO']], req[['REQUEST_METHOD']])
+      response
     },
     
     run = function(host = '0.0.0.0', port = '3000') {
@@ -39,6 +40,24 @@ dull_class <- R6::R6Class(
   private = list(
     routes = NULL,
     
+    body = function(.r, expr) {
+      if (.r %>% inherits('dull_response')) {
+        .r$set_body(expr)
+      }
+    },
+    status = function(.r, status) {
+      if (.r %>% inherits('dull_response')) {
+        .r$set_status(status)
+      }
+    },
+    assign_utils = function(route_env) {
+      new_env <- new.env(parent = route_env)
+      
+      assign('body', private$body, envir = new_env)
+      assign('status', private$status, envir = new_env)
+      
+      new_env
+    },    
     route_for = function(url, method) {
       route <- private$routes[[url]][[method]]
       
@@ -49,7 +68,7 @@ dull_class <- R6::R6Class(
             headers = list(
               'Content-Type' = 'text/html'
             ),
-            body = paste('Could not find', url, 'for method', method)
+            body = paste('Could not find URI', url, 'for method', method)
           )
         )
       }
@@ -57,11 +76,9 @@ dull_class <- R6::R6Class(
       # req <- dull_requst$new(...)
       res <- dull_response$new()
       
-      lazyeval::lazy_eval(route(NULL, res), list(
-        # route = route, # I think this thoroughly defeats the purpose
-        body = function(.res, expr) .res$body_(expr),
-        status = function(.res, status) .res$status_(status)
-      ))
+      environment(route) %<>% private$assign_utils(.)
+      
+      route(NULL, res)
       
       # necessary formatting for httpuv::runServer() -> app::call() return value
       res$as_Rook_response()
@@ -74,10 +91,6 @@ dull <- function() {
 }
 
 method <- function(.app, method, url, callback) {
-  method_(.app, method, url, callback)
-}
-
-method_ <- function(.app, method, url, callback) {
   .app$add_route(method, url, callback)
 }
 
