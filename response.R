@@ -6,7 +6,7 @@ dull_response <- R6::R6Class(
   'dull_response',
   public = list(
     initialize = function() {
-      private$status <- 500
+      private$status <- 200
       private$headers <- list()
       private$body <- list()
       invisible(self)
