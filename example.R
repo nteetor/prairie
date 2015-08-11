@@ -5,6 +5,10 @@
 source('dull_server.R')
 source('response.R')
 
+arg = commandArgs(TRUE)
+port = ifelse(length(arg) == 1, as.integer(arg), 8080)
+cat("Listening on port", port, "\n")
+
 # NOTE: the parameter structure for the "get" function
 # is currently ignored within the dull_class object
 dull() %>% 
@@ -25,4 +29,4 @@ dull() %>%
       body('<h4>Whoops, page not found!</h4><p>Better luck next time</p>')
     
   }) %>% 
-  listen('0.0.0.0', 8080)
+  listen('0.0.0.0', port)
