@@ -1,6 +1,7 @@
 
 library(magrittr)
 library(stringr)
+library(lazyeval)
 
 #
 # The comments throughout this file indicate future plans
@@ -54,14 +55,16 @@ dull_class <- R6::R6Class(
       }
       
       # req <- dull_requst$new(...)
-      # res <- dull_response$new()
-      # route(req, res)
-      res <- route()
-      if (res$status %>% is.null) res$status <- 200
+      res <- dull_response$new()
+      
+      lazyeval::lazy_eval(route(NULL, res), list(
+        # route = route, # I think this thoroughly defeats the purpose
+        body = function(.res, expr) .res$body_(expr),
+        status = function(.res, status) .res$status_(status)
+      ))
       
       # necessary formatting for httpuv::runServer() -> app::call() return value
-      # res %>% as_Rook_response
-      res
+      res$as_Rook_response()
     }
   )
 )
@@ -70,14 +73,25 @@ dull <- function() {
   dull_class$new()
 }
 
-get <- function(.app, url, f) {
-  .app$add_route('GET', url, f)
+method <- function(.app, method, url, callback) {
+  method_(.app, method, url, callback)
 }
 
-# To be implemented
-# post <- function(.app, url, f) {
-#   .app$add_route('POST', url, f)
-# }
+method_ <- function(.app, method, url, callback) {
+  .app$add_route(method, url, callback)
+}
+
+get <- function(.app, url, callback) {
+  method(.app, 'GET', url, callback)
+}
+
+post <- function(.app, url, callback) {
+  method(.app, 'POST', url, callback)
+}
+
+put <- function(.app, url, callback) {
+  method(.app, 'PUT', url, callback)
+}
 
 listen <- function(.app, host, port) {
   .app$run(host, port)

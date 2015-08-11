@@ -3,37 +3,24 @@
 #
 
 source('dull_server.R')
+source('response.R')
 
 # NOTE: the parameter structure for the "get" function
 # is currently ignored within the dull_class object
 dull() %>% 
-  get('/', function(req, res) {
-    # to demonstrate future plans
-    if (missing(req)) req <- NULL
-    if (missing(res)) res <- list() # will be R6 object
+  get('/', function(req, res) {lazyeval::lazy(
+    res %>% 
+      status(200) %>% 
+      body('Hello, world!') # content type auto added
     
-    # res %>% 
-    #   status(200) %>% 
-    #   body('Hello, world!') # content type auto added
-    
-    # but, for now,
-    res$status <- 200
-    res$headers <- list('Content-Type' = 'text/html')
-    res$body <- 'Hello, world!'
-    res
-  }) %>% 
-  get('/not_found', function(req, res) {
-    # see note above
-    if (missing(req)) req <- NULL
-    if (missing(res)) res <- list()
-    
+    # NOTE: it is not necssary to return the response object
+  )}) %>% 
+  get('/not_found', function(req, res) {lazyeval::lazy(
     # res %>% http_404_page
-    # res
     
     # for now,
-    res$status <- 404
-    res$headers <- list('Content-Type' = 'text/html')
-    res$body <- '<h5>Whoops, page not found!<h5>'
-    res
-  }) %>% 
+    res %>% 
+      status(404) %>% 
+      body('<h4>Whoops, page not found!</h5><p>Better luck next time</p>')
+  )}) %>% 
   listen('0.0.0.0', 8080)
