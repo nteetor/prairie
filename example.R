@@ -13,7 +13,7 @@ dull() %>%
       status(200) %>% 
       body('Hello, world!') # content type auto added
     
-    # NOTE: it is not necssary to return the response object
+    # NOTE: It is not necessary to return the response object
   )}) %>% 
   get('/not_found', function(req, res) {lazyeval::lazy(
     # res %>% http_404_page
@@ -21,6 +21,6 @@ dull() %>%
     # for now,
     res %>% 
       status(404) %>% 
-      body('<h4>Whoops, page not found!</h5><p>Better luck next time</p>')
+      body('<h4>Whoops, page not found!</h4><p>Better luck next time</p>')
   )}) %>% 
   listen('0.0.0.0', 8080)
