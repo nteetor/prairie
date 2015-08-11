@@ -24,12 +24,8 @@ dull_class <- R6::R6Class(
       invisible(self)
     },
     
-    print_routes = function() {
-      print(private$routes)
-    },
-    
     call = function(req) {
-      response <- private$route_for(req[['PATH_INFO']], req[['REQUEST_METHOD']])
+      response <- private$find_route(req[['PATH_INFO']], req[['REQUEST_METHOD']])
       response
     },
     
@@ -75,7 +71,7 @@ dull_class <- R6::R6Class(
       
       new_env
     },    
-    route_for = function(url, method) {
+    find_route = function(url, method) {
       route <- private$routes[[url]][[method]]
       
       if (route %>% is.null) {
