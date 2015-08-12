@@ -7,7 +7,10 @@
 #' 
 #' @section Methods:
 #' \itemize{
-#'  \item \code{uri_matches(path)}: TRUE if path matches uri as a regex
+#'  \item \code{uri_equals(string)}: TRUE if the route uri equals string
+#'  \item \code{uri_matches(path)}: TRUE if the route uri, as a regular expression, matches path
+#'  \item \code{assign_callback(method, callback)}: set the callback function for a specific HTTP method
+#'  \item \code{callback_for(method)}: return the callback function for a specific HTTP method
 #' }
 #' 
 #' @docType class
@@ -31,8 +34,8 @@ route <- R6::R6Class(
       private$uri <- uri
     },
     
-    uri_is = function(uri) {
-      private$uri == uri
+    uri_equals = function(string) {
+      private$uri == string
     },
     uri_matches = function(path) {
       stopifnot(path %>% is.character)
