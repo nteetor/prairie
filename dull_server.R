@@ -73,7 +73,9 @@ dull_class <- R6::R6Class(
       
       new_env
     },    
-    route_for = function(uri, method) {
+    route_for = function(path, method) {
+      uri <- Find(function(uri) private$routes[[uri]]$uri_matches(path), names(private$routes))
+      
       callback <- private$routes[[uri]]$callback_for(method)
       
       if (callback %>% is.null) {

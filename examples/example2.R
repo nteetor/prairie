@@ -20,4 +20,8 @@ dull() %>%
       body('<h4>Sorry, this is just a test</h4><p>Washington or Huffington?</p>')
     
   }) %>% 
+  get('/user/(?<id>[0-9]+)', function(req, res) {
+    res %>% 
+      body('<h4>User info<h4>')
+  }) %>% 
   listen('0.0.0.0', 3000)
