@@ -32,6 +32,8 @@ route <- R6::R6Class(
       private$callbacks[[method]] <- callback
       
       private$uri <- uri
+      
+      invisible(self)
     },
     
     uri_equals = function(string) {
@@ -44,6 +46,8 @@ route <- R6::R6Class(
     },
     assign_callback = function(method, callback) {
       private$callbacks[[method]] <- callback
+      
+      invisible(self)
     },
     callback_for = function(method) {
       private$callbacks[[method]]
