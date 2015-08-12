@@ -8,13 +8,13 @@ The server functionality and setup is primarily based on [expressjs](http://expr
 
 #### dull_response
 * status(res)
-    + based on [expressjs](http://expressjs.com/)
+    + based on expressjs
   
 * body(res)
-    + based on [expressjs](http://expressjs.com/)
+    + based on expressjs
   
 * headers(res)
-    + based on [wookie](http://wookie.lyonbros.com/)
+    + based on expressjs
     + passes named arguments to header of the response object, lists of values are handle like wookie,
     ```{r}
     # the following are equivalent
@@ -28,7 +28,7 @@ The server functionality and setup is primarily based on [expressjs](http://expr
 TBD
 
 #### General notes
-This project, as stated above, is heavily influenced by expressjs and wookie. Additionally, the web frameworks Sinatra, Tornado, and Shiny have also influenced the design of this project and deserve this mention and more.
+This project, as stated above, is heavily influenced by expressjs and wookie. Additionally, the web frameworks [Sinatra](http://sinatrarb.com/), [Tornado](http://www.tornadoweb.org/en/stable/), and [Shiny](http://shiny.rstudio.com/) have also influenced the design of this project. They deserve this mention and more.
 
 Hobey-ho, let's go!
   
