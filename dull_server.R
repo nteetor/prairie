@@ -24,10 +24,6 @@ dull_class <- R6::R6Class(
       invisible(self)
     },
     
-    print_routes = function() {
-      print(private$routes)
-    },
-    
     call = function(req) {
       response <- private$route_for(req[['PATH_INFO']], req[['REQUEST_METHOD']])
       response
@@ -39,39 +35,38 @@ dull_class <- R6::R6Class(
   ),
   private = list(
     routes = NULL,
-    
-    body = function(.r, expr) {
-      if (.r %>% inherits('dull_response')) {
-        .r$set_body(expr)
-      }
-    },
-    status = function(.r, status) {
-      if (.r %>% inherits('dull_response')) {
-        .r$set_status(status)
-      }
-    },
-    headers = function(.r, ...) {
-      if (.r %>% inherits('dull_response')) {
-        args <- list(...)
-        
-        if (length(names(args)) != length(args)) {
-          stop('Not all arguments are named')
+    server_utils = list(
+      body = function(.r, expr) {
+        if (.r %>% inherits('dull_response')) {
+          .r$set_body(expr)
         }
-        
-        sapply(names(args), function(field_name) {
-          field_value <- args[[field_name]]
-          .r$add_headers(setNames(field_value, rep(field_name, times = length(field_value))))
-        })
-        
-        invisible(.r)
+      },
+      status = function(.r, status) {
+        if (.r %>% inherits('dull_response')) {
+          .r$set_status(status)
+        }
+      },
+      headers = function(.r, ...) {
+        if (.r %>% inherits('dull_response')) {
+          args <- list(...)
+          
+          if (length(names(args)) != length(args)) {
+            stop('Not all arguments are named')
+          }
+          
+          sapply(names(args), function(field_name) {
+            field_value <- args[[field_name]]
+            .r$add_headers(setNames(field_value, rep(field_name, times = length(field_value))))
+          })
+          
+          invisible(.r)
+        }
       }
-    },
+    ),
     assign_utils = function(route_env) {
       new_env <- new.env(parent = route_env)
       
-      assign('body', private$body, envir = new_env)
-      assign('status', private$status, envir = new_env)
-      assign('headers', private$headers, envir = new_env)
+      Map(function(util) assign(util, private$server_utils[[util]], envir = new_env), names(private$server_utils))
       
       new_env
     },    
