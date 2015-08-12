@@ -1,12 +1,9 @@
 #
-# example file
+# example file for basic functionality
 #
 
 source('dull_server.R')
-source('response.R')
 
-# NOTE: the parameter structure for the "get" function
-# is currently ignored within the dull_class object
 dull() %>% 
   get('/', function(req, res) {
     res %>% 
@@ -25,4 +22,4 @@ dull() %>%
       body('<h4>Whoops, page not found!</h4><p>Better luck next time</p>')
     
   }) %>% 
-  listen('0.0.0.0', 8080)
+  listen('0.0.0.0', 3000)
