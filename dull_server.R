@@ -74,21 +74,21 @@ dull_class <- R6::R6Class(
       new_env
     },    
     route_for = function(path, method) {
-      uri <- Find(function(uri) private$routes[[uri]]$uri_matches(path), names(private$routes))
+      uri <- Find(function(uri) private$routes[[uri]]$uri_matches(path), names(private$routes), nomatch = NULL)
       
-      callback <- private$routes[[uri]]$callback_for(method)
-      
-      if (callback %>% is.null) {
+      if (uri %>% is.null) {
         return(
           list(
             status = 404,
             headers = list(
               'Content-Type' = 'text/html'
             ),
-            body = paste('Could not find URI', uri, 'for method', method)
+            body = paste('No route for', method, path)
           )
         )
       }
+      
+      callback <- private$routes[[uri]]$callback_for(method)
       
       # req <- dull_requst$new(...)
       res <- dull_response$new()

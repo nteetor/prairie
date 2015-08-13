@@ -31,7 +31,10 @@ route <- R6::R6Class(
       
       private$callbacks[[method]] <- callback
       
+      if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
       private$uri <- uri
+      
+      private$params <- private$capture_group_names(uri)
       
       invisible(self)
     },
@@ -55,11 +58,32 @@ route <- R6::R6Class(
   ),
   private = list(
     uri = NULL,
+    params = NULL,
     callbacks = list(
       GET = NULL,
       POST = NULL,
       PUT = NULL
-    )
+    ),
+    
+    capture_group_names = function(uri) {
+      group_names <- uri %>% 
+        str_match_all('\\(\\?<(\\w*)>') %>% 
+        extract2(1)
+      
+      if (group_names %>% NCOL %>% equals(0)) return(NULL)
+
+      group_names %<>% extract( , 2)
+      
+      if (any(group_names %>% equals(''))) {
+        empty_names <- which(group_names %>% equals(''))
+        stop(paste0(
+          'route URI contains empty capture group name',
+          ifelse(empty_names %>% length %>% equals(1), '', 's')
+        ))
+      }
+      
+      group_names
+    }
     
   )
 )
