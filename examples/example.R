@@ -5,7 +5,7 @@
 source('dull_server.R')
 
 arg = commandArgs(TRUE)
-port = ifelse(length(arg) == 1, as.integer(arg), 8080)
+port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
 
 # NOTE: the parameter structure for the "get" function
@@ -20,7 +20,8 @@ dull() %>%
     # NOTE: It is not necessary to return the response object
   }) %>% 
   get('/not_found', function(req, res) {
-    # res %>% http_404_page
+    # res %>% 
+    #    http_404_page
     
     # but for now,
     res %>% 

@@ -4,6 +4,10 @@
 
 source('dull_server.R')
 
+arg = commandArgs(TRUE)
+port = ifelse(length(arg) == 1, as.integer(arg), 3000)
+cat("Listening on port", port, "\n")
+
 dull() %>% 
   get('/', function(req, res) {
     res %>% 
@@ -24,4 +28,4 @@ dull() %>%
     res %>% 
       body('<h4>User info<h4>')
   }) %>% 
-  listen('0.0.0.0', 3000)
+  listen('0.0.0.0', port)
