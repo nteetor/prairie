@@ -27,6 +27,9 @@ The server functionality and setup is primarily based on [expressjs](http://expr
 #### dull_request
 TBD
 
+#### route
+* allowing regular expressions in URIs seems pretty standard among the popular web frameworks and has been included in dull
+
 #### General notes
 This project, as stated above, is heavily influenced by expressjs and wookie. Additionally, the web frameworks [Sinatra](http://sinatrarb.com/), [Tornado](http://www.tornadoweb.org/en/stable/), and [Shiny](http://shiny.rstudio.com/) have also influenced the design of this project. They deserve this mention and more.
 
