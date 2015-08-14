@@ -2,7 +2,7 @@
 # example file for basic functionality
 #
 
-source('dull_server.R')
+source('dull-class.R')
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)

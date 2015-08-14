@@ -2,10 +2,10 @@
 # example file demonstrating multiple HTTP methods for the same URI
 #
 
-source('dull_server.R')
+source('dull-class.R')
 
 arg = commandArgs(TRUE)
-port = ifelse(length(arg) == 1, as.integer(arg), 3000)
+port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
 
 dull() %>% 
