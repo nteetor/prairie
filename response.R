@@ -2,8 +2,8 @@
 #'
 #'
 #'
-dull_response <- R6::R6Class(
-  'dull_response',
+response <- R6::R6Class(
+  'response',
   public = list(
     initialize = function() {
       private$status <- 200

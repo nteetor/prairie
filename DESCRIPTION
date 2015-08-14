@@ -1,0 +1,23 @@
+Package: dull
+Type: package
+Title: Light-weight Web Framework for R
+Version: 0.0.0.1
+Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com")
+Description: A simple web framework for creating modular web 
+    applications with R. Based on frameworks like Expressjs and
+    Sinatra, dull provides R users with a set of tools to create
+    powerful, easy-to-grasp, simple-to-build web applications.
+License: MIT + file LICENSE
+Depends:
+    R (>= 3.0.0)
+Imports:
+    R6 (>= 2.1.0),
+    httpuv (>= 1.3.3),
+    stringr (>= 1.0.0),
+    magrittr (>= 1.5)
+URL: https://github.com/nteetor/dull
+BugReports: https://github.com/nteetor/dull/issues
+Collate:
+    'route.R',
+    'response.R',
+    'dull-class.R'

@@ -1,7 +1,6 @@
 
 library(magrittr)
 library(stringr)
-library(lazyeval)
 
 source('route.R')
 source('response.R')
@@ -39,17 +38,17 @@ dull_class <- R6::R6Class(
     routes = NULL,
     server_utils = list(
       body = function(.r, expr) {
-        if (.r %>% inherits('dull_response')) {
+        if (.r %>% inherits('response')) {
           .r$set_body(expr)
         }
       },
       status = function(.r, status) {
-        if (.r %>% inherits('dull_response')) {
+        if (.r %>% inherits('response')) {
           .r$set_status(status)
         }
       },
       headers = function(.r, ...) {
-        if (.r %>% inherits('dull_response')) {
+        if (.r %>% inherits('response')) {
           args <- list(...)
           
           if (length(names(args)) != length(args)) {
@@ -91,7 +90,7 @@ dull_class <- R6::R6Class(
       callback <- private$routes[[uri]]$callback_for(method)
       
       # req <- dull_requst$new(...)
-      res <- dull_response$new()
+      res <- response$new()
       
       environment(callback) %<>% private$assign_utils(.)
       
