@@ -27,11 +27,13 @@ route <- R6::R6Class(
   public = list(
     initialize = function(method, uri, callback) {
       stopifnot(
+        method %>% is.character,
         uri %>% is.character, 
         callback %>% is.function,
         callback %>% formals %>% length %>% equals(2)
       )
       
+      private$callbacks <- list()
       private$callbacks[[method]] <- callback
       
       if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
@@ -48,6 +50,8 @@ route <- R6::R6Class(
     uri_matches = function(path) {
       stopifnot(path %>% is.character)
       
+      if (path != '/' & path %>% str_sub(-1) %>% equals('/')) path %<>% str_sub(end = -2)
+      
       str_detect(path, paste0('^',private$uri,'$'))
     },
     assign_callback = function(method, callback) {
@@ -62,11 +66,7 @@ route <- R6::R6Class(
   private = list(
     uri = NULL,
     params = NULL,
-    callbacks = list(
-      GET = NULL,
-      POST = NULL,
-      PUT = NULL
-    ),
+    callbacks = NULL,
     
     capture_group_names = function(uri) {
       group_names <- uri %>% 
