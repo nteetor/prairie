@@ -1,13 +1,28 @@
 #' Route class
 #' 
 #' The route class holds meta information about a request received for a 
-#' particular application resource (URI). A request object, with meta 
-#' information, is passed to the corresponding callback function when the common
-#' URI is requested.
+#' particular application resource (URI). This information is pulled from an 
+#' underlying Rook environment. A request object is passed to the corresponding
+#' callback function when a URI is requested.
 #' 
 #' @section Methods:
 #' \itemize{
-#'  \item
+#'  \item \code{get_header_field(field)}:
+#'    Retrieve a HTTP header field value from the underlying Rook environment
+#'  \item \code{has_content_type(type)}:
+#'    TRUE if the request content type is \code{type}
+#'  \item \code{get_method()}:
+#'    Return request HTTP method
+#'  \item \code{get_body()}:
+#'    Return the request body
+#'  \item \code{get_ip()}:
+#'    Return the remote ip address of the request
+#'  \item \code{get_port()}:
+#'    Return the remove host address of the request
+#'  \item \code{get_host_name()}:
+#'    Return the HTTP remote host
+#'  \item \code{get_params()}:
+#'    Return captured URI parameters as a list, list names are capture group name
 #' }
 #' 
 #' @docType class
@@ -51,7 +66,7 @@ request <- R6::R6Class(
         str_c('HTTP_', .)
       
       if (!(field_formatted %in% private$header_fields)) {
-        warning(paste('Request for', private$url, 'does not contain header', field))
+        warning(paste('request for', private$url, 'does not contain header', field))
         return(NULL)
       }
       
@@ -65,7 +80,6 @@ request <- R6::R6Class(
     get_body = function() private$body,
     get_ip = function() private$ip,
     get_port = function() private$port,
-    get_route = function() private$route,
     get_host_name = function() private$host_name,
     get_params = function() private$params
   ),
@@ -75,7 +89,6 @@ request <- R6::R6Class(
     url = NULL,
     ip = NULL,
     port = NULL,
-    route = NULL,
     host_name = NULL,
     params = NULL,
     header_fields = NULL
