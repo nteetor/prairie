@@ -7,15 +7,6 @@ body.response <- function(.res, expr) {
   
   invisible(.res)
 }
-# body <- function(x, expr) {
-#   if (inherits(x, 'request')) {
-#     x$get_body()
-#   } else {
-#     x$set_body(expr)
-#     
-#     invisible(x)
-#   }
-# }
 
 method <- function(.req) .req$get_method()
 
@@ -23,13 +14,11 @@ ip <- function(.req) .req$get_ip()
 
 port <- function(.req) .req$get_port()
 
-# route <- function(.req) .req$get_route() # NOTE: interferes with R6Class "route"
-
 host_name <- function(.req) .req$get_host_name()
 
 params <- function(.req) .req$get_params()
 
-# get <- function(.req, field) .req$get_header_field(field)
+field <- function(.req, field) .req$get_header_field(field)
 
 is <- function(.req, type) .req$has_content_type(type)
 
