@@ -1,5 +1,5 @@
 #
-# example file demonstrating multiple HTTP methods for the same URI
+# example file demonstrating uses of the request object
 #
 
 source('R/dull-class.R')
@@ -16,16 +16,15 @@ dull() %>%
       body('<div align="center"><h1>Hello, world!</h1><p>(and all who inhabit it)</p></div')
     
   }) %>% 
-  post('/', function(req, res) {
-    # different method for the same uri
-    
+  get('/echo/(?<phrase>\\w+)', function(req, res) {
     res %>% 
-      status(405) %>% 
-      body('<h4>Sorry, this is just a test</h4><p>Washington or Huffington?</p>')
+      status(200) %>% 
+      body(paste0('<h3>', params(req)['phrase'], '</h3><p>Same to you pal!</p>'))
     
   }) %>% 
-  get('/user/(?<id>[0-9]+)', function(req, res) {
+  get('/greet', function(req, res) {
     res %>% 
-      body('<h4>User info<h4>')
+      body(paste0('<p>Hello, ', ip(req), ' or should I say ', host_name(req), '!<p>'))
+    
   }) %>% 
   listen('0.0.0.0', port)

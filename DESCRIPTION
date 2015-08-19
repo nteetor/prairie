@@ -10,15 +10,16 @@ Description: A simple web framework for creating modular web
 License: MIT + file LICENSE
 Depends: 
     R (>= 3.0.0)
+    magrittr (>= 1.5)
 Imports: 
     R6 (>= 2.1.0),
     httpuv (>= 1.3.3),
-    stringr (>= 1.0.0),
-    magrittr (>= 1.5)
+    stringr (>= 1.0.0)
+Suggests:
+    testthat
 URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues
 Collate: 
     'route.R',
     'response.R',
     'dull-class.R'
-Suggests: testthat

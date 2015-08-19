@@ -17,6 +17,7 @@
 #' }
 #'   
 #' @docType class
+#' @keywords internal
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
 #' @export
@@ -54,12 +55,18 @@ route <- R6::R6Class(
       
       str_detect(path, paste0('^',private$uri,'$'))
     },
+    get_uri = function() {
+      private$uri
+    },
+    get_params = function() {
+      private$params
+    },
     assign_callback = function(method, callback) {
       private$callbacks[[method]] <- callback
       
       invisible(self)
     },
-    callback_for = function(method) {
+    get_callback = function(method) {
       private$callbacks[[method]]
     }
   ),
