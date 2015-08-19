@@ -2,7 +2,7 @@
 # example file demonstrating multiple HTTP methods for the same URI
 #
 
-source('dull-class.R')
+source('R/dull-class.R')
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)
