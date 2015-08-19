@@ -1,11 +1,4 @@
 
-library(magrittr)
-library(stringr)
-
-source('R/callback-utils.R')
-source('R/route.R')
-source('R/request.R')
-source('R/response.R')
 
 #
 # The comments throughout this file indicate future plans
