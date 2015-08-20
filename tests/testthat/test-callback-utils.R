@@ -33,6 +33,6 @@ test_that('all request utilities loaded', {
   expect_exists('route')  
   expect_exists('host_name')  
   expect_exists('params')  
-  expect_exists('get')  
+  expect_exists('field')  
   expect_exists('is')
 })

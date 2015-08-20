@@ -55,7 +55,7 @@ load_helpers <- function(callback) {
       # route = route,
       host_name = host_name,
       params = params,
-      # get = get,
+      field = field,
       is = is,
       status = status,
       headers = headers
