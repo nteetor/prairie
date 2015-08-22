@@ -21,7 +21,7 @@
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
 #' @export
-#' @name route
+#' @name route-class
 route <- R6::R6Class(
   # This naming convention will be applied to response.R once this branch is merged into master
   'route',

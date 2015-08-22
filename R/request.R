@@ -31,6 +31,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_detect str_to_lower
 #' @export
+#' @name request-class
 request <- R6::R6Class(
   'request',
   public = list(

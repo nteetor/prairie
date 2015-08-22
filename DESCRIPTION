@@ -22,4 +22,9 @@ BugReports: https://github.com/nteetor/dull/issues
 Collate: 
     'route.R',
     'response.R',
-    'dull-class.R'
+    'request.R',
+    'callback-utils.R',
+    'dull-utils.R',
+    'dull-class.R',
+    'dull-app.R',
+    'dull.R'

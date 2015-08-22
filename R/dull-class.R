@@ -1,12 +1,14 @@
-
-
-#
-# The comments throughout this file indicate future plans
-# for this project
-#
-
-dull_class <- R6::R6Class(
-  'dull_class',
+#' Dull application class
+#' 
+#' An R6 class which is the backbone of the dull package. An instance of the
+#' Dull class includes
+#' 
+#' @name dull-class
+#' dull_app
+#' dull_class
+#' Dull
+dull_app <- R6::R6Class(
+  'dull_app',
   public = list(
     initialize = function() {
       private$routes <- list()
@@ -65,28 +67,3 @@ dull_class <- R6::R6Class(
     }
   )
 )
-
-dull <- function() {
-  dull_class$new()
-}
-
-method <- function(.app, method, uri, callback) {
-  .app$add_route(method, uri, callback)
-}
-
-get <- function(.app, uri, callback) {
-  method(.app, 'GET', uri, callback)
-}
-
-post <- function(.app, uri, callback) {
-  method(.app, 'POST', uri, callback)
-}
-
-put <- function(.app, uri, callback) {
-  method(.app, 'PUT', uri, callback)
-}
-
-listen <- function(.app, host, port) {
-  .app$run(host, port)
-}
-
