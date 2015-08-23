@@ -56,8 +56,3 @@ put <- function(.app, uri, callback) {
 listen <- function(.app, host, port) {
   .app$run(host, port)
 }
-
-#' @importFrom magrittr %>%
-#' @export
-#' @name %>%
-NULL

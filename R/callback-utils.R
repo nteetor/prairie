@@ -43,6 +43,14 @@ headers <- function(.res, ...) {
   invisible(.res)
 }
 
+#' Load callback helper functions
+#' 
+#' Loads a callback function's binding environment with a list of helpful
+#' functions. These functions let uses access request information and set
+#' response information more easily.
+#' 
+#' @keywords internal
+#' @export
 load_helpers <- function(callback) {
   environment(callback) <- list2env(
     x = list(

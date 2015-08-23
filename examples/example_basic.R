@@ -1,12 +1,15 @@
 #
 # example file for basic functionality
+# make sure the package meta files are up-to-date before loading
 #
 
-source('dull-class.R')
+library(dull)
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
+
+`%>%` <- magrittr::`%>%`
 
 # NOTE: the parameter structure for the "get" function
 # is currently ignored within the dull_class object

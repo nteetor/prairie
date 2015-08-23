@@ -21,18 +21,6 @@ callback function when a URI is requested.
    Retrieve a HTTP header field value from the underlying Rook environment
  \item \code{has_content_type(type)}:
    TRUE if the request content type is \code{type}
- \item \code{get_method()}:
-   Return request HTTP method
- \item \code{get_body()}:
-   Return the request body
- \item \code{get_ip()}:
-   Return the remote ip address of the request
- \item \code{get_port()}:
-   Return the remove host address of the request
- \item \code{get_host_name()}:
-   Return the HTTP remote host
- \item \code{get_params()}:
-   Return captured URI parameters as a list, list names are capture group name
 }
 }
 \keyword{internal}

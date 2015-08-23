@@ -1,8 +1,9 @@
 #
-# example file demonstrating uses of the request object
+# example file demonstrating extracting data from the request object
+# make sure the package meta files are up-to-date before loading
 #
 
-source('R/dull-class.R')
+library(dull)
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)
