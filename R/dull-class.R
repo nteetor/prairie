@@ -1,12 +1,13 @@
-#' Dull application class
+#' Dull application class object
 #' 
-#' An R6 class which is the backbone of the dull package. An instance of the
-#' Dull class includes
+#' An R6 class which is the backbone of the dull package.
 #' 
-#' @name dull-class
-#' dull_app
-#' dull_class
-#' Dull
+#' @docType class
+#' @keywords internal
+#' @format An R6 class object.
+#' @importFrom R6 R6Class
+#' @export
+#' @name dull_app
 dull_app <- R6::R6Class(
   'dull_app',
   public = list(
@@ -34,7 +35,7 @@ dull_app <- R6::R6Class(
     call = function(req) {
       private$handle_request(req)
     },
-    run = function(host = '0.0.0.0', port = '3000') {
+    run = function(host, port) {
       httpuv::runServer(host, port, self)
     }
   ),

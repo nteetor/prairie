@@ -1,6 +1,6 @@
-#' Route class
+#' Request class
 #' 
-#' The route class holds meta information about a request received for a 
+#' The request class holds meta information about a request received for a 
 #' particular application resource (URI). This information is pulled from an 
 #' underlying Rook environment. A request object is passed to the corresponding
 #' callback function when a URI is requested.
@@ -31,7 +31,7 @@
 #' @importFrom R6 R6Class
 #' @importFrom stringr str_detect str_to_lower
 #' @export
-#' @name request-class
+#' @name request
 request <- R6::R6Class(
   'request',
   public = list(
