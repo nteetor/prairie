@@ -1,6 +1,6 @@
 #' Add routes
 #' 
-#' Add a route to a dull application object. A route is comprised of a HTTP
+#' Add a route to a dull application object. A route is comprised of an HTTP
 #' method, a URI, and a callback function.
 #' 
 #' @section Usage
@@ -10,10 +10,18 @@
 #' \code{put(.app, uri, callback)}
 #' 
 #' @param .app A dull_app R6 class object
-#' @param method An HTTP method, see section Method [TODO] for details
-#' @param uri The route URI, treated as a regular expression, see section URIs [TODO]
-#' @param callback A function of two arguments \code{request} and \code{response}, see section Callbacks for details [TODO]
+#' @param method An HTTP method, see section \bold{HTTP} Methods for details
+#' @param uri The route URI, treated as a regular expression, see section URIs
+#' @param callback A function of two arguments \code{request} and \code{response}, see section Callback functions for details
 #' 
+#' @section HTTP Methods
+#' TODO
+#' 
+#' @section URIs
+#' TODO
+#' 
+#' @section Callback functions
+#' TODO
 #' 
 NULL
 

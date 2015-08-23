@@ -47,12 +47,11 @@ load_helpers <- function(callback) {
   environment(callback) <- list2env(
     x = list(
       body = body,
-      # body.request = body.request,
-      # body.response = body.response,
+      body.request = body.request,
+      body.response = body.response,
       method = method,
       ip = ip,
       port = port,
-      # route = route,
       host_name = host_name,
       params = params,
       field = field,

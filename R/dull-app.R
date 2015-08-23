@@ -1,8 +1,7 @@
 #' Create a new dull application object
 #' 
-#' Use to start building a dull application. The dull applicatoin object
-#' encapsulates the routes, callback functions, and [ADD MORE] that comprise a
-#' web application.
+#' Create a dull application object. The dull application object
+#' encapsulates route URIs, callback functions, and [ADD MORE] that together form a web application.
 #' 
 #' @section Usage 
 #' \code{dull()}
