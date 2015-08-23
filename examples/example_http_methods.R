@@ -1,8 +1,9 @@
 #
 # example file demonstrating multiple HTTP methods for the same URI
+# make sure the package meta files are up-to-date before loading
 #
 
-source('R/dull-class.R')
+library(dull)
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)

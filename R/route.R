@@ -20,12 +20,18 @@
 #' @keywords internal
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
+#' @importFrom stringr str_match_all str_sub
+#' @importFrom magrittr %>% %<>% equals
 #' @export
 #' @name route-class
 route <- R6::R6Class(
   # This naming convention will be applied to response.R once this branch is merged into master
   'route',
   public = list(
+    uri = NULL,
+    params = NULL,
+    callbacks = NULL,
+    
     initialize = function(method, uri, callback) {
       stopifnot(
         method %>% is.character,
@@ -34,55 +40,49 @@ route <- R6::R6Class(
         callback %>% formals %>% length %>% equals(2)
       )
       
-      private$callbacks <- list()
-      private$callbacks[[method]] <- callback
+      self$callbacks <- list()
+      self$callbacks[[method]] <- callback
       
       if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
-      private$uri <- uri
+      self$uri <- uri
       
-      private$params <- private$capture_group_names(uri)
+      self$params <- self$capture_group_names(uri)
       
       invisible(self)
     },
     
     uri_equals = function(string) {
-      private$uri == string
+      self$uri == string
     },
     uri_matches = function(path) {
       stopifnot(path %>% is.character)
       
       if (path != '/' & path %>% str_sub(-1) %>% equals('/')) path %<>% str_sub(end = -2)
       
-      str_detect(path, paste0('^',private$uri,'$'))
+      str_detect(path, paste0('^',self$uri,'$'))
     },
     get_uri = function() {
-      private$uri
+      self$uri
     },
     get_params = function() {
-      private$params
+      self$params
     },
     assign_callback = function(method, callback) {
-      private$callbacks[[method]] <- callback
+      self$callbacks[[method]] <- callback
       
       invisible(self)
     },
     get_callback = function(method) {
-      private$callbacks[[method]]
-    }
-  ),
-  private = list(
-    uri = NULL,
-    params = NULL,
-    callbacks = NULL,
-    
+      self$callbacks[[method]]
+    },
     capture_group_names = function(uri) {
       group_names <- uri %>% 
         str_match_all('\\(\\?<(\\w*)>') %>% 
-        extract2(1)
+        .[[1]]
       
       if (group_names %>% NCOL %>% equals(0)) return(NULL)
 
-      group_names %<>% extract( , 2)
+      group_names %<>% .[, 2]
       
       if (any(group_names %>% equals(''))) {
         empty_names <- which(group_names %>% equals(''))
