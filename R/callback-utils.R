@@ -1,6 +1,6 @@
 body <- function(x, ...) UseMethod('body', x)
 
-body.request <- function(.req) .req$get_body()
+body.request <- function(.req) .req$body
 
 body.response <- function(.res, expr) {
   .res$set_body(expr)
@@ -8,15 +8,15 @@ body.response <- function(.res, expr) {
   invisible(.res)
 }
 
-method <- function(.req) .req$get_method()
+method <- function(.req) .req$method
 
-ip <- function(.req) .req$get_ip()
+ip <- function(.req) .req$ip
 
-port <- function(.req) .req$get_port()
+port <- function(.req) .req$port
 
-host_name <- function(.req) .req$get_host_name()
+host_name <- function(.req) .req$host_name
 
-params <- function(.req) .req$get_params()
+params <- function(.req) .req$params
 
 field <- function(.req, field) .req$get_header_field(field)
 
