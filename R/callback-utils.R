@@ -1,12 +1,9 @@
 body <- function(x, ...) UseMethod('body', x)
 
+#
+# request helpers
+#
 body.request <- function(.req) .req$body
-
-body.response <- function(.res, expr) {
-  .res$set_body(expr)
-  
-  invisible(.res)
-}
 
 method <- function(.req) .req$method
 
@@ -22,6 +19,9 @@ field <- function(.req, field) .req$get_header_field(field)
 
 is <- function(.req, type) .req$has_content_type(type)
 
+#
+# response helpers
+#
 status <- function(.res, status) {
   .res$set_status(status)
   
@@ -41,6 +41,17 @@ headers <- function(.res, ...) {
   })
   
   invisible(.res)
+}
+
+body.response <- function(.res, expr) {
+  .res$set_body(expr)
+  
+  invisible(.res)
+}
+
+send <- function(.res) {
+  # Working out how to create a send function similar to expressjs's send() function
+  # the limitations are within httpuv, more research necessary
 }
 
 load_helpers <- function(callback) {
