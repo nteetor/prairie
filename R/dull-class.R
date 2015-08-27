@@ -6,6 +6,7 @@
 #' @keywords internal
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
+#' @importFrom httpuv runServer
 #' @importFrom magrittr %>%
 #' @export
 #' @name dull_app
@@ -44,7 +45,7 @@ dull_app <- R6::R6Class(
       invisible(self)
     },
     handle_request = function(rook_envir) {
-    route <- self$find_route(rook_envir[['PATH_INFO']])
+      route <- self$find_route(rook_envir[['PATH_INFO']])
       
       if (route %>% is.null) return(self$default_404)
       
@@ -55,9 +56,25 @@ dull_app <- R6::R6Class(
       req <- request$new(route, rook_envir)
       res <- response$new()
       
-      load_helpers(callback)(req, res)
-      
-      res$as_Rook_response()
+      tryCatch({
+        load_helpers(callback)(req, res)
+        
+        list(
+          status = 500,
+          headers = list('Content-Type' = 'text/plain'),
+          body = 'send() is never called for response object'
+        )
+      },
+      end_response = function(c) {
+        res$as_Rook_response()
+      },
+      error = function(e) {
+        list(
+          status = 500,
+          headers = list('Content-Type' = 'text/plain'),
+          body = paste('Server error:', e, sep = '\n')
+        )
+      })
     },
     find_route = function(uri) {
       route_name = Find(function(nm) self$routes[[nm]]$uri_matches(uri), names(self$routes), nomatch = NULL)

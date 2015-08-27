@@ -49,9 +49,13 @@ body.response <- function(.res, expr) {
   invisible(.res)
 }
 
-send <- function(.res) {
-  # Working out how to create a send function similar to expressjs's send() function
-  # the limitations are within httpuv, more research necessary
+send <- function(.res, body = NULL) {
+  if (is.null(body)) {
+    .res$end()
+  } else {
+    .res$set_body(body)
+    .res$end()
+  }
 }
 
 load_helpers <- function(callback) {
@@ -68,7 +72,8 @@ load_helpers <- function(callback) {
       field = field,
       is = is,
       status = status,
-      headers = headers
+      headers = headers,
+      send = send
     ),
     parent = environment(callback)
   )
