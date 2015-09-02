@@ -6,8 +6,6 @@
 #' 
 #' @section Methods: 
 #' \itemize{ 
-#'  \item \code{uri_equals(string)}: TRUE if the
-#'   route uri equals string 
 #'  \item \code{uri_matches(path)}: TRUE if the route
 #'   uri, as a regular expression, matches path 
 #'  \item \code{assign_callback(method, callback)}: set the callback function for a
@@ -37,35 +35,26 @@ route <- R6::R6Class(
         method %>% is.character,
         uri %>% is.character, 
         callback %>% is.function,
-        callback %>% formals %>% length %>% equals(2)
+        length(formals(callback)) == 2
       )
       
       self$callbacks <- list()
       self$callbacks[[method]] <- callback
       
-      if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
+      # if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
       self$uri <- uri
       
-      self$params <- self$capture_group_names(uri)
+      self$params <- self$uri_parameters(uri)
       
       invisible(self)
     },
     
-    uri_equals = function(string) {
-      self$uri == string
-    },
     uri_matches = function(path) {
       stopifnot(path %>% is.character)
       
-      if (path != '/' & path %>% str_sub(-1) %>% equals('/')) path %<>% str_sub(end = -2)
+      if (str_sub(path, 1, 1) == '/') path %<>% str_sub(2)
       
-      str_detect(path, paste0('^',self$uri,'$'))
-    },
-    get_uri = function() {
-      self$uri
-    },
-    get_params = function() {
-      self$params
+      path == '' | str_detect(path, self$uri)
     },
     assign_callback = function(method, callback) {
       self$callbacks[[method]] <- callback
@@ -75,25 +64,24 @@ route <- R6::R6Class(
     get_callback = function(method) {
       self$callbacks[[method]]
     },
-    capture_group_names = function(uri) {
+    uri_parameters = function(uri) {
       group_names <- uri %>% 
         str_match_all('\\(\\?<(\\w*)>') %>% 
         .[[1]]
       
-      if (group_names %>% NCOL %>% equals(0)) return(NULL)
+      if (NCOL(group_names) == 0) return(NULL)
 
       group_names %<>% .[, 2]
       
-      if (any(group_names %>% equals(''))) {
-        empty_names <- which(group_names %>% equals(''))
+      if (any(group_names == '')) {
+        empty_names <- which(group_names == '')
         stop(paste0(
           'route URI contains empty capture group name',
-          ifelse(empty_names %>% length %>% equals(1), '', 's')
+          ifelse(length(empty_names) == 1, '', 's')
         ))
       }
       
       group_names
     }
-    
   )
 )

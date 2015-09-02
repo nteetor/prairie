@@ -4,17 +4,16 @@
 #
 
 library(dull)
+library(magrittr)
 
 arg = commandArgs(TRUE)
 port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
 
-`%>%` <- magrittr::`%>%`
-
 # NOTE: the parameter structure for the "get" function
 # is currently ignored within the dull_class object
 dull() %>% 
-  get('/', function(req, res) {
+  get('^$', function(req, res) {
     res %>% 
       status(200) %>% 
       headers(Connection = 'close') %>% 
@@ -22,7 +21,7 @@ dull() %>%
     
     # NOTE: It is not necessary to return the response object
   }) %>% 
-  get('/not_found', function(req, res) {
+  get('^get/404/$', function(req, res) {
     # res %>% 
     #    http_404_page
     

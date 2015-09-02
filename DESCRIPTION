@@ -1,5 +1,5 @@
 Package: dull
-Type: package
+Type: Package
 Title: Light-weight Web Framework for R
 Version: 0.0.0.1
 Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))

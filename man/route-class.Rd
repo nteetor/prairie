@@ -17,8 +17,6 @@ dull middleware begins to take shape this class will evolve more.
 \section{Methods}{
 
 \itemize{
- \item \code{uri_equals(string)}: TRUE if the
-  route uri equals string
  \item \code{uri_matches(path)}: TRUE if the route
   uri, as a regular expression, matches path
  \item \code{assign_callback(method, callback)}: set the callback function for a

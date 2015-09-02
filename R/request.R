@@ -45,12 +45,12 @@ request <- R6::R6Class(
       
       self$header_fields <- mget(http_headers, rook_envir) %>% as.list
       
-      if (route$get_params() %>% is.null) {
+      if (route$params %>% is.null) {
         self$params <- c()
       } else {
-        param_names <- route$get_params()
+        param_names <- route$params
         param_values <- self$url %>% 
-          str_match_all(route$get_uri()) %>% 
+          str_match_all(route$uri) %>% 
           .[[1]] %>% 
           .[-1]
         self$params <- setNames(param_values, param_names)
