@@ -49,6 +49,16 @@ response <- R6::R6Class(
       self$status <- n
       invisible(self)
     },
+    end = function(call = sys.call(-1)) {
+      end_condition <- structure(
+        class = c('end_response', 'message', 'condition'),
+        list(
+          message = 'response has ended',
+          call = call
+        )
+      )
+      stop(end_condition)
+    },
     
     as_HTTP_response = function() {
       cat(

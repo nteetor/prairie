@@ -17,7 +17,7 @@ post(.app, uri, callback)
 put(.app, uri, callback)
 }
 \arguments{
-\item{.app}{A dull_app R6 class object}
+\item{.app}{A \code{dull_app} R6 class object}
 
 \item{method}{An HTTP method, see section \bold{HTTP} Methods for details}
 
