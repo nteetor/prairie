@@ -15,6 +15,8 @@ dull_app <- R6::R6Class(
   public = list(
     routes = NULL,
     default_404 = NULL,
+    host = NULL,
+    port = NULL,
     
     initialize = function() {
       self$routes <- list()
@@ -25,6 +27,8 @@ dull_app <- R6::R6Class(
         ),
         body = paste('Sorry, page not found')
       )
+      self$host <- '127.0.0.1'
+      self$port <- 3030
       
       invisible(self)
     },
@@ -33,6 +37,15 @@ dull_app <- R6::R6Class(
       self$handle_request(req)
     },
     run = function(host, port) {
+      if (missing(host)) {
+        message(paste('Host defaulting to', self$host))
+        host <- self$host
+      }
+      if (missing(port)) {
+        message(paste('Port defaulting to', self$port))
+        port <- self$port
+      }
+      
       httpuv::runServer(host, port, self)
     },
     
