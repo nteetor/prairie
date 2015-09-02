@@ -7,6 +7,8 @@
 listen(.app, host, port)
 }
 \arguments{
+\item{.app}{A \code{dull_app} R6 class object}
+
 \item{host}{A valid IPv4 address as a string, use \sQuote{0.0.0.0} to broadcast on all addresses}
 
 \item{port}{A string or number identifying the server port to listen on}

@@ -19,7 +19,10 @@ dull() %>%
       headers(Connection = 'close') %>% 
       body('<div align="center"><h1>Hello, world!</h1><p>(and all who inhabit it)</p></div>')
     
-    # NOTE: It is not necessary to return the response object
+    # NOTE: It is not necessary to return the response object, but send() must be called
+    send(res)
+    
+    print("What do you mean I'm not printed?!")
   }) %>% 
   get('^get/404/$', function(req, res) {
     # res %>% 
@@ -30,5 +33,6 @@ dull() %>%
       status(404) %>% 
       body('<h4>Whoops, page not found!</h4><p>Better luck next time</p>')
     
+    send(res)
   }) %>% 
   listen('0.0.0.0', port)

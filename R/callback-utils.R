@@ -1,12 +1,9 @@
 body <- function(x, ...) UseMethod('body', x)
 
+#
+# request helpers
+#
 body.request <- function(.req) .req$body
-
-body.response <- function(.res, expr) {
-  .res$set_body(expr)
-  
-  invisible(.res)
-}
 
 method <- function(.req) .req$method
 
@@ -22,6 +19,9 @@ field <- function(.req, field) .req$get_header_field(field)
 
 is <- function(.req, type) .req$has_content_type(type)
 
+#
+# response helpers
+#
 status <- function(.res, status) {
   .res$set_status(status)
   
@@ -43,6 +43,21 @@ headers <- function(.res, ...) {
   invisible(.res)
 }
 
+body.response <- function(.res, expr) {
+  .res$set_body(expr)
+  
+  invisible(.res)
+}
+
+send <- function(.res, body = NULL) {
+  if (is.null(body)) {
+    .res$end()
+  } else {
+    .res$set_body(body)
+    .res$end()
+  }
+}
+
 load_helpers <- function(callback) {
   environment(callback) <- list2env(
     x = list(
@@ -57,7 +72,8 @@ load_helpers <- function(callback) {
       field = field,
       is = is,
       status = status,
-      headers = headers
+      headers = headers,
+      send = send
     ),
     parent = environment(callback)
   )
