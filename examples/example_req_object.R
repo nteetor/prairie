@@ -11,7 +11,7 @@ port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
 
 dull() %>% 
-  get('/', function(req, res) {
+  get('^$', function(req, res) {
     res %>% 
       status(200) %>% 
       headers(Connection = 'close') %>% 
@@ -19,14 +19,14 @@ dull() %>%
       send
     
   }) %>% 
-  get('/echo/(?<phrase>\\w+)', function(req, res) {
+  get('^echo/(?<phrase>\\w+)$', function(req, res) {
     res %>% 
       status(200) %>% 
       body(paste0('<h3>', params(req)['phrase'], '</h3><p>Same to you pal!</p>')) %>% 
       send
     
   }) %>% 
-  get('/greet', function(req, res) {
+  get('^greet$', function(req, res) {
     res %>% 
       body(paste0('<p>Hello, ', ip(req), ' or should I say ', host_name(req), '!<p>')) %>% 
       send
