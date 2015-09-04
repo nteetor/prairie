@@ -36,4 +36,5 @@ test_that('all request utilities loaded', {
   expect_exists('field')  
   expect_exists('is')
   expect_exists('send')
+  expect_exists('original_url')
 })

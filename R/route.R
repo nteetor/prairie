@@ -41,8 +41,7 @@ route <- R6::R6Class(
       self$callbacks <- list()
       self$callbacks[[method]] <- callback
       
-      # if (uri %>% str_sub(-1) %>% equals('/') & uri != '/') uri %<>% str_sub(end = -2)
-      self$uri <- uri
+      self$uri <- paste(uri, collapse = '|')
       
       self$params <- self$uri_parameters(uri)
       

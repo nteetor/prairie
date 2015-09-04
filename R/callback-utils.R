@@ -19,6 +19,8 @@ field <- function(.req, field) .req$get_header_field(field)
 
 is <- function(.req, type) .req$has_content_type(type)
 
+original_url <- function(.req, type) .req$url
+
 #
 # response helpers
 #
@@ -71,6 +73,7 @@ load_helpers <- function(callback) {
       params = params,
       field = field,
       is = is,
+      original_url = original_url,
       status = status,
       headers = headers,
       send = send

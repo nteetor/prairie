@@ -11,7 +11,8 @@ port = ifelse(length(arg) == 1, as.integer(arg), 3030)
 cat("Listening on port", port, "\n")
 
 dull() %>% 
-  get('^$', function(req, res) {
+  get(c('^$', '^index$'), function(req, res) {
+    # c('^$', '^index$') is equivalent to '^$|^index$'
     res %>% 
       status(200) %>% 
       headers(Connection = 'close') %>% 
@@ -35,8 +36,24 @@ dull() %>%
   }) %>% 
   get('^user/(?<id>[0-9]+)$', function(req, res) {
     res %>% 
-      body('<h4>User info<h4>') %>% 
+      body(paste0('<h4>User info<h4></br><p>No records for ID ', params(req)['id'], '</p>')) %>% 
       send
     
+  }) %>% 
+  get('^redirect/', function(req, res) {
+    req_path <- original_url(req)
+    redirect_path <- sub('^/redirect/', '/redirected/', req_path, perl = TRUE)
+    
+    res %>% 
+      status(302) %>% 
+      body(paste0('<p>', 302, ' Redirecting to <a href="', redirect_path, '">', redirect_path, '</a></p>')) %>% 
+      send
+    
+  }) %>% 
+  get('^redirected/', function(req, res) {
+    redir_subject <- gsub('/', ' ', sub('^/redirected/', '', original_url(req)))
+    
+    res %>% 
+      send(paste('<h3>Welcome to the new and improved', redir_subject, 'page!</h3>'))
   }) %>% 
   listen('0.0.0.0', port)
