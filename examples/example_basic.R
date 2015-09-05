@@ -13,7 +13,7 @@ cat("Listening on port", port, "\n")
 # NOTE: the parameter structure for the "get" function
 # is currently ignored within the dull_class object
 dull() %>% 
-  get('/', function(req, res) {
+  get('^$', function(req, res) {
     res %>% 
       status(200) %>% 
       headers(Connection = 'close') %>% 
@@ -24,7 +24,7 @@ dull() %>%
     
     print("What do you mean I'm not printed?!")
   }) %>% 
-  get('/not_found', function(req, res) {
+  get('^get/404/$', function(req, res) {
     # res %>% 
     #    http_404_page
     

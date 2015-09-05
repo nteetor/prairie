@@ -50,10 +50,12 @@ dull_app <- R6::R6Class(
     },
     
     add_route = function(method, uri, callback) {
-      if (uri %in% names(self$routes))
-        self$routes[[uri]]$assign_callback(method, callback)
+      route_to_be <- route$new(method, uri, callback)
+      
+      if (route_to_be$uri %in% names(self$routes))
+        self$routes[[route_to_be$uri]]$assign_callback(method, callback)
       else
-        self$routes[[uri]] <- route$new(method, uri, callback)
+        self$routes[[route_to_be$uri]] <- route_to_be
       
       invisible(self)
     },
