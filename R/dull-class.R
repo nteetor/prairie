@@ -1,7 +1,7 @@
 #' Dull application class object
-#' 
+#'
 #' An R6 class which is the backbone of the dull package.
-#' 
+#'
 #' @docType class
 #' @keywords internal
 #' @format An R6 class object.
@@ -17,7 +17,7 @@ dull_app <- R6::R6Class(
     default_404 = NULL,
     host = NULL,
     port = NULL,
-    
+
     initialize = function() {
       self$routes <- list()
       self$default_404 <- list(
@@ -29,10 +29,10 @@ dull_app <- R6::R6Class(
       )
       self$host <- '127.0.0.1'
       self$port <- 3030
-      
+
       invisible(self)
     },
-    
+
     call = function(req) {
       self$handle_request(req)
     },
@@ -45,35 +45,35 @@ dull_app <- R6::R6Class(
         message(paste('Port defaulting to', self$port))
         port <- self$port
       }
-      
+
       httpuv::runServer(host, port, self)
     },
-    
+
     add_route = function(method, uri, callback) {
       route_to_be <- route$new(method, uri, callback)
-      
+
       if (route_to_be$uri %in% names(self$routes))
         self$routes[[route_to_be$uri]]$assign_callback(method, callback)
       else
         self$routes[[route_to_be$uri]] <- route_to_be
-      
+
       invisible(self)
     },
     handle_request = function(rook_envir) {
       route <- self$find_route(rook_envir[['PATH_INFO']])
-      
+
       if (route %>% is.null) return(self$default_404)
-      
+
       callback <- route$get_callback(rook_envir[['REQUEST_METHOD']])
-      
+
       if (callback %>% is.null) return(self$default_404)
-      
+
       req <- request$new(route, rook_envir)
       res <- response$new()
-      
+
       tryCatch({
-        load_helpers(callback)(req, res)
-        
+        load_callback_envir(callback)(req, res)
+
         list(
           status = 500,
           headers = list('Content-Type' = 'text/plain'),
@@ -93,9 +93,9 @@ dull_app <- R6::R6Class(
     },
     find_route = function(uri) {
       route_name = Find(function(nm) self$routes[[nm]]$uri_matches(uri), names(self$routes), nomatch = NULL)
-      
+
       if (route_name %>% is.null) return(NULL)
-      
+
       self$routes[[route_name]]
     }
   )
