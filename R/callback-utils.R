@@ -24,30 +24,30 @@ original_url <- function(.req, type) .req$url
 #
 # response helpers
 #
-status <- function(.res, status) {
-  .res$set_status(status)
-  
+status <- function(.res, status_code) {
+  .res$set_status(status_code)
+
   invisible(.res)
 }
 
 headers <- function(.res, ...) {
   args <- list(...)
-  
+
   if (length(names(args)) != length(args)) {
     stop('All arguments must be named')
   }
-  
+
   sapply(names(args), function(field_name) {
     field_value <- args[[field_name]]
     .res$add_headers(setNames(field_value, rep(field_name, times = length(field_value))))
   })
-  
+
   invisible(.res)
 }
 
 body.response <- function(.res, expr) {
   .res$set_body(expr)
-  
+
   invisible(.res)
 }
 
@@ -58,6 +58,12 @@ send <- function(.res, body = NULL) {
     .res$set_body(body)
     .res$end()
   }
+}
+
+redirect <- function(.res, url, status_code = NULL) {
+  .res$set_status(ifelse(is.null(status_code), 302, status_code))
+  .res$add_headers(list(Location = url))
+  .res$end()
 }
 
 load_helpers <- function(callback) {
@@ -76,7 +82,8 @@ load_helpers <- function(callback) {
       original_url = original_url,
       status = status,
       headers = headers,
-      send = send
+      send = send,
+      redirect = redirect
     ),
     parent = environment(callback)
   )

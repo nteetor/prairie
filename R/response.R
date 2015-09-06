@@ -1,18 +1,18 @@
 #' Response class
-#' 
+#'
 #' An R6 class representing an HTTP response. Additionally, the response object
 #' can be converted into a Rook response for use with the httpuv and Rook
 #' packages.
-#' 
+#'
 #' @section Methods:
 #' \itemize{
-#'  \item \code{add_headers(headers)} Add a list of HTTP headers and values to the response 
+#'  \item \code{add_headers(headers)} Add a list of HTTP headers and values to the response
 #'  object
 #'  \item \code{set_body(expr)} Sets the body of the response, the value of \code{expr} is treated as html
 #'  \item \code{set_status(n)} Sets the HTTP status of the response object
 #'  \item \code{as_HTTP_response()} Formats and returns the response object as an HTTP response
 #'  \item \code{as_Rook_response()} Formats and returns the response object as a Rook reponse
-#' } 
+#' }
 #'
 #' @docType class
 #' @keywords internal
@@ -27,14 +27,14 @@ response <- R6::R6Class(
     status = NULL,
     body = NULL,
     headers = NULL,
-    
+
     initialize = function() {
       self$status <- 200
       self$headers <- list()
-      self$body <- list()
+      self$body <- ''
       invisible(self)
     },
-    
+
     add_headers = function(headers) {
       self$headers %<>% append(headers)
       invisible(self)
@@ -59,7 +59,7 @@ response <- R6::R6Class(
       )
       stop(end_condition)
     },
-    
+
     as_HTTP_response = function() {
       cat(
         paste0('HTTP/1.1 ', self$status),
