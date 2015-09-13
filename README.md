@@ -13,7 +13,7 @@ dull() %>%
       send
   }) %>%
   put('^create/file/(?<path>\\w+)$', function(req, res) {
-    file_path <- params(req)[1]
+    file_path <- params(req)['path']
     
     if (file.exists(file_path)) {
       res %>%
