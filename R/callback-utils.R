@@ -41,6 +41,16 @@ callback_utils <- list(
       .res$end()
     }
   },
+  send_file = function(.res, path) {
+    stopifnot(is.character(path), file.exists(path))
+    
+    path_info <- file.info(path, extra_cols = FALSE)
+    .res $
+      set_body(readBin(path, 'raw', path_info$size)) $
+      set_content_type(mime::guess_type(path)) $
+      set_content_length(path_info$size) $
+      end()
+  },
   redirect = function(.res, url, status_code = NULL) {
     .res$set_status(ifelse(is.null(status_code), 302, status_code))
     .res$add_headers(list(Location = url))

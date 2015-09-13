@@ -40,8 +40,16 @@ response <- R6::R6Class(
       invisible(self)
     },
     set_body = function(expr) {
-      self$add_headers(list('Content-Type' = 'text/html'))
+      #self$add_headers(list('Content-Type' = 'text/html'))
       self$body <- expr
+      invisible(self)
+    },
+    set_content_type = function(type) {
+      self$headers[['Content-Type']] <- type  
+      invisible(self)
+    },
+    set_content_length = function(size) {
+      self$headers[['Content-Length']] <- size
       invisible(self)
     },
     set_status = function(n) {
