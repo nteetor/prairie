@@ -53,7 +53,11 @@ route <- R6::R6Class(
       
       if (str_sub(path, 1, 1) == '/') path %<>% str_sub(2)
       
-      path == '' | str_detect(path, self$uri)
+      # stringr, and stringi, incorrectly detect empty string
+      # i.e. str_detect('', '^$') returns FALSE
+      if (path == '' & any(self$uri == c('^', '$', '^$'))) return(TRUE)
+      
+      str_detect(path, self$uri)
     },
     assign_callback = function(method, callback) {
       self$callbacks[[method]] <- callback

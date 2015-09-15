@@ -18,6 +18,7 @@
 #' @keywords internal
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
+#' @importFrom markdown markdownToHTML
 #' @importFrom magrittr %>% %<>%
 #' @export
 #' @name response
@@ -39,9 +40,22 @@ response <- R6::R6Class(
       self$headers %<>% append(headers)
       invisible(self)
     },
+    render_body = function(path) {
+      stopifnot(is.character(path), file.exists(path))
+      
+      self$body <- markdown::markdownToHTML(path)
+      invisible(self)
+    },
     set_body = function(expr) {
-      self$add_headers(list('Content-Type' = 'text/html'))
       self$body <- expr
+      invisible(self)
+    },
+    set_content_type = function(type) {
+      self$headers[['Content-Type']] <- type  
+      invisible(self)
+    },
+    set_content_length = function(size) {
+      self$headers[['Content-Length']] <- size
       invisible(self)
     },
     set_status = function(n) {
