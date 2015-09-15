@@ -16,6 +16,7 @@ Imports:
     httpuv (>= 1.3.3),
     stringr (>= 1.0.0),
     httr,
+    markdown,
     testthat
 URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues

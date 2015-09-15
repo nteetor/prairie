@@ -33,6 +33,13 @@ callback_utils <- list(
 
     invisible(.res)
   },
+  render = function(.res, path) {
+    stopifnot(is.character(path), file.exists(path))
+    
+    .res$render_body(path)
+    .res$set_content_type('text/html')
+    .res$end()
+  },
   send = function(.res, body = NULL) {
     if (is.null(body)) {
       .res$end()
@@ -45,11 +52,10 @@ callback_utils <- list(
     stopifnot(is.character(path), file.exists(path))
     
     path_info <- file.info(path, extra_cols = FALSE)
-    .res $
-      set_body(readBin(path, 'raw', path_info$size)) $
-      set_content_type(mime::guess_type(path)) $
-      set_content_length(path_info$size) $
-      end()
+    .res$set_body(readBin(path, 'raw', path_info$size))
+    .res$set_content_type(mime::guess_type(path))
+    .res$set_content_length(path_info$size)
+    .res$end()
   },
   redirect = function(.res, url, status_code = NULL) {
     .res$set_status(ifelse(is.null(status_code), 302, status_code))

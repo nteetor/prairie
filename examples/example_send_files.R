@@ -21,6 +21,10 @@ dull() %>%
     res %>% 
       send_file('./public/index.html')
   }) %>% 
+  get('^about/$', function(req, res) {
+    res %>% 
+      render('./public/about.md')
+  }) %>% 
   listen('127.0.0.1', port)
 
 setwd(old_wd)
