@@ -39,8 +39,3 @@ TODO
 TODO
 }
 
-\section{Callback functions}{
-
-TODO
-}
-

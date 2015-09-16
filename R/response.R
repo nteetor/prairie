@@ -17,7 +17,7 @@
 #' @docType class
 #' @keywords internal
 #' @format An R6 class object.
-#' @importFrom R6 R6Class
+# @importFrom R6 R6Class
 #' @importFrom markdown markdownToHTML
 #' @importFrom magrittr %>% %<>%
 #' @export
@@ -42,7 +42,7 @@ response <- R6::R6Class(
     },
     render_body = function(path) {
       stopifnot(is.character(path), file.exists(path))
-      
+
       self$body <- markdown::markdownToHTML(path)
       invisible(self)
     },
@@ -51,7 +51,7 @@ response <- R6::R6Class(
       invisible(self)
     },
     set_content_type = function(type) {
-      self$headers[['Content-Type']] <- type  
+      self$headers[['Content-Type']] <- type
       invisible(self)
     },
     set_content_length = function(size) {
@@ -64,6 +64,10 @@ response <- R6::R6Class(
       invisible(self)
     },
     end = function(call = sys.call(-1)) {
+      # an inadequate check, to be replaced
+      # a valid response must have at least one header value
+      if (self$headers == list()) self$set_content_type('text/html')
+
       end_condition <- structure(
         class = c('end_response', 'message', 'condition'),
         list(

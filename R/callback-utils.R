@@ -1,11 +1,38 @@
-callback_utils <- list(
-  body = function(x, ...) UseMethod('body', x),
-  body.request = function(.req) .req$body,
-  body.response = function(.res, expr) {
-    .res$set_body(expr)
+body <- function(x, ...) UseMethod('body', x)
 
-    invisible(.res)
-  },
+#' Retrieve the body of a request object
+#'
+#' @param .req \code{response} object
+#'
+#' @name request-body
+#' @examples
+#' library(magrittr)
+#'
+#' dull() %>%
+#'   post('^upload/csv/$', function(req, res) {
+#'     file_name <- tempfile(pattern = 'upload_', fileext = '.csv', tmpdir = 'public')
+#'
+#'     # extract body from request and write to temp file
+#'     writeBin(body(req), file_name)
+#'
+#'     res %>%
+#'       send('Upload successful!')
+#'   })
+body.request <- function(.req) .req$body
+
+#' Add body to response object
+#'
+#' @name response-body
+body.response <- function(.res, expr) {
+  .res$set_body(expr)
+
+  invisible(res)
+}
+
+callback_utils <- list(
+  body = body,
+  body.request = body.request,
+  body.response = body.response,
   method = function(.req) .req$method,
   ip = function(.req) .req$ip,
   port = function(.req) .req$port,
@@ -35,7 +62,7 @@ callback_utils <- list(
   },
   render = function(.res, path) {
     stopifnot(is.character(path), file.exists(path))
-    
+
     .res$render_body(path)
     .res$set_content_type('text/html')
     .res$end()
@@ -50,7 +77,7 @@ callback_utils <- list(
   },
   send_file = function(.res, path) {
     stopifnot(is.character(path), file.exists(path))
-    
+
     path_info <- file.info(path, extra_cols = FALSE)
     .res$set_body(readBin(path, 'raw', path_info$size))
     .res$set_content_type(mime::guess_type(path))
