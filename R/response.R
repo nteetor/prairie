@@ -143,7 +143,7 @@ response <- R6::R6Class(
       assert_that(is.character(path))
 
       if (path == 'back') {
-        path <- if (!is.null(private$req$get('Referrer'))) private$req$get('Referrer') else '/'
+        path <- private$req$get('Referrer') %||% '/'
       }
 
       self$set('Location', path)
