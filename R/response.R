@@ -58,18 +58,18 @@ response <- R6::R6Class(
       invisible(self)
     },
     cookie = function(name, value, options = NULL) {
-      stop('Not implemented')
+      stop('$cookie not implemented')
     },
     clear_cookie = function(name, options = NULL) {
-      stop('Not implemented')
+      stop('$clear_cookie not implemented')
     },
-    download = function(path, filename = NULL) {
+    download = function(path, filename = path) {
       assert_that(is.character(path), file.exists(path))
       if (!is.null(filename)) assert_that(filename)
 
-      self$attachment(if (is.null(filename)) path else filename)
+      self$attachment(filename)
 
-      stop('send_file not implemented')
+      stop('$send_file not implemented')
     },
     end = function(body = NULL) {
       if (!is.null(body)) {
@@ -115,6 +115,8 @@ response <- R6::R6Class(
         stop('package jsonlite is not installed')
       }
 
+      assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+
       self$set('Content-Type', 'application/json')
       private$body <- jsonlite::toJSON(body)
 
@@ -156,6 +158,44 @@ response <- R6::R6Class(
       self$status(status)
       self$location(path)
 
+      self$end()
+    },
+    render = function(view, locals) {
+      stop('$render not implemented')
+    },
+    send = function(body = NULL) {
+      assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+
+      if (is.list(body) | is.data.frame(body)) {
+        self$json(body)
+      }
+
+      self$set('Content-Type', 'text/html')
+      private$body <- body
+
+      invisible(self)
+    },
+    send_file = function(path, options = list(), ...) {
+      assert_that(is.character(path), is.list(options))
+
+      stop('$send_file is not implemented')
+
+      all_options <- append(options, list(...))
+      if (!all(names(all_options) %in% c('max_age', 'root', 'last_modified', 'headers', 'dotfiles'))) {
+        stop('unknown options passed to $send_file')
+      }
+
+      root <- all_options$root
+      if (is.null(root) & !is_absolute(path)) {
+        stop('options$root must be specified or `path` must be absolute')
+      }
+
+      full_path <- httpuv::encode(file.path(root, path))
+
+      if (!is.null(all_options$max_age)) self$set('Cache-Control', paste0('max-age=', all_options$max_age))
+      if (all_options$last_modified %||% TRUE) self$set('Last-Modified', http_date(NULL)) #TODO
+
+      private$body <- setNames(full_path, 'file')
       self$end()
     }
 
