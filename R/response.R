@@ -178,23 +178,46 @@ response <- R6::R6Class(
     send_file = function(path, options = list(), ...) {
       assert_that(is.character(path), is.list(options))
 
-      stop('$send_file is not implemented')
-
       all_options <- append(options, list(...))
       if (!all(names(all_options) %in% c('max_age', 'root', 'last_modified', 'headers', 'dotfiles'))) {
         stop('unknown options passed to $send_file')
       }
-
+      
       root <- all_options$root
       if (is.null(root) & !is_absolute(path)) {
-        stop('options$root must be specified or `path` must be absolute')
+        stop('option `root` must be specified or`path` must be absolute')
       }
-
+      
       full_path <- httpuv::encode(file.path(root, path))
-
-      if (!is.null(all_options$max_age)) self$set('Cache-Control', paste0('max-age=', all_options$max_age))
-      if (all_options$last_modified %||% TRUE) self$set('Last-Modified', http_date(NULL)) #TODO
-
+      
+      if (!is.null(all_options$headers)) {
+        if (length(names(all_options$headers)) != length(all_options$headers)) {
+          stop('values of option `headers` must be named')
+        }
+        
+        for (nm in names(all_options)) {
+          self$set(nm, all_options$headers[[nm]])
+        }
+      }
+      
+      if (is.null(all_options$max_age)) {
+        self$set('Cache-Control', paste0('max-age=', 0))
+      } else {
+        self$set('Cache-Control', paste0('max-age=', all_options$max_age))
+      }
+      
+      if (is.null(all_options$last_modified) | all_options$last_modified) {
+        self$set('Last-Modified', http_date(file.mtime(full_path)))
+      }
+      
+      if (is.null(all_options$dot_files)) {
+        if (!(all_options$dot_files %in% c('allow', 'deny', 'ignore'))) {
+          stop('unknown value for option `dot_files`, must be one of "allow", "deny", or "ignore"')
+        }
+        
+        warning('option `dot_files` is not implemented')
+      }
+      
       private$body <- setNames(full_path, 'file')
       self$end()
     }
