@@ -68,13 +68,12 @@ response <- R6::R6Class(
       if (!is.null(filename)) assert_that(filename)
 
       self$attachment(filename)
-
-      stop('$send_file not implemented')
+      
+      self$send_file(path)
     },
     end = function(body = NULL) {
       if (!is.null(body)) {
         assert_that(is.character(body))
-
         private$body <- body
       }
 
@@ -102,12 +101,13 @@ response <- R6::R6Class(
       } else if (!is.null(default_callback)) {
         default_callback()
       } else {
-        self$status(406)
+        self$send_status(406)
       }
 
       invisible(self)
     },
     get = function(field) {
+      assert_that(is.character(field))
       self$headers[[stringr::str_to_lower(field)]]
     },
     json = function(body = NULL) {
@@ -214,60 +214,42 @@ response <- R6::R6Class(
         if (!(all_options$dot_files %in% c('allow', 'deny', 'ignore'))) {
           stop('unknown value for option `dot_files`, must be one of "allow", "deny", or "ignore"')
         }
-        
         warning('option `dot_files` is not implemented')
       }
       
       private$body <- setNames(full_path, 'file')
       self$end()
-    }
-
+    },
+    send_status = function(status) {
+      assert_that(is.integer(status))
+      self$status(status)
+      private$body <- get_status_description(status)
+      invisible(self)
+    },
+    set = function(field, value) {
+      assert_that(is.character(field), is.character(value))
+      private$headers[[field]] = value
+      invisible(self)
+    },
     status = function(code) {
-      assert_that(is.integer)
-
+      assert_that(is.integer(code))
       private$status_code <- code
-
-      invisible(self)
-    }
-  ),
-  private = list(
-    status_code = NULL,
-    body = NULL,
-    headers = NULL,
-    req = NULL,
-
-    add_headers = function(headers) {
-      private$headers <- append(private$headers, headers)
       invisible(self)
     },
-    render_body = function(path) {
-      stopifnot(is.character(path), file.exists(path))
-
-      private$body <- markdown::markdownToHTML(path)
+    type = function(type) {
+      assert_that(is.character(type))
+      self$set('Content-Type', mime::guess_type(type, empty = type))
       invisible(self)
     },
-    set_body = function(expr) {
-      private$body <- expr
+    vary = function(field) {
+      assert_that(is.character(field))
+      self$set('Vary', paste(field, private$headers[['Vary']], sep = ','))
       invisible(self)
     },
-    set_content_type = function(type) {
-      private$headers[['Content-Type']] <- type
-      invisible(self)
-    },
-    set_content_length = function(size) {
-      private$headers[['Content-Length']] <- size
-      invisible(self)
-    },
-    set_status = function(n) {
-      stopifnot(n %>% is.numeric)
-      private$status <- n
-      invisible(self)
-    },
-
-
+    
     as_HTTP_response = function() {
       cat(
-        paste0('HTTP/1.1 ', private$status),
+        paste0('HTTP/1.1 ', private$status_code),
         '\r\n',
         paste0(names(private$headers), ': ', private$headers, collapse = '\r\n'),
         '\r\n\r\n',
@@ -278,10 +260,16 @@ response <- R6::R6Class(
     },
     as_Rook_response = function() {
       list(
-        status = private$status,
+        status = private$status_code,
         headers = private$headers,
         body = private$body
       )
     }
+  ),
+  private = list(
+    status_code = NULL,
+    body = NULL,
+    headers = NULL,
+    req = NULL
   )
 )
