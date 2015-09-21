@@ -6,10 +6,6 @@
 #'
 #' @section Methods:
 #' \itemize{
-#'  \item \code{add_headers(headers)} Add a list of HTTP headers and values to the response
-#'  object
-#'  \item \code{set_body(expr)} Sets the body of the response, the value of \code{expr} is treated as html
-#'  \item \code{set_status(n)} Sets the HTTP status of the response object
 #'  \item \code{as_HTTP_response()} Formats and returns the response object as an HTTP response
 #'  \item \code{as_Rook_response()} Formats and returns the response object as a Rook reponse
 #' }
@@ -24,7 +20,7 @@ response <- R6::R6Class(
   'response',
   public = list(
     initialize = function(req) {
-      private$status <- 200
+      private$status_code <- 200L
       private$headers <- list('Content-Type' = 'text/plain')
       private$body <- ''
       private$req <- req
@@ -48,11 +44,11 @@ response <- R6::R6Class(
       } else {
         assert_that(is.character(path), file.exists(path))
 
-        split_path <- strsplit(path, '/|\\', perl = TRUE)[[1]]
+        split_path <- strsplit(path, '/|\\\\', perl = TRUE)[[1]]
         f_name <- split_path[length(split_path)]
 
-        private$headers[['Content-Disposition']] <- paste0('attachment; filename=\"', f_name, '\"')
-        private$headers[['Content-Type']] <- mime::guess_type(f_name)
+        self$set('Content-Disposition', paste0('attachment; filename=\"', f_name, '\"'))
+        self$set('Content-Type', mime::guess_type(f_name))
       }
 
       invisible(self)
@@ -68,7 +64,7 @@ response <- R6::R6Class(
       if (!is.null(filename)) assert_that(filename)
 
       self$attachment(filename)
-      
+
       self$send_file(path)
     },
     end = function(body = NULL) {
@@ -108,7 +104,8 @@ response <- R6::R6Class(
     },
     get = function(field) {
       assert_that(is.character(field))
-      self$headers[[stringr::str_to_lower(field)]]
+      field <- Find(function(nm) tolower(nm) == tolower(field), names(private$headers), nomatch = NA)
+      private$headers[[field]]
     },
     json = function(body = NULL) {
       if (!requireNamespace('jsonlite')) {
@@ -172,7 +169,7 @@ response <- R6::R6Class(
         self$set('Content-Type', 'text/html')
         private$body <- body
       }
-      
+
       invisible(self)
     },
     send_file = function(path, options = list(), ...) {
@@ -182,41 +179,41 @@ response <- R6::R6Class(
       if (!all(names(all_options) %in% c('max_age', 'root', 'last_modified', 'headers', 'dotfiles'))) {
         stop('unknown options passed to $send_file')
       }
-      
+
       root <- all_options$root
       if (is.null(root) & !is_absolute(path)) {
         stop('option `root` must be specified or`path` must be absolute')
       }
-      
+
       full_path <- httpuv::encode(file.path(root, path))
-      
+
       if (!is.null(all_options$headers)) {
         if (length(names(all_options$headers)) != length(all_options$headers)) {
           stop('values of option `headers` must be named')
         }
-        
+
         for (nm in names(all_options)) {
           self$set(nm, all_options$headers[[nm]])
         }
       }
-      
+
       if (is.null(all_options$max_age)) {
         self$set('Cache-Control', paste0('max-age=', 0))
       } else {
         self$set('Cache-Control', paste0('max-age=', all_options$max_age))
       }
-      
+
       if (is.null(all_options$last_modified) | all_options$last_modified) {
         self$set('Last-Modified', http_date(file.mtime(full_path)))
       }
-      
+
       if (is.null(all_options$dot_files)) {
         if (!(all_options$dot_files %in% c('allow', 'deny', 'ignore'))) {
           stop('unknown value for option `dot_files`, must be one of "allow", "deny", or "ignore"')
         }
         warning('option `dot_files` is not implemented')
       }
-      
+
       private$body <- setNames(full_path, 'file')
       self$end()
     },
@@ -228,7 +225,7 @@ response <- R6::R6Class(
     },
     set = function(field, value) {
       assert_that(is.character(field), is.character(value))
-      private$headers[[field]] = value
+      private$headers[[field]] <- value
       invisible(self)
     },
     status = function(code) {
@@ -243,13 +240,17 @@ response <- R6::R6Class(
     },
     vary = function(field) {
       assert_that(is.character(field))
-      self$set('Vary', paste(field, private$headers[['Vary']], sep = ','))
+      if (is.null(self$get('Vary'))) {
+        self$set('Vary', field)
+      } else {
+        self$append('Vary', paste0(',', field))
+      }
       invisible(self)
     },
-    
+
     as_HTTP_response = function() {
       cat(
-        paste0('HTTP/1.1 ', private$status_code),
+        paste('HTTP/1.1', private$status_code, get_status_description(private$status_code, FALSE)),
         '\r\n',
         paste0(names(private$headers), ': ', private$headers, collapse = '\r\n'),
         '\r\n\r\n',

@@ -18,7 +18,7 @@ library(magrittr)
 
 dull() \%>\%
   post('^upload/csv/$', function(req, res) {
-    file_name <- tempfile(pattern = '.csv', tempdir = 'public')
+    file_name <- tempfile(pattern = 'upload_', fileext = '.csv', tmpdir = 'public')
 
     # extract body from request and write to temp file
     writeBin(body(req), file_name)

@@ -13,7 +13,7 @@ is_absolute <- function(path) {
   else FALSE
 }
 
-get_status_description <- function(status) {
+get_status_description <- function(status, default_to_status = TRUE) {
   stopifnot(is.integer(status) | is.character(status))
   switch (
     as.character(status),
@@ -57,6 +57,6 @@ get_status_description <- function(status) {
     '503' = "Service Unavailable",
     '504' = "Gateway Timeout",
     '505' = "HTTP Version Not Supported",
-    as.character(status)
+    if (default_to_status) as.character(status) else NULL
   )
 }

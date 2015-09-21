@@ -16,10 +16,6 @@ packages.
 \section{Methods}{
 
 \itemize{
- \item \code{add_headers(headers)} Add a list of HTTP headers and values to the response
- object
- \item \code{set_body(expr)} Sets the body of the response, the value of \code{expr} is treated as html
- \item \code{set_status(n)} Sets the HTTP status of the response object
  \item \code{as_HTTP_response()} Formats and returns the response object as an HTTP response
  \item \code{as_Rook_response()} Formats and returns the response object as a Rook reponse
 }
