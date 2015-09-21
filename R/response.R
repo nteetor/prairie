@@ -164,15 +164,15 @@ response <- R6::R6Class(
       stop('$render not implemented')
     },
     send = function(body = NULL) {
-      assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+      if (!is.null(body)) assert_that(is.character(body) | is.list(body) | is.data.frame(body))
 
-      if (is.list(body) | is.data.frame(body)) {
+      if (!is.null(body) & (is.list(body) | is.data.frame(body))) {
         self$json(body)
+      } else {
+        self$set('Content-Type', 'text/html')
+        private$body <- body
       }
-
-      self$set('Content-Type', 'text/html')
-      private$body <- body
-
+      
       invisible(self)
     },
     send_file = function(path, options = list(), ...) {
