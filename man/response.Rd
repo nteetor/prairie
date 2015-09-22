@@ -3,22 +3,69 @@
 \docType{class}
 \name{response}
 \alias{response}
-\title{Response class}
+\title{Response objects}
 \format{An R6 class object.}
 \usage{
 response
 }
 \description{
-An R6 class representing an HTTP response. Additionally, the response object
-can be converted into a Rook response for use with the httpuv and Rook
-packages.
+An R6Class respresentation of an HTTP response. The response object is used
+inside route callback functions where it can be
 }
+\section{Fields}{
+
+
+  None.
+}
+
 \section{Methods}{
 
-\itemize{
- \item \code{as_HTTP_response()} Formats and returns the response object as an HTTP response
- \item \code{as_Rook_response()} Formats and returns the response object as a Rook reponse
+
+  Response objects understand the following methods. Many of these methods
+  invisibly return the response object, which allows multiple methods to be
+  chained together. The methods which cannot be chained return a value, such
+  as \code{get}.
+
+  \subsection{\code{res$append(field, value)}}
+
+  Append \code{value} to the existing value for header field \code{field}.
+
+  \subsection{\code{res$attachment(path = NULL)}}
+
+  Add \code{path} as the response attachment. Calling \code{attachment} will
+  set the "Content-Disposition" and "Content-Type" HTTP header fields of the
+  response object.
+
+  If \code{path} is specified the path is split, attchment file name parsed,
+  and the file name of "Content-Disposition" set accordingly.
+
+  \subsection{\code{res$download(path, filename = path)}}
+
+  Prompts the client to a file specified by \code{path}. An alternate name
+  may be specified by \code{filename}.
+
+  Ends the callback function.
+
+  \subsection{\code{res$end(body = NULL)}}
+
+  Ends the callback function. Typically used to halt callback execution when
+  a request is incomplete. If \code{body} is not NULL then the response body
+  will be overwritten when \code{end} is called.
+
+  Ends the callback function.
+
+  \code{as_HTTP_response()} Formats and returns the response object as an
+  HTTP response
+
+  \code{as_Rook_response()} Formats and returns the response object as a Rook
+  reponse
 }
+\examples{
+sample <- dull$route('^.+', function(req, res) {
+  res$set('Connection', 'close')
+
+  res$status(301)$send('Page is gone!')
+})
 }
 \keyword{internal}
 

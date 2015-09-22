@@ -1,18 +1,66 @@
-#' Response class
+#' Response objects
 #'
-#' An R6 class representing an HTTP response. Additionally, the response object
-#' can be converted into a Rook response for use with the httpuv and Rook
-#' packages.
+#' An R6Class respresentation of an HTTP response. The response object is used
+#' inside route callback functions where it can be
+#'
+#' @format
+#'
+#' An R6 class object.
+#'
+#' @section Fields:
+#'
+#'   None.
 #'
 #' @section Methods:
-#' \itemize{
-#'  \item \code{as_HTTP_response()} Formats and returns the response object as an HTTP response
-#'  \item \code{as_Rook_response()} Formats and returns the response object as a Rook reponse
-#' }
+#'
+#'   Response objects understand the following methods. Many of these methods
+#'   invisibly return the response object, which allows multiple methods to be
+#'   chained together. The methods which cannot be chained return a value, such
+#'   as \code{get}.
+#'
+#'   \subsection{\code{res$append(field, value)}}
+#'
+#'   Append \code{value} to the existing value for header field \code{field}.
+#'
+#'   \subsection{\code{res$attachment(path = NULL)}}
+#'
+#'   Add \code{path} as the response attachment. Calling \code{attachment} will
+#'   set the "Content-Disposition" and "Content-Type" HTTP header fields of the
+#'   response object.
+#'
+#'   If \code{path} is specified the path is split, attchment file name parsed,
+#'   and the file name of "Content-Disposition" set accordingly.
+#'
+#'   \subsection{\code{res$download(path, filename = path)}}
+#'
+#'   Prompts the client to a file specified by \code{path}. An alternate name
+#'   may be specified by \code{filename}.
+#'
+#'   Ends the callback function.
+#'
+#'   \subsection{\code{res$end(body = NULL)}}
+#'
+#'   Ends the callback function. Typically used to halt callback execution when
+#'   a request is incomplete. If \code{body} is not NULL then the response body
+#'   will be overwritten when \code{end} is called.
+#'
+#'   Ends the callback function.
+#'
+#'   \code{as_HTTP_response()} Formats and returns the response object as an
+#'   HTTP response
+#'
+#'   \code{as_Rook_response()} Formats and returns the response object as a Rook
+#'   reponse
+#'
+#' @examples
+#' sample <- dull$route('^.+', function(req, res) {
+#'   res$set('Connection', 'close')
+#'
+#'   res$status(301)$send('Page is gone!')
+#' })
 #'
 #' @docType class
 #' @keywords internal
-#' @format An R6 class object.
 #' @importFrom assertthat assert_that
 #' @export
 #' @name response
@@ -40,7 +88,7 @@ response <- R6::R6Class(
     },
     attachment = function(path = NULL) {
       if (is.null(path)) {
-        private$headers[['Content-Disposition']] <- 'attachment'
+        self$set('Content-Disposition', 'attachment')
       } else {
         assert_that(is.character(path), file.exists(path))
 
@@ -60,12 +108,11 @@ response <- R6::R6Class(
       stop('$clear_cookie not implemented')
     },
     download = function(path, filename = path) {
-      assert_that(is.character(path), file.exists(path))
-      if (!is.null(filename)) assert_that(filename)
+      assert_that(is.character(path), file.exists(path), is.character(filename))
 
-      self$attachment(filename)
+      # self$set('Content-Disposition', paste0('attachment; filename=\"', filename, '\"'))
 
-      self$send_file(path)
+      self$send_file(path, list('Content-Disposition' = paste0('attachment; filename=\"', filename, '\"')))
     },
     end = function(body = NULL) {
       if (!is.null(body)) {
@@ -117,7 +164,7 @@ response <- R6::R6Class(
       self$set('Content-Type', 'application/json')
       private$body <- jsonlite::toJSON(body)
 
-      invisible(self)
+      self$end()
     },
     links = function(links) {
       assert_that(is.list(links), length(links) != 0)
@@ -170,19 +217,23 @@ response <- R6::R6Class(
         private$body <- body
       }
 
-      invisible(self)
+      self$end()
     },
     send_file = function(path, options = list(), ...) {
       assert_that(is.character(path), is.list(options))
 
       all_options <- append(options, list(...))
+      if (length(names(all_options)) != length(all_options)) {
+        stop('all options must be named')
+      }
+
       if (!all(names(all_options) %in% c('max_age', 'root', 'last_modified', 'headers', 'dotfiles'))) {
         stop('unknown options passed to $send_file')
       }
 
       root <- all_options$root
       if (is.null(root) & !is_absolute(path)) {
-        stop('option `root` must be specified or`path` must be absolute')
+        stop('option `root` must be specified or `path` must be absolute')
       }
 
       full_path <- httpuv::encode(file.path(root, path))
@@ -229,8 +280,8 @@ response <- R6::R6Class(
       invisible(self)
     },
     status = function(code) {
-      assert_that(is.integer(code))
-      private$status_code <- code
+      assert_that(is.numeric(code))
+      private$status_code <- as.integer(code)
       invisible(self)
     },
     type = function(type) {

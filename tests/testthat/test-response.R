@@ -47,4 +47,14 @@ test_that('$attachment uses correct type and file name', {
   expect_equal(res$get('content-type'), 'text/x-markdown')
 })
 
+test_that('$download sets correct disposition and file name when specified', {
+  res <- response$new(NULL)
+
+  expect_error(res$download('/path/to/distant/lands.txt'))
+
+  # TODO: research "resolve" function in node "path" module, once added
+  # $download can be better tested, see
+  # https://github.com/strongloop/express/blob/master/lib/response.js#L523
+})
+
 

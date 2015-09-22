@@ -24,6 +24,7 @@ Suggests:
 URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues
 Collate:
+    'utils.R'
     'route.R'
     'response.R'
     'request.R'
