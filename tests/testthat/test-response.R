@@ -69,9 +69,7 @@ test_that('$end raises end signal, sets body if specified', {
 test_that('$format handles both explicit and general content types', {
   res <- response$new(NULL)
 
-  frmt <- list(
-    'html'
-  )
+  # testing of $format will have to wait until the request object is overhauled
 })
 
 
