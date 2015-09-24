@@ -1,5 +1,5 @@
 library(dull)
-context('callback utility functions')
+context('callback utils')
 
 test_that('all callback utilities loaded', {
   callback_envir <- environment(load_callback_envir(function(req, res) NULL))

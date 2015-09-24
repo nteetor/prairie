@@ -15,12 +15,12 @@ Imports:
     R6 (>= 2.1.0),
     magrittr (>= 1.5),
     stringr (>= 1.0.0),
-    httr,
     markdown,
-    assertthat,
-    testthat
+    assertthat
 Suggests:
-    jsonlite
+    jsonlite,
+    httr,
+    testthat
 URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues
 Collate:

@@ -122,25 +122,24 @@ response <- R6::R6Class(
 
       stop(
         structure(
-          class = c('end_response', 'message', 'condition'),
+          class = c('end_signal', 'error', 'condition'),
           list(
-            message = 'response has ended',
-            call = sys.call(-1)
+            message = '(not really) $end called from response'
           )
         )
       )
     },
-    format = function(obj) {
-      assert_that(is.list(obj))
+    format = function(lst) {
+      assert_that(is.list(lst))
 
-      default_callback <- obj[['default']]
-      obj['default'] <- NULL
+      default_callback <- lst[['default']]
+      lst['default'] <- NULL
 
-      accepted_type <- Find(private$req$accepts, names(obj), nomatch = NULL)
+      accepted_type <- Find(private$req$accepts, names(lst), nomatch = NULL)
 
       if (!is.null(accepted_type)) {
         res$set('Content-Type', mime::guess_type(accepted_type))
-        obj[[accepted_type]]()
+        lst[[accepted_type]]()
       } else if (!is.null(default_callback)) {
         default_callback()
       } else {
@@ -156,13 +155,16 @@ response <- R6::R6Class(
     },
     json = function(body = NULL) {
       if (!requireNamespace('jsonlite')) {
-        stop('package jsonlite is not installed')
+        stop('package jsonlite must be installed in order to use method `json`')
       }
 
-      assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+      if (!is.null(body)) {
+        assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+
+        private$body <- jsonlite::toJSON(body)
+      }
 
       self$set('Content-Type', 'application/json')
-      private$body <- jsonlite::toJSON(body)
 
       self$end()
     },
