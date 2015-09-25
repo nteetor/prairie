@@ -1,6 +1,8 @@
 library(dull)
 context('response object')
 
+end_response_signal <- '.*end called from response\\n'
+
 test_that('$get and $set correctly access values', {
   res <- response$new(NULL)
 
@@ -48,6 +50,7 @@ test_that('$attachment uses correct type and file name', {
 })
 
 test_that('$download sets correct disposition and file name when specified', {
+  skip('testing $download depends on implementing a `resolve` method')
   res <- response$new(NULL)
 
   expect_error(res$download('/path/to/distant/lands.txt'))
@@ -60,16 +63,47 @@ test_that('$download sets correct disposition and file name when specified', {
 test_that('$end raises end signal, sets body if specified', {
   res <- response$new(NULL)
 
-  expect_error(res$end(), '.*end called from response\\n')
+  expect_error(res$end(), end_response_signal)
 
   expect_error(res$end('and soul'))
   expect_equal(res$as_Rook_response()$body, 'and soul')
 })
 
 test_that('$format handles both explicit and general content types', {
+  skip('implement once request object is overhauled')
   res <- response$new(NULL)
 
   # testing of $format will have to wait until the request object is overhauled
 })
 
+test_that('$json accepts correct types, ends response', {
+  skip_if_not_installed('jsonlite')
+
+  res <- response$new(NULL)
+
+  df <- data.frame(a = 1:5, b = 5:9, c = 10:14)
+  json_df <- jsonlite::toJSON(df)
+
+  lst <- list(foo = list(bar = 'boo', baz = 'hoo'), howdy = 'doody')
+  json_lst <- jsonlite::toJSON(lst)
+
+  chr <- 'ol_salty'
+  json_chr <- jsonlite::toJSON(chr)
+
+  expect_error(res$json(), end_response_signal)
+  expect_equal(res$get('content-type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, '')
+
+  expect_error(res$json(df), end_response_signal)
+  expect_equal(res$get('Content-Type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, json_df)
+
+  expect_error(res$json(lst), end_response_signal)
+  expect_equal(res$get('Content-Type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, json_lst)
+
+  expect_error(res$json(chr), end_response_signal)
+  expect_equal(res$get('content-type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, json_chr)
+})
 
