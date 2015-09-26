@@ -172,18 +172,16 @@ response <- R6::R6Class(
       assert_that(is.list(links), length(links) != 0)
 
       existing_links <- self$get('Link')
-
-      self$set(
-        'Link',
-        paste(
-          existing_links,
-          paste(
-            vapply(names(links), function(rel) paste0('<', links[[rel]], '>; rel=', rel), character(1)),
-            collapse = ', '
-          ),
-          sep = ', '
-        )
+      new_links <- paste(
+        vapply(names(links), function(rel) paste0('<', links[[rel]], '>; rel=', rel), character(1)),
+        collapse = ', '
       )
+
+      if (is.null(existing_links)) {
+        self$set('Link', new_links)
+      } else {
+        self$set('Link', paste0(existing_links, ', ', new_links))
+      }
 
       invisible(self)
     },
@@ -210,13 +208,15 @@ response <- R6::R6Class(
       stop('$render not implemented')
     },
     send = function(body = NULL) {
-      if (!is.null(body)) assert_that(is.character(body) | is.list(body) | is.data.frame(body))
+      if (!is.null(body)) {
+        assert_that(is.character(body) || is.list(body) || is.data.frame(body))
 
-      if (!is.null(body) & (is.list(body) | is.data.frame(body))) {
-        self$json(body)
-      } else {
-        self$set('Content-Type', 'text/html')
-        private$body <- body
+        if (is.list(body) || is.data.frame(body)) {
+          self$json(body)
+        } else {
+          self$set('Content-Type', 'text/html')
+          private$body <- body
+        }
       }
 
       self$end()
@@ -225,7 +225,7 @@ response <- R6::R6Class(
       assert_that(is.character(path), is.list(options))
 
       all_options <- append(options, list(...))
-      if (length(names(all_options)) != length(all_options)) {
+      if (any(names(all_options) == '') || length(names(all_options)) != length(all_options)) {
         stop('all options must be named')
       }
 

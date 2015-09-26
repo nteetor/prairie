@@ -1,25 +1,24 @@
 #' Simple route class
-#' 
+#'
 #' This class is a glorified container for a url and the corresponding callback
 #' function. Some handy utility functions are included as private methods. As
 #' dull middleware begins to take shape this class will evolve more.
-#' 
-#' @section Methods: 
-#' \itemize{ 
+#'
+#' @section Methods:
+#' \itemize{
 #'  \item \code{uri_matches(path)}: TRUE if the route
-#'   uri, as a regular expression, matches path 
+#'   uri, as a regular expression, matches path
 #'  \item \code{assign_callback(method, callback)}: set the callback function for a
-#'   specific HTTP method 
+#'   specific HTTP method
 #'  \item \code{callback_for(method)}: return the callback
-#'   function for a specific HTTP method 
+#'   function for a specific HTTP method
 #' }
-#'   
+#'
 #' @docType class
 #' @keywords internal
 #' @format An R6 class object.
-#' @importFrom R6 R6Class
-#' @importFrom stringr str_match_all str_sub
-#' @importFrom magrittr %>% %<>% equals
+#' @importFrom stringr str_match_all
+#' @importFrom magrittr %>%
 #' @export
 #' @name route-class
 route <- R6::R6Class(
@@ -29,61 +28,54 @@ route <- R6::R6Class(
     uri = NULL,
     params = NULL,
     callbacks = NULL,
-    
+
     initialize = function(method, uri, callback) {
       stopifnot(
-        method %>% is.character,
-        uri %>% is.character, 
-        callback %>% is.function,
+        is.character(method),
+        is.character(uri),
+        is.function(callback),
         length(formals(callback)) == 2
       )
-      
+
       self$callbacks <- list()
       self$callbacks[[method]] <- callback
-      
-      self$uri <- paste(uri, collapse = '|')
-      
-      self$params <- self$uri_parameters(uri)
-      
+
+      # I typically would not modify the user's specification, however
+      # the fact that ^$ does not match the empty string is bonkers
+      self$uri <- if (uri == '^$') '^\\B$' else paste(uri, collapse = '|')
+
+      self$params <- self$uri_parameters()
+
       invisible(self)
     },
-    
+
     uri_matches = function(path) {
       stopifnot(path %>% is.character)
-      
-      if (str_sub(path, 1, 1) == '/') path %<>% str_sub(2)
-      
-      # stringr, and stringi, incorrectly detect empty string
-      # i.e. str_detect('', '^$') returns FALSE
-      if (path == '' & any(self$uri == c('^', '$', '^$'))) return(TRUE)
-      
-      str_detect(path, self$uri)
+
+      if (substr(path, 1, 1) == '/') path <- substr(path, 2, nchar(path))
+
+      grepl(path, self$uri, perl = TRUE)
     },
     assign_callback = function(method, callback) {
       self$callbacks[[method]] <- callback
-      
+
       invisible(self)
     },
     get_callback = function(method) {
       self$callbacks[[method]]
     },
-    uri_parameters = function(uri) {
-      group_names <- uri %>% 
-        str_match_all('\\(\\?<(\\w*)>') %>% 
-        .[[1]]
-      
-      if (NCOL(group_names) == 0) return(NULL)
-
-      group_names %<>% .[, 2]
-      
-      if (any(group_names == '')) {
-        empty_names <- which(group_names == '')
-        stop(paste0(
-          'route URI contains empty capture group name',
-          ifelse(length(empty_names) == 1, '', 's')
-        ))
+    uri_parameters = function() {
+      if (grepl('<>', self$uri)) {
+        stop('route URI contains empty capture group name(s)')
       }
-      
+
+      split_uri <- Filter(function(w) w != '', strsplit(self$uri, '/')[[1]])
+      grp_name_pattern <- '<\\w+>'
+      name_match <- regexpr(grp_name_pattern, split_uri, perl = TRUE)
+      group_names <- gsub('<|>', '', regmatches(split_uri, name_match))
+
+      if (length(group_names) == 0) return(NULL)
+
       group_names
     }
   )

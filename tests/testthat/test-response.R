@@ -107,3 +107,62 @@ test_that('$json accepts correct types, ends response', {
   expect_equal(res$as_Rook_response()$body, json_chr)
 })
 
+test_that('$links sets and updates Link header', {
+  res <- response$new(NULL)
+
+  res$links(list(Princess = 'Zelda'))
+  expect_equal(res$get('Link'), '<Zelda>; rel=Princess')
+
+  res$links(list(Hero = 'Link'))
+  expect_equal(res$get('Link'), '<Zelda>; rel=Princess, <Link>; rel=Hero')
+})
+
+test_that('$location sets Location header, handles special value "back"', {
+  skip('need to implement new request object')
+})
+
+test_that('$redirect sets Location, sets Status, raises end signal', {
+  skip('requires that res$location is implemented')
+})
+
+test_that('$render', {
+  skip('res$render is not implemented')
+})
+
+test_that('$send sets content-type and body, signals end of response', {
+  skip_if_not_installed('jsonlite')
+
+  res <- response$new(NULL)
+
+  expect_error(res$send(), end_response_signal)
+
+  html <- '<h1>Graphing Bad Puns</h1><p>Para-plot</p>'
+  expect_error(res$send(html), end_response_signal)
+  expect_equal(res$get('content-type'), 'text/html')
+  expect_equal(res$as_Rook_response()$body, html)
+
+  lsting <- list(tip = 'the boat')
+  expect_error(res$send(lsting), end_response_signal)
+  expect_equal(res$get('content-type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, jsonlite::toJSON(lsting))
+
+  df <- data.frame(d = 'me', and = 'revenge I swore')
+  expect_error(res$send(df), end_response_signal)
+  expect_equal(res$get('content-type'), 'application/json')
+  expect_equal(res$as_Rook_response()$body, jsonlite::toJSON(df))
+})
+
+test_that('$send_file stops on incorrect arguments', {
+  res <- response$new(NULL)
+
+  expect_error(res$send_file('attachment.html', options = list(opt = 'ical'), 'illusion'),
+               'all options must be named')
+  expect_error(res$send_file('attachment.html', options = list('ing')),
+               'all options must be named')
+  expect_error(res$send_file('attachment.html', mag = 'ical'),
+               'unknown options passed to \\$send_file')
+  expect_error(res$send_file('../../README.md'),
+               'option `root` must be specified or `path` must be absolute')
+
+})
+
