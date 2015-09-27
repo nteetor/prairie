@@ -13,8 +13,7 @@ test_that('route stops on incorrect arguments', {
   expect_error(route$new('GET', '^test/$', 404))
 })
 
-# the label of this test needs improvement
-test_that('callback function formals are checked', {
+test_that('callback function formals', {
   expect_error(route$new('GET', '^test/$', function() NULL))
   expect_error(route$new('GET', '^test/$', function(req) NULL))
   expect_error(route$new('GET', '^test/$', function(req, res, extra_arg) NULL))

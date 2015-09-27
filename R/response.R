@@ -238,7 +238,7 @@ response <- R6::R6Class(
         stop('option `root` must be specified or `path` must be absolute')
       }
 
-      full_path <- httpuv::encode(file.path(root, path))
+      full_path <- httpuv::encodeURI(file.path(root, path))
 
       if (!is.null(all_options$headers)) {
         if (length(names(all_options$headers)) != length(all_options$headers)) {

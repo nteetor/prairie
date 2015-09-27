@@ -152,17 +152,30 @@ test_that('$send sets content-type and body, signals end of response', {
   expect_equal(res$as_Rook_response()$body, jsonlite::toJSON(df))
 })
 
-test_that('$send_file stops on incorrect arguments', {
+test_that('$send_file stops on incorrect options', {
   res <- response$new(NULL)
 
   expect_error(res$send_file('attachment.html', options = list(opt = 'ical'), 'illusion'),
                'all options must be named')
   expect_error(res$send_file('attachment.html', options = list('ing')),
                'all options must be named')
+
   expect_error(res$send_file('attachment.html', mag = 'ical'),
                'unknown options passed to \\$send_file')
+  expect_error(res$send_file('attachment.html', max_age = 20, bad = 'oops'),
+               'unknown options passed to \\$send_file')
+
   expect_error(res$send_file('../../README.md'),
                'option `root` must be specified or `path` must be absolute')
+
+  expect_error(res$send_file('attachment.html', root = '.', headers = list('shoulders', 'knees')),
+               'values of option `headers` must be named')
+  expect_error(
+    res$send_file('attachment.html',
+                  options = list(root = '.', headers = list(Warning = 'small file', '#comment'))
+    ),
+    'values of option `headers` must be named'
+  )
 
 })
 
