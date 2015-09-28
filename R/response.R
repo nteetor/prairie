@@ -225,7 +225,7 @@ response <- R6::R6Class(
       assert_that(is.character(path), is.list(options))
 
       all_options <- append(options, list(...))
-      if (any(names(all_options) == '') || length(names(all_options)) != length(all_options)) {
+      if (length(all_options) && !is_named(all_options)) {
         stop('all options must be named')
       }
 
@@ -241,7 +241,7 @@ response <- R6::R6Class(
       full_path <- httpuv::encodeURI(file.path(root, path))
 
       if (!is.null(all_options$headers)) {
-        if (length(names(all_options$headers)) != length(all_options$headers)) {
+        if (!is_named(all_options$headers)) {
           stop('values of option `headers` must be named')
         }
 

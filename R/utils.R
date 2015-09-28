@@ -5,6 +5,13 @@ http_date <- function(date_time) {
   strftime(date_time, format = '%a, %d %b %Y %H:%M:%S', usetz = TRUE)
 }
 
+is_named <- function(lst) {
+  if (length(lst) == 0) FALSE
+  else if (any(names(lst) == '')) FALSE
+  else if (any(is.null(names(lst)))) FALSE
+  else TRUE
+}
+
 # borrowed from expressjs
 is_absolute <- function(path) {
   if (substr(path, 1, 1) == '/') TRUE

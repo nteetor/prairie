@@ -176,6 +176,4 @@ test_that('$send_file stops on incorrect options', {
     ),
     'values of option `headers` must be named'
   )
-
 })
-
