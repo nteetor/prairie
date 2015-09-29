@@ -124,7 +124,7 @@ response <- R6::R6Class(
         structure(
           class = c('end_signal', 'error', 'condition'),
           list(
-            message = '(not really) $end called from response'
+            message = '(not really an error) $end called from response'
           )
         )
       )
@@ -234,7 +234,7 @@ response <- R6::R6Class(
       }
 
       root <- all_options$root
-      if (is.null(root) & !is_absolute(path)) {
+      if (is.null(root) && !is_absolute(path)) {
         stop('option `root` must be specified or `path` must be absolute')
       }
 
@@ -245,7 +245,7 @@ response <- R6::R6Class(
           stop('values of option `headers` must be named')
         }
 
-        for (nm in names(all_options)) {
+        for (nm in names(all_options$headers)) {
           self$set(nm, all_options$headers[[nm]])
         }
       }
@@ -256,11 +256,13 @@ response <- R6::R6Class(
         self$set('Cache-Control', paste0('max-age=', all_options$max_age))
       }
 
-      if (is.null(all_options$last_modified) | all_options$last_modified) {
+      if (is.null(all_options$last_modified) || all_options$last_modified) {
         self$set('Last-Modified', http_date(file.mtime(full_path)))
+      } else {
+        self$set('Last-Modified', NULL)
       }
 
-      if (is.null(all_options$dot_files)) {
+      if (!is.null(all_options$dot_files)) {
         if (!(all_options$dot_files %in% c('allow', 'deny', 'ignore'))) {
           stop('unknown value for option `dot_files`, must be one of "allow", "deny", or "ignore"')
         }
@@ -277,7 +279,7 @@ response <- R6::R6Class(
       invisible(self)
     },
     set = function(field, value) {
-      assert_that(is.character(field), is.character(value))
+      assert_that(is.character(field), is.null(value) || is.character(value))
       private$headers[[field]] <- value
       invisible(self)
     },

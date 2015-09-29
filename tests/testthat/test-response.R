@@ -1,7 +1,7 @@
 library(dull)
 context('response object')
 
-end_response_signal <- '.*end called from response\\n'
+end_response_signal <- '\\(not really an error\\) \\$end called from response'
 
 test_that('$get and $set correctly access values', {
   res <- response$new(NULL)
@@ -176,4 +176,28 @@ test_that('$send_file stops on incorrect options', {
     ),
     'values of option `headers` must be named'
   )
+})
+
+test_that('$send_file sets headers for corresponding options', {
+  res <- response$new(NULL)
+
+  expect_error(res$send_file('attachment.html', root = '.'), end_response_signal)
+  expect_equal(res$get('cache-control'), 'max-age=0')
+  expect_equal(res$get('last-modified'), http_date(file.mtime('attachment.html')))
+
+  expect_error(res$send_file('attachment.html', max_age = 23, root = '.'), end_response_signal)
+  expect_equal(res$get('cache-control'), 'max-age=23')
+
+  # res <- response$new(NULL)
+  expect_error(res$send_file('attachment.html', root = '.', last_modified = FALSE), end_response_signal)
+
+  expect_null(res$get('last-modified'))
+
+  eg_headers <- list(Warning = 'corrupt file', Allow = 'GET')
+  expect_error(res$send_file('attachment.html', root = '.', options = list(headers = eg_headers)),
+               end_response_signal)
+  expect_equal(res$get('warning'), 'corrupt file')
+  expect_equal(res$get('allow'), 'GET')
+
+  skip('dot_files option is not yet implemented')
 })
