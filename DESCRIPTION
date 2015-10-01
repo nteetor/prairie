@@ -1,7 +1,7 @@
 Package: dull
 Type: Package
 Title: Light-weight Web Framework For R
-Version: 0.0.1.1000
+Version: 0.0.0.4
 Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))
 Description: A simple web framework for creating modular web
     applications with R. Based on frameworks like Expressjs and

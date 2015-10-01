@@ -201,3 +201,10 @@ test_that('$send_file sets headers for corresponding options', {
 
   skip('dot_files option is not yet implemented')
 })
+
+test_that('$send_file body set, has attribute name "file"', {
+  res <- response$new(NULL)
+  
+  expect_error(res$send_file('attachment.html', root = '.'), end_response_signal)
+  skip('IN PROGRESS')
+})
