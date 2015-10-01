@@ -276,7 +276,7 @@ response <- R6::R6Class(
       assert_that(is.numeric(status))
       self$status(status)
       private$body <- get_status_description(status)
-      invisible(self)
+      self$end()
     },
     set = function(field, value) {
       assert_that(is.character(field), is.null(value) || is.character(value))
@@ -285,7 +285,7 @@ response <- R6::R6Class(
     },
     status = function(code) {
       assert_that(is.numeric(code))
-      private$status_code <- as.integer(code)
+      private$status_code <- code
       invisible(self)
     },
     type = function(type) {
