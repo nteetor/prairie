@@ -201,3 +201,20 @@ test_that('$send_file sets headers for corresponding options', {
 
   skip('dot_files option is not yet implemented')
 })
+
+test_that('$send_file sets body with attribute "file"', {
+  res <- response$new(NULL)
+
+  expect_error(res$send_file('attachment.html', options = list(root = '.')), end_response_signal)
+  expect_equal(res$as_Rook_response()$body, setNames('./attachment.html', 'file'))
+})
+
+test_that('$send_status sets status and body', {
+  res <- response$new(NULL)
+
+  expect_error(res$send_status(306), end_response_signal)
+  rook_res <- res$as_Rook_response()
+
+  expect_equal(rook_res$status, 306)
+  expect_equal(rook_res$body, get_status_description(306))
+})
