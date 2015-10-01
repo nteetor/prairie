@@ -273,7 +273,7 @@ response <- R6::R6Class(
       self$end()
     },
     send_status = function(status) {
-      assert_that(is.integer(status))
+      assert_that(is.numeric(status))
       self$status(status)
       private$body <- get_status_description(status)
       invisible(self)

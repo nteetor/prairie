@@ -21,7 +21,7 @@ is_absolute <- function(path) {
 }
 
 get_status_description <- function(status, default_to_status = TRUE) {
-  stopifnot(is.integer(status) | is.character(status))
+  stopifnot(is.numeric(status) | is.character(status))
   switch (
     as.character(status),
     '100' = "Continue",
