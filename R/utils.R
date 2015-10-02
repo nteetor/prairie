@@ -1,6 +1,16 @@
 # borrowing from javascript, will return
 "%||%" <- function(a, b) if (is.null(a)) b else a
 
+mimeextra = c(
+  md = "text/markdown",
+  markdown = "text/markdown",
+  r = "text/plain",
+  rd = "text/plain",
+  rmd = "text/markdown",
+  geojson = "application/vnd.geo+json",
+  NULL
+)
+
 http_date <- function(date_time) {
   strftime(date_time, format = '%a, %d %b %Y %H:%M:%S', usetz = TRUE)
 }

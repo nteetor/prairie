@@ -290,7 +290,7 @@ response <- R6::R6Class(
     },
     type = function(type) {
       assert_that(is.character(type))
-      self$set('Content-Type', mime::guess_type(type, empty = type))
+      self$set('Content-Type', mime::guess_type(type, empty = type, mime_extra = mimeextra))
       invisible(self)
     },
     vary = function(field) {
