@@ -33,8 +33,8 @@ dull_app <- R6::R6Class(
       invisible(self)
     },
 
-    call = function(req) {
-      self$handle_request(req)
+    call = function(http_request) {
+      self$handle_request(http_request)
     },
     run = function(host, port) {
       if (missing(host)) {
@@ -59,16 +59,16 @@ dull_app <- R6::R6Class(
 
       invisible(self)
     },
-    handle_request = function(rook_envir) {
-      route <- self$find_route(rook_envir[['PATH_INFO']])
+    handle_request = function(http_request) {
+      route <- self$find_route(http_request[['PATH_INFO']])
 
-      if (route %>% is.null) return(self$default_404)
+      if (is.null(route)) return(self$default_404)
 
-      callback <- route$get_callback(rook_envir[['REQUEST_METHOD']])
+      callback <- route$get_callback(http_request[['REQUEST_METHOD']])
 
-      if (callback %>% is.null) return(self$default_404)
+      if (is.null(callback)) return(self$default_404)
 
-      req <- request$new(route, rook_envir)
+      req <- request$new(route, http_request)
       res <- response$new()
 
       tryCatch({
