@@ -16,9 +16,6 @@
 #' @docType class
 #' @keywords internal
 #' @format An R6 class object.
-#' @importFrom R6 R6Class
-#' @importFrom stringr str_match_all str_detect str_to_lower str_to_upper
-#' @importFrom magrittr %>%
 #' @export
 #' @name request
 request <- R6::R6Class(
@@ -41,18 +38,20 @@ request <- R6::R6Class(
       self$host_name <- http_request[['HTTP_HOST']]
       self$body <- http_request[['rook.input']]$read_lines()
 
-      http_headers <- Filter(function(nm) nm %>% str_detect('^HTTP_'), names(http_request))
+      self$header_fields <- lapply(names(http_request), function(nm) {
+        if (grepl('^HTTP_', nm)) {
+          http_request[[nm]]
+        }
+      })
+      # http_headers <- Filter(function(nm) nm %>% str_detect('^HTTP_'), names(http_request))
 
-      self$header_fields <- mget(http_headers, http_request) %>% as.list
+      # self$header_fields <- mget(http_headers, http_request) %>% as.list
 
-      if (route$params %>% is.null) {
+      if (is.null(route$params)) {
         self$params <- c()
       } else {
         param_names <- route$params
-        param_values <- self$url %>%
-          str_match_all(route$uri) %>%
-          .[[1]] %>%
-          .[-1]
+        param_values <- stringr::str_match_all(self$route$uri, self$url)[[1]][-1]
         self$params <- setNames(param_values, param_names)
       }
 
@@ -60,9 +59,7 @@ request <- R6::R6Class(
     },
 
     get_header_field = function(field) {
-      field_formatted <- field %>%
-        str_to_upper %>%
-        paste0('HTTP_', .)
+      field_formatted <- paste0('HTTP_', toupper(field))
 
       if (!(field_formatted %in% self$header_fields)) {
         warning(paste('request for', self$url, 'does not contain header', field))
