@@ -26,7 +26,7 @@ request <- R6::R6Class(
     body = NULL,
     cookies = NULL, # need to implement cookie parser
     fresh = NULL, # may or may not be implemented,
-    ip = NULL, 
+    ip = NULL,
     ips = NULL, # may not be implemented
     original_url = NULL, # for now, very unecessary
     params = NULL,
@@ -36,7 +36,7 @@ request <- R6::R6Class(
     stale = NULL, # depends on $fresh
     subdomains = NULL,
     xhr = NULL, # may not be implemented
-    
+
     method = NULL,
     url = NULL,
     port = NULL,
@@ -51,46 +51,97 @@ request <- R6::R6Class(
       self$ips <- NULL
       self$original_url <- http_request$PATH_INFO
       self$url <- self$original_url
-      
+
       self$params <- setNames(
         list(stringr::str_match_all(self$route$uri, self$original_url)[[1]][-1]),
         stringr::str_match_all(strsplit(self$original_url, '/'), '\\?<\\w+>')[, 2]
       )
-      
+
       self$protocol <- http_request$rook.url_scheme # definitely check this
       self$route <- route
       self$signed_cookies <- NULL
       self$stale <- NULL
       self$subdomains <- strsplit(sub('(\\.\\w+){2}/.*$', '', self$original_url), '\\.')[[1]] # breaks on 'example.com'
-      
-      # move to private or remove      
-      self$method <- http_request[['REQUEST_METHOD']]
-      self$url <- http_request[['PATH_INFO']]
-      self$port <- http_request[['SERVER_PORT']]
-      self$host_name <- http_request[['HTTP_HOST']]
-      
+
+      private$method <- http_request[['REQUEST_METHOD']]
+      private$url <- http_request[['PATH_INFO']]
+      private$port <- http_request[['SERVER_PORT']]
+      private$host_name <- http_request[['HTTP_HOST']]
+
       headers <- http_request[grep('^HTTP_', names(http_request), value = TRUE)]
-      
+      names(headers) <- tolower(names(headers))
+
       if (length(headers) == 0) {
-        self$header_fields <- list()
+        private$header_fields <- list()
       } else {
-        self$header_fields <- headers
+        private$header_fields <- headers
       }
-      
+
       invisible(self)
     },
 
+    accepts = function(type, ...) {
+      assert_that(is.character(c(type, ...)))
+
+      if (is.null(self$get('accept'))) return(NULL)
+
+      accepted_types <- strsplit(self$get('accept'), ',\\s*')
+      types_to_question <- c(type, ...)
+
+      all_combinations <- expand.grid(accepted_types, types_to_question, stringsAsFactors = FALSE)
+
+      for (row in seq_len(NROW(all_combinations))) {
+        accepted_type <- all_combinations[row, 1]
+        type_in_question <- all_combinations[row, 2]
+
+        if (grepl('/', type_in_question)) {
+          if (accepted_type == type_in_question) {
+            return(type_in_question)
+          }
+        } else {
+          accepted_regex <- gsub('\\*', '.*', accepted_type)
+          mime_in_question <- mime::guess_type(paste0('.', type_in_question))
+
+          if (grepl(accepted_regex, mime_in_question)) {
+            return(type_in_question)
+          }
+        }
+      }
+
+      NULL
+    },
     get = function(field) {
       assert_that(is.character(field))
-      self$header_fields[[tolower(field)]]
+
+      if (tolower(field) %in% c('referer', 'referrer')) {
+        private$header_fields$referer %||% private$header_fields$referrer
+      } else {
+        private$header_fields[[tolower(field)]]
+      }
     },
     header = function(field) {
       self$get(field)
     },
-    
-    # this will become the method "is"
-    has_content_type = function(type) {
-      type == self$header_fields[['HTTP_CONTENT_TYPE']]
+    is = function(type) {
+      assert_that(is.character(type))
+
+      accepted_type <- sub('\\s*;.*$', '', self$get('content-type'))
+      accepted_regex <- gsub('\\*', '.*', accepted_type)
+
+      if (grepl('/', type)) {
+        type_regex <- gsub('\\*', '.*', type)
+      } else {
+        type_regex <- mime::guess_type(paste0('.', type))
+      }
+
+      # this will need -plenty- of testing
+      grepl(accepted_regex, type) || grepl(type_regex, accepted_type)
     }
+  ),
+  private = list(
+    method = NULL,
+    url = NULL,
+    port = NULL,
+    host_name = NULL
   )
 )
