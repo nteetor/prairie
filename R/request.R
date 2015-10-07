@@ -29,6 +29,7 @@ request <- R6::R6Class(
     ip = NULL,
     ips = NULL, # may not be implemented
     original_url = NULL, # for now, very unecessary
+    url = NULL,
     params = NULL,
     protocol = NULL,
     route = NULL,
@@ -36,12 +37,6 @@ request <- R6::R6Class(
     stale = NULL, # depends on $fresh
     subdomains = NULL,
     xhr = NULL, # may not be implemented
-
-    method = NULL,
-    url = NULL,
-    port = NULL,
-    host_name = NULL,
-    header_fields = NULL,
 
     initialize = function(route, http_request) {
       self$base_url <- NULL
@@ -64,7 +59,6 @@ request <- R6::R6Class(
       self$subdomains <- strsplit(sub('(\\.\\w+){2}/.*$', '', self$original_url), '\\.')[[1]] # breaks on 'example.com'
 
       private$method <- http_request[['REQUEST_METHOD']]
-      private$url <- http_request[['PATH_INFO']]
       private$port <- http_request[['SERVER_PORT']]
       private$host_name <- http_request[['HTTP_HOST']]
 
@@ -140,7 +134,6 @@ request <- R6::R6Class(
   ),
   private = list(
     method = NULL,
-    url = NULL,
     port = NULL,
     host_name = NULL
   )

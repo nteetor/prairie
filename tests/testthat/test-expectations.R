@@ -37,6 +37,8 @@ test_test_that(
   'expect_status fails correctly',
   failure_expected = TRUE,
   {
+    if (.Platform$OS.type == 'unix') skip('tests do not work on unix')
+    
     test_app <- list(
       call = function(req) {
           list(
@@ -53,6 +55,8 @@ test_test_that(
 )
 
 test_that('expect_status succeeds correctly', {
+  if (.Platform$OS.type == 'unix') skip('tests do not work on unix')
+  
   expect_status(dummy_app(200, ''), 'GET', '/error/please', 200)
   expect_status(dummy_app(200, ''), 'PUT', '/maybe/404', 200)
 
@@ -67,6 +71,8 @@ test_test_that(
   'expect_body fails correctly',
   failure_expected = TRUE,
   {
+    if (.Platform$OS.type == 'unix') skip('tests do not work on unix')
+    
     test_app <- list(
       call = function(req) {
         list(
@@ -82,6 +88,8 @@ test_test_that(
 )
 
 test_that('expect_body succeeds correctly', {
+  if (.Platform$OS.type == 'unix') skip('tests do not work on unix')
+  
   expect_body(dummy_app(200, 'wax on, wax off'), 'GET', '/again', 'wax on, wax off')
   expect_body(dummy_app(300, 'do or do not'), 'PUT', '/and', 'do or do not')
 })
