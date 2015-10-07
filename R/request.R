@@ -46,14 +46,18 @@ request <- R6::R6Class(
       self$ips <- NULL
       self$original_url <- http_request$PATH_INFO
       self$url <- self$original_url
+      self$route <- route
 
-      self$params <- setNames(
-        list(stringr::str_match_all(self$route$uri, self$original_url)[[1]][-1]),
-        stringr::str_match_all(strsplit(self$original_url, '/'), '\\?<\\w+>')[, 2]
-      )
+      if (grepl('\\?<\\w+>', self$original_url)) {
+        param_values <- stringr::str_match_all(self$route$uri, self$original_url)[[1]][-1]
+        param_names <- stringr::str_match_all(self$original_url, '\\?<(\\w+)>')[[1]][, 1]
+
+        self$params <- as.list(setNames(param_values, param_names))
+      } else {
+        self$params <- list()
+      }
 
       self$protocol <- http_request$rook.url_scheme # definitely check this
-      self$route <- route
       self$signed_cookies <- NULL
       self$stale <- NULL
       self$subdomains <- strsplit(sub('(\\.\\w+){2}/.*$', '', self$original_url), '\\.')[[1]] # breaks on 'example.com'
@@ -135,6 +139,7 @@ request <- R6::R6Class(
   private = list(
     method = NULL,
     port = NULL,
-    host_name = NULL
+    host_name = NULL,
+    header_fields = NULL
   )
 )
