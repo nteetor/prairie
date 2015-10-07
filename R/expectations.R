@@ -25,6 +25,8 @@ NULL
 #' @export
 #' @rdname sharpen
 expect_status <- function(app, method, uri, status, ...) {
+  if (.Platform$OS.type == 'unix') stop('expect_status does not work on OS X / Linux / Unix')
+  
   if (!requireNamespace('httr')) {
     stop('package httr must be installed in order to use `expect_response`')
   }
@@ -52,6 +54,8 @@ expect_status <- function(app, method, uri, status, ...) {
 #' @export
 #' @rdname sharpen
 expect_body <- function(app, method, uri, body, ...) {
+  if (.Platform$OS.type == 'unix') stop('expect_body does not work on OS X / Linux / Unix')
+  
   if (!requireNamespace('httr')) {
     stop('package httr must be installed in order to use `expect_body`')
   }
