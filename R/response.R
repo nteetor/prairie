@@ -273,10 +273,10 @@ response <- R6::R6Class(
       self$end()
     },
     send_status = function(status) {
-      assert_that(is.integer(status))
+      assert_that(is.numeric(status))
       self$status(status)
       private$body <- get_status_description(status)
-      invisible(self)
+      self$end()
     },
     set = function(field, value) {
       assert_that(is.character(field), is.null(value) || is.character(value))
@@ -285,12 +285,12 @@ response <- R6::R6Class(
     },
     status = function(code) {
       assert_that(is.numeric(code))
-      private$status_code <- as.integer(code)
+      private$status_code <- code
       invisible(self)
     },
     type = function(type) {
       assert_that(is.character(type))
-      self$set('Content-Type', mime::guess_type(type, empty = type))
+      self$set('Content-Type', mime::guess_type(type, empty = type, mime_extra = mimeextra))
       invisible(self)
     },
     vary = function(field) {

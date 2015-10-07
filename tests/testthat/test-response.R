@@ -202,9 +202,49 @@ test_that('$send_file sets headers for corresponding options', {
   skip('dot_files option is not yet implemented')
 })
 
-test_that('$send_file body set, has attribute name "file"', {
+test_that('$send_file sets body with attribute "file"', {
   res <- response$new(NULL)
-  
-  expect_error(res$send_file('attachment.html', root = '.'), end_response_signal)
-  skip('IN PROGRESS')
+
+  expect_error(res$send_file('attachment.html', options = list(root = '.')), end_response_signal)
+  expect_equal(res$as_Rook_response()$body, setNames('./attachment.html', 'file'))
+})
+
+test_that('$send_status sets status and body', {
+  res <- response$new(NULL)
+
+  expect_error(res$send_status(305), end_response_signal)
+  rook_res <- res$as_Rook_response()
+
+  expect_equal(rook_res$status, 305)
+  expect_equal(rook_res$body, "Use Proxy")
+})
+
+test_that('$status sets status', {
+  res <- response$new(NULL)
+
+  res$status(202)
+  expect_equal(res$as_Rook_response()$status, 202)
+})
+
+test_that('$type sets Content-Type, defaults to argument if unknown', {
+  res <- response$new(NULL)
+
+  res$type('.md')
+  expect_equal(res$get('Content-Type'), 'text/markdown')
+
+  res$type('.json')
+  expect_equal(res$get('Content-Type'), 'application/json')
+
+  res$type('text/mytype')
+  expect_equal(res$get('Content-Type'), 'text/mytype')
+})
+
+test_that('$vary sets header Vary, appends additional values', {
+  res <- response$new(NULL)
+
+  res$vary('Content-Type')
+  expect_equal(res$get('Vary'), 'Content-Type')
+
+  res$vary('User-Agent')
+  expect_equal(res$get('Vary'), 'Content-Type,User-Agent')
 })
