@@ -1,3 +1,5 @@
+For the latest changes please refer to the response-class and request-class branches.
+
 <h1 align="center">
 	<img width="400" src="./inst/dull_logo.png" alt="">
 </h1>
