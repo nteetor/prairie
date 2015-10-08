@@ -48,9 +48,9 @@ request <- R6::R6Class(
       self$url <- self$original_url
       self$route <- route
 
-      if (grepl('\\?<\\w+>', self$original_url)) {
-        param_values <- stringr::str_match_all(self$route$uri, self$original_url)[[1]][-1]
-        param_names <- stringr::str_match_all(self$original_url, '\\?<(\\w+)>')[[1]][, 1]
+      if (grepl('\\?<[a-zA-Z]+>', self$route$uri)) {
+        param_values <- stringr::str_match_all(self$original_url, self$route$uri)[[1]][1,][-1]
+        param_names <- stringr::str_match_all(self$route$uri, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
         self$params <- as.list(setNames(param_values, param_names))
       } else {
