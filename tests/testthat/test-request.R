@@ -6,6 +6,12 @@ template_route <- list(
 )
 
 template_request <- list(
+  HTTP_ACCEPT = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+  HTTP_ACCEPT_ENCODING = "gzip, deflate, sdch",
+  HTTP_ACCEPT_LANGUAGE = "en-US,en;q=0.8",
+  HTTP_CACHE_CONTROL = "max-age=0",
+  HTTP_CONNECTION = "keep-alive",
+  HTTP_HOST = "localhost:3030",
   REQUEST_METHOD = 'GET',
   SCRIPT_NAME = '',
   PATH_INFO = '/foo/bar',
@@ -36,8 +42,14 @@ test_that('fields set on initialize', {
   req2 <- request$new(template_route, template_request)
 
   expect_equal(list(filename = 'party_jams', page = '2'), req2$params)
+  expect_equal(req$get('cache-control'), 'max-age=0')
+  expect_equal(req$get('connection'), 'keep-alive')
 })
 
 test_that('$accepts accepts correct types', {
-  skip('PICK UP HERE')
+  template_request$HTTP_ACCEPT <- 'text/html'
+  req <- request$new(template_route, template_request)
+  expect_equal(req$accepts('html'), 'html')
+
+
 })

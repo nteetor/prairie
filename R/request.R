@@ -67,7 +67,7 @@ request <- R6::R6Class(
       private$host_name <- http_request[['HTTP_HOST']]
 
       headers <- http_request[grep('^HTTP_', names(http_request), value = TRUE)]
-      names(headers) <- tolower(names(headers))
+      names(headers) <- gsub('_', '-', gsub('^http_', '', tolower(names(headers))))
 
       if (length(headers) == 0) {
         private$header_fields <- list()
