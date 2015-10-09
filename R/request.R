@@ -78,15 +78,16 @@ request <- R6::R6Class(
       invisible(self)
     },
 
-    accepts = function(type, ...) {
-      assert_that(is.character(c(type, ...)))
+    accepts = function(types) {
+      assert_that(is.character(types))
 
       if (is.null(self$get('accept'))) return(NULL)
 
-      accepted_types <- strsplit(self$get('accept'), ',\\s*')
-      types_to_question <- c(type, ...)
+      accepted_types <- strsplit(self$get('accept'), ',\\s*')[[1]]
+      types_to_question <- types
 
       all_combinations <- expand.grid(accepted_types, types_to_question, stringsAsFactors = FALSE)
+      # print(all_combinations)
 
       for (row in seq_len(NROW(all_combinations))) {
         accepted_type <- all_combinations[row, 1]
@@ -95,6 +96,12 @@ request <- R6::R6Class(
         if (grepl('/', type_in_question)) {
           if (accepted_type == type_in_question) {
             return(type_in_question)
+          } else {
+            accepted_regex <- gsub('\\*', '.*', accepted_type)
+
+            if (grepl(accepted_regex, type_in_question)){
+              return(type_in_question)
+            }
           }
         } else {
           accepted_regex <- gsub('\\*', '.*', accepted_type)
