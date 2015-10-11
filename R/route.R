@@ -1,4 +1,4 @@
-#' Simple route class
+#' Route class
 #'
 #' This class is a glorified container for a url and the corresponding callback
 #' function. Some handy utility functions are included as private methods. As
@@ -17,66 +17,71 @@
 #' @docType class
 #' @keywords internal
 #' @format An R6 class object.
-#' @importFrom stringr str_match_all
-#' @importFrom magrittr %>%
+#' @importFrom assertthat assert_that
 #' @export
 #' @name route-class
 route <- R6::R6Class(
-  # This naming convention will be applied to response.R once this branch is merged into master
   'route',
   public = list(
-    uri = NULL,
-    params = NULL,
-    callbacks = NULL,
+    strict = NULL,
 
-    initialize = function(method, uri, callback) {
-      stopifnot(
-        is.character(method),
-        is.character(uri),
-        is.function(callback),
-        length(formals(callback)) == 2
-      )
+    initialize = function(options = list()) {
+      assert_that(is.null(options$strict) || is.logical(strict))
 
-      self$callbacks <- list()
-      self$callbacks[[method]] <- callback
+      self$strict <- options$strict %||% FALSE
 
+      private$stack <- list()
+      private$path <- '/'
+
+      invisible(self)
+    },
+
+    all = function(path, callback, ...) {
+      if (missing(path)) path <- private$path
+      private$push(private$.ALL, path, list(callback, ...))
+      invisible(self)
+    },
+    get = function(path, callback, ...) {
+      if (missing(path)) path <- private$path
+      private$push('GET', path, list(callback, ...))
+      invisible(self)
+    },
+    put = function(path, callback, ...) {
+      if (missing(path)) path <- private$path
+      private$push('PUT', path, list(callback, ...))
+      invisible(self)
+    },
+    post = function(path, callback, ...) {
+      if (missing(path)) path <- private$path
+      private$push('POST', path, list(callback, ...))
+      invisible(self)
+    },
+    route = function(path) {
+      private$path <- private$sanitize_path(path)
+      invisible(self)
+    },
+    use = function(path = private$path, fn, ...) {
+      private$push(private$.ALL, path, list(fn, ...))
+      invisible(self)
+    }
+
+  ),
+  private = list(
+    stack = NULL,
+    path = NULL,
+    method = NULL,
+    .ALL = 'ALL',
+
+    push = function(method, path, callbacks) {
+      path <- private$sanitize_path(path)
+      private$stack <- append(private$stack, lapply(callbacks, function(c) {
+        layer$new(method, path, c, private$.ALL)
+      }))
+    },
+    sanitize_path = function(path) {
       # I typically would not modify the user's specification, however
-      # the fact that ^$ does not match the empty string is bonkers
-      self$uri <- if (uri == '^$') '^\\B$' else paste(uri, collapse = '|')
-
-      self$params <- self$uri_parameters()
-
-      invisible(self)
-    },
-
-    uri_matches = function(path) {
-      stopifnot(path %>% is.character)
-
-      if (substr(path, 1, 1) == '/') path <- substr(path, 2, nchar(path))
-
-      grepl(path, self$uri, perl = TRUE)
-    },
-    assign_callback = function(method, callback) {
-      self$callbacks[[method]] <- callback
-
-      invisible(self)
-    },
-    get_callback = function(method) {
-      self$callbacks[[method]]
-    },
-    uri_parameters = function() {
-      if (grepl('<>', self$uri)) {
-        stop('route URI contains empty capture group name(s)')
-      }
-
-      split_uri <- Filter(function(w) w != '', strsplit(self$uri, '/')[[1]])
-      grp_name_pattern <- '<\\w+>'
-      name_match <- regexpr(grp_name_pattern, split_uri, perl = TRUE)
-      group_names <- gsub('<|>', '', regmatches(split_uri, name_match))
-
-      if (length(group_names) == 0) return(NULL)
-
-      group_names
+      # the fact that ^$, in R, does not match the empty string is bonkers
+      if (path == '^$') '^\\B$' else paste(path, collapse = '|')
     }
   )
 )

@@ -55,9 +55,3 @@ listen <- function(.app, host, port) {
   .app$run(host, port)
 }
 
-#' @importFrom magrittr %>%
-#' @name %>%
-#' @export
-#' @rdname chain
-#' @usage LHS \%>\% RHS
-NULL

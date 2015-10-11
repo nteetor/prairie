@@ -1,4 +1,4 @@
-#' Dull application class object
+#' Application class object
 #'
 #' An R6 class which is the backbone of the dull package.
 #'
@@ -6,12 +6,10 @@
 #' @keywords internal
 #' @format An R6 class object.
 #' @importFrom R6 R6Class
-#' @importFrom httpuv runServer
-#' @importFrom magrittr %>%
 #' @export
-#' @name dull_app
-dull_app <- R6::R6Class(
-  'dull_app',
+#' @name application
+application <- R6::R6Class(
+  'application',
   public = list(
     routes = NULL,
     default_404 = NULL,
@@ -94,7 +92,7 @@ dull_app <- R6::R6Class(
     find_route = function(uri) {
       route_name = Find(function(nm) self$routes[[nm]]$uri_matches(uri), names(self$routes), nomatch = NULL)
 
-      if (route_name %>% is.null) return(NULL)
+      if (is.null(route_name)) return(NULL)
 
       self$routes[[route_name]]
     }
