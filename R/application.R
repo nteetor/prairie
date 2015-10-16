@@ -11,11 +11,6 @@
 application <- R6::R6Class(
   'application',
   public = list(
-    routes = NULL,
-    default_404 = NULL,
-    host = NULL,
-    port = NULL,
-
     initialize = function() {
       self$routes <- list()
       self$default_404 <- list(
@@ -31,10 +26,14 @@ application <- R6::R6Class(
       invisible(self)
     },
 
+    all = function(path, callback, ...) {
+
+    },
+
     call = function(http_request) {
       self$handle_request(http_request)
     },
-    run = function(host, port) {
+    listen = function(host, port) {
       if (missing(host)) {
         message(paste('Host defaulting to', self$host))
         host <- self$host
@@ -96,5 +95,11 @@ application <- R6::R6Class(
 
       self$routes[[route_name]]
     }
+  ),
+  private = list(
+    router = NULL,
+    default_404 = NULL,
+    host = NULL,
+    port = NULL
   )
 )

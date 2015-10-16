@@ -63,8 +63,19 @@ route <- R6::R6Class(
     use = function(path = private$path, fn, ...) {
       private$push(private$.ALL, path, list(fn, ...))
       invisible(self)
-    }
+    },
 
+    dispath = function(req, res) {
+      method <- toupper(req$method)
+
+      for (layer in private$stack) {
+        if (layer$matches(method, req$path)) {
+          return(layer$callback(req, res))
+        }
+      }
+
+      NULL
+    }
   ),
   private = list(
     stack = NULL,
