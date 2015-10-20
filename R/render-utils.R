@@ -22,11 +22,13 @@ tag <- function(name, args) {
   attributes <- args[names(args) != ""]
   values <- args[names(args) == ""]
 
-  # TODO: add double quotes around character attributes
   attribute_string <- paste(
     vapply(
       names(attributes),
-      function(nm) paste0(nm, '=', attributes[[nm]]),
+      function(nm) {
+        quote_char <- if (grepl('\"', attributes[[nm]])) '\'' else '\"' 
+        paste0(nm, '=', quote_char, attributes[[nm]], quote_char)
+      },
       character(1)
     ),
     collapse = ' '
