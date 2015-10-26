@@ -24,12 +24,16 @@ Suggests:
 URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues
 Collate:
+    'tags.R'
+    'render.R'
     'utils.R'
     'route.R'
     'response.R'
     'request.R'
+    'layer.R'
+    'route.R'
     'callback-utils.R'
     'dull-utils.R'
-    'dull-class.R'
+    'application.R'
     'dull.R'
-    'sharpen.R'
+    'expectations.R'

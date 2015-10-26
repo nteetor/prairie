@@ -53,9 +53,9 @@ tag <- function(name, args) {
   value_string <- paste(values, collapse = '')
 
   if (nchar(value_string) == 0) {
-    paste0('<', name, attribute_string, '/>')
+    paste0('<', name, attribute_string, '/>\n')
   } else {
-    paste0('<', name, attribute_string, '>', value_string, '</', name, '>')
+    paste0('<', name, attribute_string, '>', value_string, '</', name, '>\n')
   }
 }
 
@@ -144,10 +144,12 @@ big <- function(...) tag('big', list(...))
 #' @export
 blockquote <- function(...) tag('blockquote', list(...))
 
+body <- function(x, ...) UseMethod('body', x)
+body.default <- base::body
 # <body>	Defines the document's body
 #' @rdname templating
 #' @export
-body <- function(...) tag('body', list(...))
+body.character <- function(...) tag('body', list(...))
 
 # <br>	Defines a single line break
 #' @rdname templating

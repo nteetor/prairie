@@ -4,7 +4,7 @@
 \name{route-class}
 \alias{route}
 \alias{route-class}
-\title{Simple route class}
+\title{Route class}
 \format{An R6 class object.}
 \usage{
 route

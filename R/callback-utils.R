@@ -1,38 +1,6 @@
-body <- function(x, ...) UseMethod('body', x)
 
-#' Retrieve the body of a request object
-#'
-#' @param .req \code{response} object
-#'
-#' @name request-body
-#' @examples
-#' library(magrittr)
-#'
-#' dull() %>%
-#'   post('^upload/csv/$', function(req, res) {
-#'     file_name <- tempfile(pattern = 'upload_', fileext = '.csv', tmpdir = 'public')
-#'
-#'     # extract body from request and write to temp file
-#'     writeBin(body(req), file_name)
-#'
-#'     res %>%
-#'       send('Upload successful!')
-#'   })
-body.request <- function(.req) .req$body
-
-#' Add body to response object
-#'
-#' @name response-body
-body.response <- function(.res, expr) {
-  .res$set_body(expr)
-
-  invisible(res)
-}
 
 callback_utils <- list(
-  body = body,
-  body.request = body.request,
-  body.response = body.response,
   method = function(.req) .req$method,
   ip = function(.req) .req$ip,
   port = function(.req) .req$port,
