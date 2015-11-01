@@ -11,7 +11,6 @@ render <- function(path, locals = NULL) {
 
     with(locals, eval(parse(path)))
   } else {
-    eval(parse(path))
   }
 }
 

@@ -1,4 +1,4 @@
-#' Create an HTML tag string
+#' Create an HTML tag
 #'
 #' A handy function to create HTML tags. Named arguments are interpreted as HTML
 #' tag attributes and unnamed arguments are used as the value. Mulitple unnamed
@@ -8,13 +8,20 @@
 #' @param args Additional HTML attributes and tag values
 #' @param ... HTML attributes and values for the specific tag
 #'
+#' @return
+#'
+#' An HTML tag string.
+#'
 #' @details
 #'
-#' Most of the time one will want to use the default wrapper functions like
-#' \code{a}, \code{body} or \code{div}, see below for the complete list.
-#' However, \code{tag} allows for one to work with custom tags. Because of this,
-#' \code{tag} naiveley assumes the named arguments passed as \code{...} are
-#' appropriate attributes for tag \code{name}.
+#' Most of the time the default wrapper functions like \code{a}, \code{body} or
+#' \code{div} will suffice, see below for the complete list. However, \code{tag}
+#' allows for custom tags should you so desire. Because of this, \code{tag}
+#' naiveley assumes the named arguments passed as \code{...} are appropriate
+#' attributes for tag \code{name}.
+#'
+#' Note that, in HTML 5 many attributes are ignored. Instead CSS is used to
+#' modify tag attributes.
 #'
 #' @name templating
 #' @export
@@ -55,7 +62,11 @@ tag <- function(name, args) {
   if (nchar(value_string) == 0) {
     paste0('<', name, attribute_string, '/>\n')
   } else {
-    paste0('<', name, attribute_string, '>', value_string, '</', name, '>\n')
+    if (name == 'body' || name == 'header' || name == 'html') {
+      paste0('<', name, attribute_string, '>\n', value_string, '</', name, '>\n')
+    } else {
+      paste0('<', name, attribute_string, '>', value_string, '</', name, '>\n')
+    }
   }
 }
 
