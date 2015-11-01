@@ -27,7 +27,7 @@ application <- R6::R6Class(
     },
 
     all = function(path, callback, ...) {
-
+      private$routes <- append()
     },
 
     call = function(http_request) {
@@ -97,9 +97,14 @@ application <- R6::R6Class(
     }
   ),
   private = list(
-    router = NULL,
+    routes = NULL,
+    settings = NULL,
     default_404 = NULL,
     host = NULL,
-    port = NULL
+    port = NULL,
+
+    push = function(options = list()) {
+      private$routes()
+    }
   )
 )

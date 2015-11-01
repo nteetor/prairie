@@ -26,7 +26,7 @@ route <- R6::R6Class(
     strict = NULL,
 
     initialize = function(options = list()) {
-      assert_that(is.null(options$strict) || is.logical(strict))
+      assert_that(is.null(options$strict) || is.logical(options$strict))
 
       self$strict <- options$strict %||% FALSE
 
