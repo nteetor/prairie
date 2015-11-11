@@ -13,9 +13,7 @@ Depends:
 Imports:
     httpuv (>= 1.3.3),
     R6 (>= 2.1.0),
-    magrittr (>= 1.5),
     stringr (>= 1.0.0),
-    markdown,
     assertthat
 Suggests:
     jsonlite,
@@ -30,6 +28,7 @@ Collate:
     'request.R'
     'callback-utils.R'
     'dull-utils.R'
-    'dull-class.R'
+    'application.R'
     'dull.R'
-    'sharpen.R'
+    'expectations.R'
+RoxygenNote: 5.0.1
