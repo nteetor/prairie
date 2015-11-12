@@ -1,6 +1,6 @@
 #' Create routes
 #' 
-#' Within prairie, a route is defined as \emph{a mapping between any number of 
+#' Within prairie, a route is a \emph{a mapping between any number of 
 #' \link[=method]{methods} and a single \link{path}.} A route may never have 
 #' more than one path, however a path may be defined as a regular expression. In
 #' this case a single route would match multiple URIs.
@@ -29,8 +29,8 @@
 #' For example, if \code{path} is 
 #' \tabular{c}{\code{"^wizard/(?<alias>[a-z]+)/([a-z]+)$"}} and the application 
 #' receives a request for \tabular{c}{\code{/wizard/sparrowhawk/ged}} then 
-#' \code{handler} will have access to the character vector \code{c("alias" = 
-#' "sparrowhawk", "" = "ged")} as \code{args} during evaluation. See next 
+#' \code{args} would be the character vector \code{c("alias" = 
+#' "sparrowhawk", "" = "ged")} during the evaluation of \code{handler}. See next 
 #' section for details about \code{args} and \code{handler}.
 #' 
 #' \strong{\code{handler}}
@@ -83,5 +83,12 @@
 #'   }
 #' )
 route <- function(method, path, handler) {
-  route$new(method, path, handler)
+  assertthat::assert_that(
+    is.character(method),
+    is.character(path),
+    length(path) == 1,
+    is.function(handler),
+    length(formals(handler)) %in% c(2, 3)
+  )
+  route__$new(method, tolower(path), handler)
 }

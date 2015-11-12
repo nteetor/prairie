@@ -1,7 +1,7 @@
 # borrowing from javascript, will return
 "%||%" <- function(a, b) if (is.null(a)) b else a
 
-mimeextra = c(
+mimeextra <- c(
   md = "text/markdown",
   markdown = "text/markdown",
   r = "text/plain",
@@ -31,7 +31,7 @@ is_absolute <- function(path) {
 }
 
 get_status_description <- function(status, default_to_status = TRUE) {
-  stopifnot(is.numeric(status) | is.character(status))
+  stopifnot(is.numeric(status) || is.character(status))
   switch (
     as.character(status),
     '100' = "Continue",
