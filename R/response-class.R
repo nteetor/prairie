@@ -38,11 +38,26 @@ response__ <- R6::R6Class(
 
       invisible(self)
     },
-    cookie = function(name, value, options = NULL) {
-      stop('$cookie not implemented')
+    cookie = function(name, value, expires = NULL) {
+      assert_that(is.character(name), is.character(value), is.list(options))
+      
+      cookie_string <- paste0(name, '=', value)
+      
+      if (!is.null(expires)) {
+        assert_that(assertthat::is.time(expires) || assertthat::is.date(expires))
+        cookie_string <- paste0(cookie_string, '; ', 'Expires=', http_date(expires))
+      }
+      
+      private$headers <- append(private$headers, list('Set-Cookie' = cookie_string))
+      
+      invisible(self)
     },
-    clear_cookie = function(name, options = NULL) {
-      stop('$clear_cookie not implemented')
+    clear_cookie = function(name) {
+      assert_that(is.character(name))
+      
+      self$cookie(name, '', expires = Sys.time())
+
+      invisible(self)
     },
     download = function(path, filename = path) {
       assert_that(is.character(path), file.exists(path), is.character(filename))
@@ -66,24 +81,24 @@ response__ <- R6::R6Class(
         )
       )
     },
-    format = function(handlers) {
-      assert_that(is.list(handlers), is_named(handlers))
+    format = function(callbacks) {
+      assert_that(is.list(callbacks), is_named(callbacks))
 
-      default_callback <- handlers[['default']]
-      handlers['default'] <- NULL
+      default_callback <- callbacks$default
+      callbacks$default <- NULL
 
-      accepted_type <- Find(private$req$accepts, names(handlers), nomatch = NULL)
+      accepted_type <- Find(private$req$accepts, names(callbacks), nomatch = NULL)
 
       if (!is.null(accepted_type)) {
         res$set('Content-Type', mime::guess_type(accepted_type))
-        handlers[[accepted_type]]()
+        callbacks[[accepted_type]]()
+        self$end()
       } else if (!is.null(default_callback)) {
         default_callback()
+        self$end()
       } else {
         self$send_status(406)
       }
-
-      invisible(self)
     },
     get = function(field) {
       assert_that(is.character(field))
@@ -133,8 +148,8 @@ response__ <- R6::R6Class(
 
       invisible(self)
     },
-    redirect = function(path, status = 302L) {
-      assert_that(is.character(path), is.integer(status))
+    redirect = function(path, status = 302) {
+      assert_that(is.character(path), is.numeric(status))
 
       self$status(status)
       self$location(path)

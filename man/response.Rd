@@ -19,10 +19,9 @@ inside route callback functions where it can be
   Response objects understand the methods below. Many of these methods 
   invisibly return the response object and allow additional methods to be
   chained. See the following example handler, 
-  \preformatted{  function(req, res) \{
+  \preformatted{  function(req, res) {
     res$status(404)$body("Page not found")$send()
-  \}
-  }
+  }}
   Methods which end chains return a value, like \code{get}, or end
   execution of the handler, like \code{send} or \code{json}.
   
@@ -39,6 +38,17 @@ inside route callback functions where it can be
   If \code{path} is specified the path is split, the attchment file name
   parsed, and "Content-Disposition" set accordingly.
   
+  \strong{\code{cookie(name, value, expires = NULL)}}
+  
+  Set a cookie with \code{name} and \code{value}. If \code{expires} is not 
+  \code{NULL} and of class \code{time} or \code{Date}, the cookie attribute 
+  Expires is set to \code{expires}. \code{expires} is automatically formatted
+  in HTTP datetime format.
+  
+  \strong{\code{clear_cookie(name)}}
+  
+  Clears cookie \code{name}.
+  
   \strong{\code{download(path, filename = path)}}
   
   Prompts the client to download a file specified by \code{path}. An
@@ -54,12 +64,12 @@ inside route callback functions where it can be
   
   Ends execution of the handler.
   
-  \strong{\code{format(handlers)}}
+  \strong{\code{format(callbacks)}}
   
   Used to modify the response based on the \code{Accept} HTTP header of the
-  request received. \code{handlers} is a list of functions. The specific 
-  function to use for a given request is determined by list name and then by
-  list order. See example,
+  request received. \code{callbacks} is a list of functions. The specific 
+  callback executed for a given request is determined by item name and order
+  with \code{callbacks}. See example,
   \preformatted{  list(
     # selected if "text/html" is accepted
     "text/html" = function() {
@@ -72,10 +82,34 @@ inside route callback functions where it can be
     },
     # selected if no accepted type is found
     "default" = function() {
-      res$send("We find no fault with default")}
+      res$send("We find no fault with default")
+    }
   )}
-  If \code{"default"} is not supplied and no matching type is found then a 
-  406 status is sent back to the client.
+  In the above example although "text/html" would match both the first and
+  second callbacks, \code{format} uses the first matching callback.
+  
+  If \code{"default"} is not supplied and no matching type is found a 406
+  status is sent back to the client. If a function does not end execution of
+  the handler, \code{end} is called after the selected function finishes
+  execution.
+  
+  Ends execution of the handler.
+  
+  \strong{\code{get(field)}}
+  
+  Retreives the value for HTTP header \code{field} from the response headers.
+  \code{field} is not case sensitive.
+  
+  \strong{\code{json(body = NULL)}}
+  
+  Sets the response Content-Type to \code{"application/json"}. If \code{body}
+  is not \code{NULL} and of class \code{character}, \code{list}, or
+  \code{data.frame}, \code{body} is converted to JSON using
+  \code{jsonlite::toJSON} and the response body is set.
+  
+  Requires installation of package \code{jsonlite}.
+  
+  Ends execution of the handler.
 }
 \examples{
 route(
@@ -83,8 +117,8 @@ route(
   '^.+',
   function(req, res) {
     res$set('Connection', 'close')
-
-    res$status(301)$send('Page is gone!')
+    res$status(301)
+    res$send('Page is gone!')
   }
 )
 }
