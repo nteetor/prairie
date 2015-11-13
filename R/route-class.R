@@ -1,3 +1,5 @@
+is.route <- function(obj) inherits(obj, 'route__')
+
 #' @docType class
 #' @keywords internal
 #' @name route-class
@@ -11,7 +13,14 @@ route__ <- R6::R6Class(
     initialize = function(method, path, handler) {
       self$method <- method
       self$path <- self$sanitize_path(path)
-      self$handler <- handler
+      self$handler <- function(req, res) {
+        handler(req, res)
+        list(
+          status = 500,
+          headers = list('Content-Type' = 'text/plain'),
+          body = 'end() never called'
+        )
+      }
 
       invisible(self)
     },
@@ -20,14 +29,10 @@ route__ <- R6::R6Class(
       method == self$method && path == self$path
     },
     matches = function(method, path) {
-      method == self$method && grepl(self$path, path)
+      (method == self$method || self$method == 'all') && grepl(self$path, path)
     },
-    dispath = function(req, res, args = character(0)) {
-      if (length(formals(self$handler)) == 2) {
-        self$handler(req, res)
-      } else {
-        self$handler(req, res, args)
-      }
+    dispath = function(req, res) {
+      self$handler(req, res)
     },
     
     sanitize_path = function(path) {

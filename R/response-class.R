@@ -71,15 +71,8 @@ response__ <- R6::R6Class(
         assert_that(is.character(body))
         private$body <- body
       }
-
-      stop(
-        structure(
-          class = c('end_signal', 'message', 'condition'),
-          list(
-            message = '(not really an error) $end called from response'
-          )
-        )
-      )
+      
+      signalCondition(response_conditions$end)
     },
     format = function(callbacks) {
       assert_that(is.list(callbacks), is_named(callbacks))

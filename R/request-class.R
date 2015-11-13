@@ -1,71 +1,38 @@
-#' Request class
-#'
-#' The request class holds meta information about a request received for a
-#' particular application resource (URI). This information is pulled from an
-#' underlying Rook environment. A request object is passed to the corresponding
-#' callback function when a URI is requested.
-#'
-#' @section Methods:
-#' \itemize{
-#'  \item \code{get_header_field(field)}:
-#'    Retrieve a HTTP header field value from the underlying Rook environment
-#'  \item \code{has_content_type(type)}:
-#'    TRUE if the request content type is \code{type}
-#' }
-#'
 #' @docType class
 #' @keywords internal
-#' @format An R6 class object.
 #' @importFrom assertthat assert_that
-#' @export
-#' @name request
-request <- R6::R6Class(
-  'request',
+#' @name request-class
+request__ <- R6::R6Class(
+  'request__',
   public = list(
-    base_url = NULL, # in need of route implementation
+    args = NULL,
     body = NULL,
-    cookies = NULL, # need to implement cookie parser
-    fresh = NULL, # may or may not be implemented,
     ip = NULL,
-    ips = NULL, # may not be implemented
     method = NULL,
-    original_url = NULL, # for now, very unecessary
     url = NULL,
-    params = NULL,
     protocol = NULL,
-    route = NULL,
-    signed_cookies = NULL, # need to implement cookie parser
-    stale = NULL, # depends on $fresh
     subdomains = NULL,
-    xhr = NULL, # may not be implemented
 
-    initialize = function(route, http_request) {
-      self$base_url <- NULL
+    initialize = function(http_request) {
       self$body <- http_request$rook.input$read_lines()
-      self$cookies <- list()
       self$ip <- http_request$SERVER_NAME
-      self$ips <- NULL
-      self$original_url <- http_request$PATH_INFO
-      self$url <- self$original_url
-      self$route <- route
+      self$url <- http_request$PATH_INFO
 
-      if (grepl('\\?<[a-zA-Z]+>', self$route$uri)) {
-        param_values <- stringr::str_match_all(self$original_url, self$route$uri)[[1]][1,][-1]
-        param_names <- stringr::str_match_all(self$route$uri, '\\?<([a-zA-Z]+)>')[[1]][,2]
+      if (grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
+        args <- stringr::str_match_all(self$original_url, http_request$ROUTE_PATH)[[1]][1,][-1]
+        args_names <- stringr::str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
-        self$params <- as.list(setNames(param_values, param_names))
+        self$args <- as.list(setNames(args, args_names))
       } else {
-        self$params <- list()
+        self$args <- list()
       }
 
       self$protocol <- http_request$rook.url_scheme # definitely check this
-      self$signed_cookies <- NULL
-      self$stale <- NULL
       self$subdomains <- strsplit(sub('(\\.\\w+){2}/.*$', '', self$original_url), '\\.')[[1]] # breaks on 'example.com'
 
-      self$method <- http_request[['REQUEST_METHOD']]
-      private$port <- http_request[['SERVER_PORT']]
-      private$host_name <- http_request[['HTTP_HOST']]
+      self$method <- http_request$REQUEST_METHOD
+      private$port <- http_request$SERVER_PORT
+      private$host_name <- http_request$HTTP_HOST
 
       headers <- http_request[grep('^HTTP_', names(http_request), value = TRUE)]
       names(headers) <- gsub('_', '-', gsub('^http_', '', tolower(names(headers))))
@@ -88,7 +55,6 @@ request <- R6::R6Class(
       types_to_question <- types
 
       all_combinations <- expand.grid(accepted_types, types_to_question, stringsAsFactors = FALSE)
-      # print(all_combinations)
 
       for (row in seq_len(NROW(all_combinations))) {
         accepted_type <- all_combinations[row, 1]
@@ -125,10 +91,7 @@ request <- R6::R6Class(
         private$header_fields[[tolower(field)]]
       }
     },
-    header = function(field) {
-      self$get(field)
-    },
-    is = function(type) {
+    type_is = function(type) {
       assert_that(is.character(type))
 
       accepted_type <- sub('\\s*;.*$', '', self$get('content-type'))
