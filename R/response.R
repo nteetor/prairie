@@ -5,7 +5,7 @@
 #' 
 #' @section Fields:
 #'   
-#'   None.
+#'   None
 #'   
 #' @section Methods:
 #'   
