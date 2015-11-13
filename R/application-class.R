@@ -6,7 +6,7 @@ is.application <- function(obj) inherits(obj, 'application__')
 application__ <- R6::R6Class(
   'application__',
   public = list(
-    initialize = function(routes, host, port) {
+    initialize = function(routes) {
       self$routes <- routes
       self$default_404 <- list(
         status = 404,
@@ -62,6 +62,6 @@ application__ <- R6::R6Class(
   ),
   private = list(
     routes = NULL,
-    default_404 = NULL,
+    default_404 = NULL
   )
 )

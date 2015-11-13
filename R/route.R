@@ -1,4 +1,4 @@
-#' Create routes
+#' Routing
 #' 
 #' Within prairie, a route is a \emph{a mapping between any number of 
 #' \link[=method]{methods} and a single \link{path}.} A route may never have 
@@ -88,7 +88,7 @@ route <- function(method, path, handler) {
     is.character(path),
     length(path) == 1,
     is.function(handler),
-    length(formals(handler)) %in% c(2, 3)
+    names(formals(handler)) == c('req', 'res')
   )
   route__$new(method, tolower(path), handler)
 }

@@ -10,7 +10,7 @@ inside route callback functions where it can be
 \section{Fields}{
 
   
-  None.
+  None
 }
 
 \section{Methods}{

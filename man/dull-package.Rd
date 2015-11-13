@@ -2,15 +2,17 @@
 % Please edit documentation in R/dull.R
 \docType{package}
 \name{dull-package}
+\alias{dull}
 \alias{dull-package}
-\title{dull, building web applications too easily}
+\title{Light-weight Web Framework For R}
 \description{
-\code{dull} provides a straight-forward syntax to build web applications in 
-R. Functions like \link{get}, \link{post}, and \link{put} add route callbacks
-to a \link{dull} application.
+A straight forward web framework for creating modular web
+applications with R. Based on frameworks like Express, Wookie,
+and Sinatra, dull provides R users with a set of tools to create
+powerful, simple-to-build web applications.
 }
-\details{
-For information regarding route callbacks and route URI specification refer
-to \link{dull}.
+\seealso{
+\code{\link{app}}, \code{\link{route}}, \code{\link{request}}, and
+\code{\link{response}}
 }
 

@@ -11,16 +11,9 @@
 #' 
 #' @export
 #' @name app
-#' @examples
 app <- function(...) {
-  routes <- lapply(
-    function(r) {
-      assertthat::assert_that(is.route(r))
-      r
-    },
-    list(...)
-  )
-  application__(routes)  
+  assertthat::assert_that(all(vapply(list(...), is.application, logical(1))))
+  application__(list(...))  
 }
 
 #' Run application

@@ -23,12 +23,14 @@ URL: https://github.com/nteetor/dull
 BugReports: https://github.com/nteetor/dull/issues
 Collate:
     'utils.R'
+    'conditions.R'
     'route-class.R'
-    'response-class.R'
     'route.R'
-    'response.R'
+    'request-class.R'
     'request.R'
-    'callback-utils.R'
+    'response-class.R'
+    'response.R'
+    'application-class.R'
     'application.R'
     'dull.R'
     'expectations.R'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/route.R
 \name{route}
 \alias{route}
-\title{Create routes}
+\title{Routing}
 \usage{
 route(method, path, handler)
 }
