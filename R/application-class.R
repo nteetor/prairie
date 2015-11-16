@@ -1,12 +1,15 @@
-is.application <- function(obj) inherits(obj, 'application__')
+#' @export
+is.application <- function(obj) inherits(obj, 'application')
 
 #' @docType class
 #' @keywords internal
 #' @name application-class
 application__ <- R6::R6Class(
-  'application__',
+  'application',
   public = list(
     initialize = function(routes) {
+      assert_that(all(vapply(routes, is.route, logical(1))))
+      
       self$routes <- routes
       self$default_404 <- list(
         status = 404,

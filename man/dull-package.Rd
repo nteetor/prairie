@@ -4,12 +4,12 @@
 \name{dull-package}
 \alias{dull}
 \alias{dull-package}
-\title{Light-weight Web Framework For R}
+\title{A Web Framework For R}
 \description{
 A straight forward web framework for creating modular web
-applications with R. Based on frameworks like Express, Wookie,
-and Sinatra, dull provides R users with a set of tools to create
-powerful, simple-to-build web applications.
+applications with R. Based on existing frameworks like Express (JS),
+Wookie (lisp), and Sinatra (ruby), dull provides R users with a set
+of tools to create powerful, simple-to-build web applications.
 }
 \seealso{
 \code{\link{app}}, \code{\link{route}}, \code{\link{request}}, and

@@ -8,15 +8,15 @@ app(...)
 }
 \arguments{
 \item{\ldots}{Route objects}
-
-\item{host}{host address to run the application on}
-
-\item{port}{port to run the application on}
 }
 \description{
-Applications in prairie are naively defined as a \emph{list of 
-\link{routes}}. The application handles dispatching HTTP requests to the 
-routes and responding with HTTP responses. However, response building happens
-within each route.
+An application in prairie is simply defined as \emph{a list of 
+\link{routes}}. The application handles dispatching HTTP requests to routes 
+and sending back HTTP responses. Route handlers are pure functions and 
+therefore for a given HTTP request an application will always return the same
+HTTP response.
+}
+\details{
+
 }
 

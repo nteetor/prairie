@@ -2,7 +2,7 @@
 #' @keywords internal
 #' @name response-class
 response__ <- R6::R6Class(
-  'response__',
+  'response',
   public = list(
     initialize = function(req) {
       private$status_code <- 200L
@@ -13,7 +13,7 @@ response__ <- R6::R6Class(
     },
 
     append = function(field, value) {
-      assertthat::assert_that(is.character(field), is.character(value))
+      assert_that(is.character(field), is.character(value))
 
       if (!is.null(self$get(field))) {
         value <- paste(self$get(field), paste(value, collapse = ''), sep = '')
@@ -44,7 +44,7 @@ response__ <- R6::R6Class(
       cookie_string <- paste0(name, '=', value)
       
       if (!is.null(expires)) {
-        assert_that(assertthat::is.time(expires) || assertthat::is.date(expires))
+        assert_that(is.time(expires) || is.date(expires))
         cookie_string <- paste0(cookie_string, '; ', 'Expires=', http_date(expires))
       }
       

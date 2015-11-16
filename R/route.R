@@ -83,12 +83,5 @@
 #'   }
 #' )
 route <- function(method, path, handler) {
-  assertthat::assert_that(
-    is.character(method),
-    is.character(path),
-    length(path) == 1,
-    is.function(handler),
-    names(formals(handler)) == c('req', 'res')
-  )
-  route__$new(method, tolower(path), handler)
+  route__$new(method, path, handler)
 }

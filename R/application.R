@@ -1,27 +1,32 @@
 #' Create application
 #' 
-#' Applications in prairie are naively defined as a \emph{list of 
-#' \link{routes}}. The application handles dispatching HTTP requests to the 
-#' routes and responding with HTTP responses. However, response building happens
-#' within each route.
+#' An application in prairie is simply defined as \emph{a list of 
+#' \link{routes}}. The application handles dispatching HTTP requests to routes 
+#' and sending back HTTP responses. Route handlers are pure functions and 
+#' therefore for a given HTTP request an application will always return the same
+#' HTTP response.
 #' 
 #' @param \ldots Route objects
-#' @param host host address to run the application on
-#' @param port port to run the application on
 #' 
+#' @details
+#' 
+#' 
+#'   
 #' @export
 #' @name app
 app <- function(...) {
-  assertthat::assert_that(all(vapply(list(...), is.application, logical(1))))
-  application__(list(...))  
+  routes <- lapply(list(...), as.route)
+  
+  application__$new(routes)  
 }
 
 #' Run application
 #'
-#' Starts \code{application} on \code{host}
+#' Starts \code{application} at \code{host} on \code{port}. 
 #'
 #' @export
+#' @name start
 start <- function(application, host, port) {
-  assertthat::assert_that(is.application(application), is.character(host), is.numeric(port))
+  assert_that(is.application(application), is.character(host), is.numeric(port))
   application$listen(host, port)
 }

@@ -7,6 +7,6 @@
 start(application, host, port)
 }
 \description{
-Starts \code{application} on \code{host}
+Starts \code{application} at \code{host} on \code{port}.
 }
 

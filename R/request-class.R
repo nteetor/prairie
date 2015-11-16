@@ -1,9 +1,8 @@
 #' @docType class
 #' @keywords internal
-#' @importFrom assertthat assert_that
 #' @name request-class
 request__ <- R6::R6Class(
-  'request__',
+  'request',
   public = list(
     args = NULL,
     body = NULL,
@@ -14,6 +13,8 @@ request__ <- R6::R6Class(
     subdomains = NULL,
 
     initialize = function(http_request) {
+      assert_that(is.environment(http_request) || is.list(http_request))
+      
       self$body <- http_request$rook.input$read_lines()
       self$ip <- http_request$SERVER_NAME
       self$url <- http_request$PATH_INFO
