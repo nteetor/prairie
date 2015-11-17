@@ -23,9 +23,12 @@ is.route(x)
 
 \item{path}{System path to file.}
 }
+\value{
+An object of class \code{route}.
+}
 \description{
 The function \code{as.route} provides an alternative way to create 
-\code{\link[route-class]{routes}} from lists or files.
+\code{\link[=route]{routes}} from lists or files.
 }
 \details{
 If \code{x} is a list, \code{x} must have the following named items: 
@@ -33,7 +36,12 @@ If \code{x} is a list, \code{x} must have the following named items:
 
 If \code{x} is a character vector, \code{x} is interpreted as a file name. 
 The file must contain a route defined using the \link{route} function. The 
-default directory for route files is "routes". However a different folder may
-be specified by \code{path}.
+default directory for route files is "routes", but a different folder may be 
+specified by the argument \code{path}.
+
+The S3 generic function \code{as.route} is exported by prairie to encourage 
+creation of \code{as.route.*} functions. Custom \code{as.route} functions 
+allow users to coerce their classes to routes and quickly serve them over
+HTTP.
 }
 

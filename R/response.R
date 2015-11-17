@@ -1,7 +1,6 @@
-#' Response objects
+#' Create an HTTP response
 #' 
-#' An R6Class respresentation of an HTTP response. The response object is used 
-#' inside route callback functions where it can be
+#' A response object represents the HTTP response returned by a route handler.
 #' 
 #' @section Fields:
 #'   
@@ -104,6 +103,8 @@
 #'   
 #'   Ends execution of the handler.
 #'   
+#' @seealso \code{\link{route}}, \code{\link{req}}
+#' 
 #' @name response
 #' @examples
 #' route(
@@ -115,4 +116,6 @@
 #'     res$send('Page is gone!')
 #'   }
 #' )
-NULL
+response <- function() {
+  response__$new()
+}

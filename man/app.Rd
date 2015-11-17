@@ -2,19 +2,19 @@
 % Please edit documentation in R/application.R
 \name{app}
 \alias{app}
-\title{Create application}
+\title{Create an application}
 \usage{
 app(...)
 }
 \arguments{
-\item{\ldots}{Route objects}
+\item{\ldots}{Routes or objects to coerce to routes.}
 }
 \description{
-An application in prairie is simply defined as \emph{a list of 
-\link{routes}}. The application handles dispatching HTTP requests to routes 
-and sending back HTTP responses. Route handlers are pure functions and 
-therefore for a given HTTP request an application will always return the same
-HTTP response.
+An application in prairie is defined most basically as \emph{a list of 
+\link[=route]{routes}}. The application handles dispatching HTTP requests to routes 
+and sending back HTTP responses. Route handlers are pure functions, therefore
+for a given HTTP request an application will always return the same HTTP
+response.
 }
 \details{
 

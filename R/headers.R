@@ -1,0 +1,11 @@
+#'
+#'
+#'
+#'
+`[.response` <- function() {
+  
+}
+
+`[<-.response` <- function() {
+  
+}

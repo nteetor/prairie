@@ -4,8 +4,7 @@
 \alias{response}
 \title{Response objects}
 \description{
-An R6Class respresentation of an HTTP response. The response object is used 
-inside route callback functions where it can be
+A response object represents the HTTP response returned by a route handler.
 }
 \section{Fields}{
 
@@ -121,5 +120,8 @@ route(
     res$send('Page is gone!')
   }
 )
+}
+\seealso{
+\code{\link{route}}, \code{\link{req}}
 }
 

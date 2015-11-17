@@ -1,7 +1,7 @@
 #' Coercing to a route
 #' 
 #' The function \code{as.route} provides an alternative way to create 
-#' \code{\link[route-class]{routes}} from lists or files.
+#' \code{\link[=route]{routes}} from lists or files.
 #' 
 #' @param x any \R object.
 #'   
@@ -12,12 +12,13 @@
 #' 
 #' If \code{x} is a character vector, \code{x} is interpreted as a file name. 
 #' The file must contain a route defined using the \link{route} function. The 
-#' default directory for route files is "routes". However a different folder may
-#' be specified by \code{path}.
+#' default directory for route files is "routes", but a different folder may be 
+#' specified by the argument \code{path}.
 #' 
-#' The S3 generic function \code{as.route} is exported by prairie to allow 
-#' definition of further \code{as.route.*} functions. This allows users to
-#' coerce their custom classes to routes and quickly serve them over HTTP.
+#' The S3 generic function \code{as.route} is exported by prairie to encourage 
+#' creation of \code{as.route.*} functions. Custom \code{as.route} functions 
+#' allow users to coerce their classes to routes and quickly serve them over
+#' HTTP.
 #' 
 #' @return
 #' 
@@ -43,7 +44,7 @@ as.route.character <- function(x, path = 'routes') {
   )
   
   route <- source(file.path(path, x))$value
-  if (!is.route(route)) stop('Could not parse "', file.path(path, x), '" as route', call. = FALSE)
+  if (!is.route(route)) stop('Could not parse route from "', file.path(path, x), '"', call. = FALSE)
   
   route
 }
