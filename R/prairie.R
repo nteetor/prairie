@@ -4,5 +4,4 @@
 #' \code{\link{response}}
 #' 
 #' @import assertthat
-#' @name dull-package
 "_PACKAGE"
