@@ -8,7 +8,7 @@
 #' @param method A character vector specifying an HTTP method(s), such as 
 #'   \code{"get"}, \code{"post"}, or \code{"put"}
 #' @param path A character vector specifying which URIs the route will handle
-#' @param handler A function which returns a \link{repsonse} object, see below
+#' @param handler A function which returns a \link{repsonse} object, see below 
 #'   for more information
 #'   
 #' @details
@@ -18,6 +18,9 @@
 #' \code{method} is a character vector with at least one element. Multiple 
 #' methods may be specified or if \code{"all"} is specified then all HTTP 
 #' methods are accepted. Custom methods are possible, but not advised.
+#' 
+#' \code{method} is converted to lower case, so \code{"GET"} and \code{"get"}
+#' are equivalent.
 #' 
 #' \strong{\code{path}}
 #' 
@@ -29,9 +32,9 @@
 #' For example, if \code{path} is 
 #' \tabular{c}{\code{"^wizard/(?<alias>[a-z]+)/([a-z]+)$"}} and the application 
 #' receives a request for \tabular{c}{\code{/wizard/sparrowhawk/ged}} then 
-#' \code{args} would be the character vector \code{c("alias" = 
-#' "sparrowhawk", "" = "ged")} during the evaluation of \code{handler}. See next 
-#' section for details about \code{args} and \code{handler}.
+#' \code{args} would be the character vector \code{c("alias" = "sparrowhawk", ""
+#' = "ged")} during the evaluation of \code{handler}. See next section for
+#' details about \code{args} and \code{handler}.
 #' 
 #' \strong{\code{handler}}
 #' 

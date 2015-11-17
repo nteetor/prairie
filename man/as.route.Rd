@@ -3,34 +3,37 @@
 \name{as.route}
 \alias{as.route}
 \alias{as.route.character}
-\alias{as.route.default}
 \alias{as.route.list}
 \alias{as.route.route}
-\title{Converting objects to routes}
+\alias{is.route}
+\title{Coercing to a route}
 \usage{
-as.route(obj, ...)
+as.route(x, ...)
 
-\method{as.route}{route}(rte)
+\method{as.route}{route}(x)
 
-\method{as.route}{character}(file, path = "views")
+\method{as.route}{character}(x, path = "routes")
 
 \method{as.route}{list}(x)
 
-\method{as.route}{default}(other)
+is.route(x)
 }
 \arguments{
-\item{rte}{An object of class \code{rte}}
+\item{x}{any \R object.}
 
-\item{file}{A file which defines a route}
-
-\item{path}{Folder path to route file}
-
-\item{x}{A \code{list} with items \code{method}, \code{path}, and
-\code{handler}}
-
-\item{other}{An object of an unsupported class}
+\item{path}{System path to file.}
 }
 \description{
-Routes may be defined with the
+The function \code{as.route} provides an alternative way to create 
+\code{\link[route-class]{routes}} from lists or files.
+}
+\details{
+If \code{x} is a list, \code{x} must have the following named items: 
+\code{method}, \code{path}, and \code{handler}.
+
+If \code{x} is a character vector, \code{x} is interpreted as a file name. 
+The file must contain a route defined using the \link{route} function. The 
+default directory for route files is "routes". However a different folder may
+be specified by \code{path}.
 }
 

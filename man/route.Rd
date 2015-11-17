@@ -12,7 +12,7 @@ route(method, path, handler)
 
 \item{path}{A character vector specifying which URIs the route will handle}
 
-\item{handler}{A function which returns a \link{repsonse} object, see below
+\item{handler}{A function which returns a \link{repsonse} object, see below 
 for more information}
 }
 \value{
@@ -31,6 +31,9 @@ this case a single route would match multiple URIs.
 methods may be specified or if \code{"all"} is specified then all HTTP 
 methods are accepted. Custom methods are possible, but not advised.
 
+\code{method} is converted to lower case, so \code{"GET"} and \code{"get"}
+are equivalent.
+
 \strong{\code{path}}
 
 \code{path} may be a regular expression. \code{path} never needs to include a
@@ -41,9 +44,9 @@ substrings.
 For example, if \code{path} is 
 \tabular{c}{\code{"^wizard/(?<alias>[a-z]+)/([a-z]+)$"}} and the application 
 receives a request for \tabular{c}{\code{/wizard/sparrowhawk/ged}} then 
-\code{args} would be the character vector \code{c("alias" = 
-"sparrowhawk", "" = "ged")} during the evaluation of \code{handler}. See next 
-section for details about \code{args} and \code{handler}.
+\code{args} would be the character vector \code{c("alias" = "sparrowhawk", ""
+= "ged")} during the evaluation of \code{handler}. See next section for
+details about \code{args} and \code{handler}.
 
 \strong{\code{handler}}
 
