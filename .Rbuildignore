@@ -1,4 +1,3 @@
-^dull\.Rproj$
-^examples\.*$
+^prairie\.Rproj$
 ^\.Rproj\.user$
 ^\.travis\.yml$
