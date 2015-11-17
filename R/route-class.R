@@ -21,6 +21,10 @@ is.route <- function(obj) inherits(obj, 'route')
 #' 
 #' Routes may be defined with the 
 #' 
+#' @details
+#' 
+#' When defining routes
+#' 
 #' @export
 #' @name as.route
 as.route <- function(obj, ...) UseMethod('as.route')
