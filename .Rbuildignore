@@ -1,3 +1,4 @@
 ^dull\.Rproj$
 ^examples\.*$
 ^\.Rproj\.user$
+^\.travis\.yml$
