@@ -7,7 +7,7 @@ For the latest changes please refer to the response-class and request-class bran
 # dull
 A web framework for R that makes building web applications a little too easy.
 
-[![Travis-CI Build Status](https://travis-ci.org/nteetor/dull.svg?branch=master)](https://travis-ci.org/nteetor/dull)
+[![Travis-CI Build Status](https://travis-ci.org/nteetor/dull.svg?branch=master)](https://travis-ci.org/nteetor/dull) [![codecov](https://img.shields.io/codecov/c/github/nteetor/dull.svg)](https://codecov.io/github/nteetor/dull)
 
 Below is the current style of creating dull apps, see further below for the upcoming style.
 ```R
