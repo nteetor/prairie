@@ -1,7 +1,7 @@
 # prairie
 A framework to grow web applications in R.
 
-[![Travis-CI Build Status](https://travis-ci.org/nteetor/dull.svg?branch=master)](https://travis-ci.org/nteetor/dull) [![codecov](https://img.shields.io/codecov/c/github/nteetor/dull.svg)](https://codecov.io/github/nteetor/dull)
+[![Travis-CI Build Status](https://travis-ci.org/nteetor/prairie.svg?branch=master)](https://travis-ci.org/nteetor/prairie) [![codecov](https://img.shields.io/codecov/c/github/nteetor/prairie.svg)](https://codecov.io/github/nteetor/prairie)
 
 ```R
 app(
