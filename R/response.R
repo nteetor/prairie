@@ -105,6 +105,7 @@
 #'   
 #' @seealso \code{\link{route}}, \code{\link{req}}
 #' 
+#' @export
 #' @name response
 #' @examples
 #' route(
@@ -117,5 +118,5 @@
 #'   }
 #' )
 response <- function() {
-  response__$new()
+  response__$new(NULL)
 }

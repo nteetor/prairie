@@ -2,7 +2,10 @@
 % Please edit documentation in R/response.R
 \name{response}
 \alias{response}
-\title{Response objects}
+\title{Create an HTTP response}
+\usage{
+response()
+}
 \description{
 A response object represents the HTTP response returned by a route handler.
 }

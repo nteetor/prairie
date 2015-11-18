@@ -83,7 +83,7 @@ response__ <- R6::R6Class(
       accepted_type <- Find(private$req$accepts, names(callbacks), nomatch = NULL)
 
       if (!is.null(accepted_type)) {
-        res$set('Content-Type', mime::guess_type(accepted_type))
+        self$set('Content-Type', mime::guess_type(accepted_type))
         callbacks[[accepted_type]]()
         self$end()
       } else if (!is.null(default_callback)) {
@@ -95,7 +95,7 @@ response__ <- R6::R6Class(
     },
     get = function(field) {
       assert_that(is.character(field))
-      field <- Find(function(nm) tolower(nm) == tolower(field), names(private$headers), nomatch = NA)
+      
       private$headers[[field]]
     },
     json = function(body = NULL) {

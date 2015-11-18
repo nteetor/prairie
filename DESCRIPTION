@@ -30,6 +30,7 @@ Collate:
     'request-class.R'
     'request.R'
     'response-class.R'
+    'response-headers.R'
     'response.R'
     'application-class.R'
     'application.R'
