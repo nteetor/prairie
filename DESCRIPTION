@@ -1,7 +1,7 @@
 Package: prairie
 Type: Package
 Title: Grow Web Applications In R
-Version: 0.0.0.4
+Version: 0.0.0.1
 Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))
 Description: A web framework for R, prairie is based on existing 
     frameworks like Express (JS), Django (python), Wookie (lisp), and 
@@ -23,6 +23,7 @@ Suggests:
 URL: prairie.nteetor.com
 BugReports: https://github.com/nteetor/prairie/issues
 Collate:
+    'prairie.R'
     'utils.R'
     'conditions.R'
     'route-class.R'
@@ -34,6 +35,5 @@ Collate:
     'response.R'
     'application-class.R'
     'application.R'
-    'prairie.R'
     'expectations.R'
 RoxygenNote: 5.0.1
