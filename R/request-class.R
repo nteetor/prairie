@@ -1,7 +1,7 @@
 #' @docType class
 #' @keywords internal
 #' @name request-class
-request__ <- R6::R6Class(
+request__ <- R6Class(
   'request',
   public = list(
     args = NULL,
@@ -10,16 +10,17 @@ request__ <- R6::R6Class(
     method = NULL,
     url = NULL,
     protocol = NULL,
-    subdomains = NULL,
+    host_name = NULL,
+    port = NULL,
 
     initialize = function(http_request) {
       assert_that(is.environment(http_request) || is.list(http_request))
       
-      self$body <- http_request$rook.input$read_lines()
+      self$body <- tryCatch(http_request$rook.input$read_lines(), error = function(e) NULL)
       self$ip <- http_request$SERVER_NAME
       self$url <- http_request$PATH_INFO
 
-      if (grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
+      if (!is.null(http_request$ROUTE_PATH) && grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
         args <- stringr::str_match_all(self$original_url, http_request$ROUTE_PATH)[[1]][1,][-1]
         args_names <- stringr::str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
@@ -29,11 +30,10 @@ request__ <- R6::R6Class(
       }
 
       self$protocol <- http_request$rook.url_scheme # definitely check this
-      self$subdomains <- strsplit(sub('(\\.\\w+){2}/.*$', '', self$original_url), '\\.')[[1]] # breaks on 'example.com'
 
       self$method <- http_request$REQUEST_METHOD
-      private$port <- http_request$SERVER_PORT
-      private$host_name <- http_request$HTTP_HOST
+      self$port <- http_request$SERVER_PORT
+      self$host_name <- http_request$HTTP_HOST
 
       headers <- http_request[grep('^HTTP_', names(http_request), value = TRUE)]
       names(headers) <- gsub('_', '-', gsub('^http_', '', tolower(names(headers))))
@@ -109,8 +109,6 @@ request__ <- R6::R6Class(
     }
   ),
   private = list(
-    port = NULL,
-    host_name = NULL,
     header_fields = NULL
   )
 )

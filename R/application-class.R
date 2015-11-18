@@ -4,7 +4,7 @@ is.application <- function(obj) inherits(obj, 'application')
 #' @docType class
 #' @keywords internal
 #' @name application-class
-application__ <- R6::R6Class(
+application__ <- R6Class(
   'application',
   public = list(
     initialize = function(routes) {
@@ -34,33 +34,15 @@ application__ <- R6::R6Class(
       invisible(self)
     },
     handle_request = function(http_request) {
-      routes <- Filter(
+      rte <- Find(
         function(r) r$matches(http_request$REQUEST_METHOD, http_request$PATH_INFO), 
         self$routes 
       )
 
-      if (length(routes) == 0) return(self$default_404)
+      if (length(rte) == 0) return(self$default_404)
 
-      http_request$ROUTE_PATH <- routes[[1]]$path
-      req <- request__$new(http_request)
-      res <- response__$new(req)
-      
-      withCallingHandlers(
-        for (r in routes) {
-          http_request$ROUTE_PATH <- r$path
-          r$dispatch(request__$new(http_request), res)
-        },
-        end = function(sig) {
-          res$as_Rook_response()
-        },
-        error = function(err) {
-          list(
-            status = 500,
-            headers = list('Content-Type' = 'text/plain'),
-            body = paste('Server error:', err$message, sep = '\n')
-          )
-        }
-      )
+      http_request$ROUTE_PATH <- rte$path
+      rte$dispath(http_request)$as_Rook_response()
     }
   ),
   private = list(

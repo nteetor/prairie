@@ -69,7 +69,7 @@ is.route <- function(x) inherits(x, 'route')
 #' @docType class
 #' @keywords internal
 #' @name route-class
-route__ <- R6::R6Class(
+route__ <- R6Class(
   'route',
   public = list(
     method = NULL,
@@ -81,20 +81,12 @@ route__ <- R6::R6Class(
         is.character(method),
         is.character(path),
         length(path) == 1,
-        is.function(handler),
-        has_args(handler, c('req', 'res'), exact = TRUE)
+        is.function(handler)
       )
       
       self$method <- tolower(method)
       self$path <- self$sanitize_path(path)
-      self$handler <- function(req, res) {
-        handler(req, res)
-        list(
-          status = 500,
-          headers = list('Content-Type' = 'text/plain'),
-          body = 'end() never called'
-        )
-      }
+      self$handler <- handler
 
       invisible(self)
     },
@@ -105,8 +97,19 @@ route__ <- R6::R6Class(
     matches = function(method, path) {
       (method %in% self$method || self$method == 'all') && grepl(self$path, path)
     },
-    dispath = function(req, res) {
-      self$handler(req, res)
+    dispatch = function(request_environment) {
+      print(environment())
+      self$handler()
+#       tryCatch(
+#         self$handler(),
+#         error = function(e) {
+#           list(
+#             status = 500,
+#             headers = list('Content-Type' = 'text/plain'),
+#             body = paste0('Server error: ', e$message)
+#           )
+#         }
+#       )
     },
     
     sanitize_path = function(path) {

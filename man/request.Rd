@@ -2,7 +2,10 @@
 % Please edit documentation in R/request.R
 \name{request}
 \alias{request}
-\title{Request objects}
+\title{Get an HTTP Request}
+\usage{
+request()
+}
 \description{
 Request objects, yeah
 }

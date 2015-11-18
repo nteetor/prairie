@@ -9,120 +9,20 @@ response()
 \description{
 A response object represents the HTTP response returned by a route handler.
 }
-\section{Fields}{
-
-  
-  None
-}
-
-\section{Methods}{
-
-  
-  Response objects understand the methods below. Many of these methods 
-  invisibly return the response object and allow additional methods to be
-  chained. See the following example handler, 
-  \preformatted{  function(req, res) {
-    res$status(404)$body("Page not found")$send()
-  }}
-  Methods which end chains return a value, like \code{get}, or end
-  execution of the handler, like \code{send} or \code{json}.
-  
-  \strong{\code{append(field, value)}}
-  
-  Append character vector \code{value} to the existing value for header field
-  \code{field}.
-  
-  \strong{\code{attachment(path = NULL)}}
-  
-  Calling \code{attachment} will set the "Content-Disposition" and
-  "Content-Type" HTTP header fields of the response object.
-  
-  If \code{path} is specified the path is split, the attchment file name
-  parsed, and "Content-Disposition" set accordingly.
-  
-  \strong{\code{cookie(name, value, expires = NULL)}}
-  
-  Set a cookie with \code{name} and \code{value}. If \code{expires} is not 
-  \code{NULL} and of class \code{time} or \code{Date}, the cookie attribute 
-  Expires is set to \code{expires}. \code{expires} is automatically formatted
-  in HTTP datetime format.
-  
-  \strong{\code{clear_cookie(name)}}
-  
-  Clears cookie \code{name}.
-  
-  \strong{\code{download(path, filename = path)}}
-  
-  Prompts the client to download a file specified by \code{path}. An
-  alternate name may be specified by \code{filename}.
-  
-  Ends execution of the handler.
-  
-  \strong{\code{end(body = NULL)}}
-  
-  Typically used to halt callback execution when a request is incomplete. If
-  \code{body} is not \code{NULL} then the response body will be overwritten
-  when \code{end} is called.
-  
-  Ends execution of the handler.
-  
-  \strong{\code{format(callbacks)}}
-  
-  Used to modify the response based on the \code{Accept} HTTP header of the
-  request received. \code{callbacks} is a list of functions. The specific 
-  callback executed for a given request is determined by item name and order
-  with \code{callbacks}. See example,
-  \preformatted{  list(
-    # selected if "text/html" is accepted
-    "text/html" = function() {
-      res$send("We like HTML too")
-    },
-    # selected if "text/plain", "text/html", etc. 
-    # are accepted
-    "text/*" = function() {
-      res$send("We accept all texts of types")
-    },
-    # selected if no accepted type is found
-    "default" = function() {
-      res$send("We find no fault with default")
-    }
-  )}
-  In the above example although "text/html" would match both the first and
-  second callbacks, \code{format} uses the first matching callback.
-  
-  If \code{"default"} is not supplied and no matching type is found a 406
-  status is sent back to the client. If a function does not end execution of
-  the handler, \code{end} is called after the selected function finishes
-  execution.
-  
-  Ends execution of the handler.
-  
-  \strong{\code{get(field)}}
-  
-  Retreives the value for HTTP header \code{field} from the response headers.
-  \code{field} is not case sensitive.
-  
-  \strong{\code{json(body = NULL)}}
-  
-  Sets the response Content-Type to \code{"application/json"}. If \code{body}
-  is not \code{NULL} and of class \code{character}, \code{list}, or
-  \code{data.frame}, \code{body} is converted to JSON using
-  \code{jsonlite::toJSON} and the response body is set.
-  
-  Requires installation of package \code{jsonlite}.
-  
-  Ends execution of the handler.
-}
 \examples{
-route(
-  'get',
-  '^.+',
-  function(req, res) {
-    res$set('Connection', 'close')
-    res$status(301)
-    res$send('Page is gone!')
-  }
-)
+# simple 301 response
+res_301 <- resposne()
+    
+res[['Connection']] <- 'close'
+status(res_301) <- 301
+body(res_301) <- 'Sorry, this page has moved'
+
+# simple 404 response
+res_404 <- response()
+
+res[['Connection']] <- 'close'
+status(res_404) <- 404
+body(res_404) <- 'Sorry, page not found'
 }
 \seealso{
 \code{\link{route}}, \code{\link{req}}

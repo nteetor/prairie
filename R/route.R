@@ -38,14 +38,14 @@
 #' 
 #' \strong{\code{handler}}
 #' 
-#' \code{handler} must be a function of at least two arguments, \code{req} and 
-#' \code{res}. An optional third argument, \code{args}, may be included. If 
-#' \code{path} is a regular expression with capture groups the captured values 
-#' are passed as \code{args} to \code{handler}. \code{args} will always be a 
-#' character vector. Values in \code{args} are ordered according to the order of
-#' the capture groups in \code{path} from left to right. If \code{path} does not
-#' contain a capture group and \code{handler} includes \code{args} as a 
-#' parameter, then the value of \code{args} will be \code{character(0)}.
+#' \code{handler} is a function with an optional argument \code{args}, may be 
+#' included. If \code{path} is a regular expression with capture groups the 
+#' captured values are passed as \code{args} to \code{handler}. \code{args} will
+#' always be a character vector. Values in \code{args} are ordered according to 
+#' the order of the capture groups in \code{path} from left to right. If 
+#' \code{path} does not contain a capture group and \code{handler} includes 
+#' \code{args} as a parameter, then the value of \code{args} will be
+#' \code{character(0)}.
 #' 
 #' @return
 #' 
@@ -58,31 +58,40 @@
 #' ## app(), but creation of standalone route 
 #' ## objects is possible
 #' 
-#' ## accepts only GET requests
-#' ## path has capture groups, include args
+#' # accepts only GET requests
+#' # path has capture groups, include args
 #' route(
 #'   'get',
 #'   '^transformers/(?<series>[a-z_]+)$',
-#'   function(req, res, args) {
+#'   function(args) {
+#'     res <- response()
+#'     
 #'     if (args['series'] == 'beast_wars') {
-#'       res$body('Right on!')$send()
+#'       body(res) <- 'Right on!'
 #'     } else {
-#'       res$body('I can dig that.')$send()
+#'       body(res) <- 'I can dig that.'
 #'     }
+#'     
+#'     res
 #'   }
 #' )
 #' 
-#' ## accepts both GET and POST requests
-#' ## no capture groups, no need for args
+#' # accepts both GET and POST requests
+#' # no capture groups, no need for args
 #' route(
 #'   c('get', 'post'),
 #'   '^blog/comments$',
-#'   function(req, res) {
-#'     if (req$method == 'get') {
-#'       res$body('The latest comments...')$send()
-#'     } else if (req$method == 'post') {
-#'       res$body('Uploading comment')$send()
+#'   function() {
+#'     req <- request()
+#'     res <- response()
+#'     
+#'     if (method(req) == 'get') {
+#'       body(res) <- 'Get your own comments!'
+#'     } else {
+#'       body(res) <- 'Thanks for commenting'
 #'     }
+#'     
+#'     res
 #'   }
 #' )
 route <- function(method, path, handler) {
