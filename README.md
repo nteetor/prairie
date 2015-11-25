@@ -23,12 +23,9 @@ app(
     method = c('get', 'post'),
     path = '^data$',
     handler = function() {
-      res <- response()
+      res <- as.response(iris)
       
-      status(res) <- 200
-      
-      res[['Content-Type']] <- 'application/json'
-      body(res) <- iris
+      # change status, headers, etc.
       
       res
     }
