@@ -1,6 +1,6 @@
 Package: prairie
 Type: Package
-Title: Grow Web Applications In R
+Title: Get Web Applications Growing In R
 Version: 0.0.0.1
 Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))
 Description: A web framework for R, prairie is based on existing 
@@ -25,14 +25,15 @@ BugReports: https://github.com/nteetor/prairie/issues
 Collate:
     'prairie.R'
     'utils.R'
-    'conditions.R'
     'route-class.R'
     'route.R'
     'request-class.R'
+    'request-header.R'
     'request.R'
     'response-class.R'
-    'response-headers.R'
+    'response-header.R'
     'response.R'
+    'body.R'
     'application-class.R'
     'application.R'
     'expectations.R'

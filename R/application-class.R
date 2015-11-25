@@ -1,9 +1,5 @@
-#' @export
 is.application <- function(obj) inherits(obj, 'application')
 
-#' @docType class
-#' @keywords internal
-#' @name application-class
 application__ <- R6Class(
   'application',
   public = list(

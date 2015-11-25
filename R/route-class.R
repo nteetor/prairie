@@ -66,9 +66,6 @@ as.route.list <- function(x) {
 #' @rdname as.route
 is.route <- function(x) inherits(x, 'route')
 
-#' @docType class
-#' @keywords internal
-#' @name route-class
 route__ <- R6Class(
   'route',
   public = list(

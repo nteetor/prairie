@@ -1,4 +1,4 @@
-#' HTTP Response Headers
+#' HTTP Response Header Fields
 #' 
 #' Within prairie, getting and setting the fields of the \code{\link{response}} 
 #' header is much like assigning values to lists. One can use \code{[}, 

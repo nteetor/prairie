@@ -4,7 +4,7 @@
 \name{prairie}
 \alias{prairie}
 \alias{prairie-package}
-\title{Grow Web Applications In R}
+\title{Get Web Applications Growing In R}
 \description{
 A web framework for R, prairie is based on existing
 frameworks like Express (JS), Django (python), Wookie (lisp), and

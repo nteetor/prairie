@@ -1,39 +1,39 @@
-#' @docType class
-#' @keywords internal
-#' @name request-class
+is.request <- function(obj) inherits(obj, 'request')
+
 request__ <- R6Class(
   'request',
+  active = list(
+    args = function() private$args_, # TODO: take this out?
+    body = function() private$body_,
+    ip = function() private$ip_,
+    method = function() private$method_,
+    url = function() private$url_,
+    protocol = function() private$protocol_,
+    host_name = function() private$host_name_,
+    port = function() private$port_
+  ),
   public = list(
-    args = NULL,
-    body = NULL,
-    ip = NULL,
-    method = NULL,
-    url = NULL,
-    protocol = NULL,
-    host_name = NULL,
-    port = NULL,
-
     initialize = function(http_request) {
       assert_that(is.environment(http_request) || is.list(http_request))
       
-      self$body <- tryCatch(http_request$rook.input$read_lines(), error = function(e) NULL)
-      self$ip <- http_request$SERVER_NAME
-      self$url <- http_request$PATH_INFO
+      private$body_ <- tryCatch(http_request$rook.input$read_lines(), error = function(e) NULL)
+      private$ip_ <- http_request$SERVER_NAME
+      private$url_ <- http_request$PATH_INFO
 
       if (!is.null(http_request$ROUTE_PATH) && grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
-        args <- stringr::str_match_all(self$original_url, http_request$ROUTE_PATH)[[1]][1,][-1]
+        args <- stringr::str_match_all(private$url_, http_request$ROUTE_PATH)[[1]][1,][-1]
         args_names <- stringr::str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
-        self$args <- as.list(setNames(args, args_names))
+        private$args_ <- as.list(setNames(args, args_names))
       } else {
-        self$args <- list()
+        private$args_ <- list()
       }
 
-      self$protocol <- http_request$rook.url_scheme # definitely check this
+      private$protocol_ <- http_request$rook.url_scheme # definitely check this
 
-      self$method <- http_request$REQUEST_METHOD
-      self$port <- http_request$SERVER_PORT
-      self$host_name <- http_request$HTTP_HOST
+      private$method_ <- http_request$REQUEST_METHOD
+      private$port_ <- http_request$SERVER_PORT
+      private$host_name_ <- http_request$HTTP_HOST
 
       headers <- http_request[grep('^HTTP_', names(http_request), value = TRUE)]
       names(headers) <- gsub('_', '-', gsub('^http_', '', tolower(names(headers))))
@@ -95,7 +95,7 @@ request__ <- R6Class(
     type_is = function(type) {
       assert_that(is.character(type))
 
-      accepted_type <- sub('\\s*;.*$', '', self$get('content-type'))
+      accepted_type <- sub('\\s*;.*$', '', private$get('content-type'))
       accepted_regex <- gsub('\\*', '.*', accepted_type)
 
       if (grepl('/', type)) {
@@ -109,6 +109,14 @@ request__ <- R6Class(
     }
   ),
   private = list(
-    header_fields = NULL
+    header_fields = NULL,
+    args_ = NULL,
+    body_ = NULL,
+    ip_ = NULL,
+    method_ = NULL,
+    url_ = NULL,
+    protocol_ = NULL,
+    host_name_ = NULL,
+    port_ = NULL
   )
 )

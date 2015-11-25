@@ -11,7 +11,7 @@ A response object represents the HTTP response returned by a route handler.
 }
 \examples{
 # simple 301 response
-res_301 <- resposne()
+res_301 <- response()
     
 res[['Connection']] <- 'close'
 status(res_301) <- 301
