@@ -1,4 +1,4 @@
 library(testthat)
 library(prairie)
 
-test_check("pairie")
+test_check("prairie")

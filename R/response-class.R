@@ -16,103 +16,37 @@
 #' is.response(3030)
 is.response <- function(obj) inherits(obj, 'response')
 
-# @section Fields:
-#   
-#   None
-#   
-# @section Methods:
-#   
-#   Response objects understand the methods below. Many of these methods 
-#   invisibly return the response object and allow additional methods to be 
-#   chained. See the following example handler, \preformatted{  function(req,
-#   res) { res$status(404)$body("Page not found")$send() }} Methods which end
-#   chains return a value, like \code{get}, or end execution of the handler,
-#   like \code{send} or \code{json}.
-#   
-#   \strong{\code{append(field, value)}}
-#   
-#   Append character vector \code{value} to the existing value for header field
-#   \code{field}.
-#   
-#   \strong{\code{attachment(path = NULL)}}
-#   
-#   Calling \code{attachment} will set the "Content-Disposition" and 
-#   "Content-Type" HTTP header fields of the response object.
-#   
-#   If \code{path} is specified the path is split, the attchment file name 
-#   parsed, and "Content-Disposition" set accordingly.
-#   
-#   \strong{\code{cookie(name, value, expires = NULL)}}
-#   
-#   Set a cookie with \code{name} and \code{value}. If \code{expires} is not 
-#   \code{NULL} and of class \code{time} or \code{Date}, the cookie attribute 
-#   Expires is set to \code{expires}. \code{expires} is automatically formatted
-#   in HTTP datetime format.
-#   
-#   \strong{\code{clear_cookie(name)}}
-#   
-#   Clears cookie \code{name}.
-#   
-#   \strong{\code{download(path, filename = path)}}
-#   
-#   Prompts the client to download a file specified by \code{path}. An 
-#   alternate name may be specified by \code{filename}.
-#   
-#   \strong{\code{format(callbacks)}}
-#   
-#   Used to modify the response based on the \code{Accept} HTTP header of the 
-#   request received. \code{callbacks} is a list of functions. The specific 
-#   callback executed for a given request is determined by item name and order 
-#   with \code{callbacks}. See example, \preformatted{  list( # selected if
-#   "text/html" is accepted "text/html" = function() { res$send("We like HTML
-#   too") }, # selected if "text/plain", "text/html", etc. # are accepted 
-#   "text/*" = function() { res$send("We accept all texts of types") }, #
-#   selected if no accepted type is found "default" = function() { res$send("We
-#   find no fault with default") } )} In the above example although "text/html"
-#   would match both the first and second callbacks, \code{format} uses the
-#   first matching callback.
-#   
-#   If \code{"default"} is not supplied and no matching type is found a 406 
-#   status is sent back to the client. If a function does not end execution of 
-#   the handler, \code{end} is called after the selected function finishes 
-#   execution.
-#   
-#   \strong{\code{get(field)}}
-#   
-#   Retreives the value for HTTP header \code{field} from the response headers.
-#   \code{field} is not case sensitive.
-#   
-#   \strong{\code{json(body = NULL)}}
-#   
-#   Sets the response Content-Type to \code{"application/json"}. If \code{body}
-#   is not \code{NULL} and of class \code{character}, \code{list}, or 
-#   \code{data.frame}, \code{body} is converted to JSON using 
-#   \code{jsonlite::toJSON} and the response body is set.
-#   
-#   Requires installation of package \code{jsonlite}.
-#   
-# @docType class
-# @keywords internal
-# @name response-class
 response__ <- R6Class(
   'response',
+  active = list(
+    body = function(value) {
+      if (missing(value)) {
+        private$body_
+      } else {
+        private$body_ <- value
+        invisible(self)
+      }
+    },
+    status = function(code) {
+      if (missing(code)) {
+        private$status_code
+      } else {
+        assert_that(is.numeric(code))
+        
+        private$status_code <- code
+        invisible(self)
+      }
+    }
+  ),
   public = list(
     initialize = function() {
       private$status_code <- 200
       private$headers <- list('Content-Type' = 'text/plain')
-      private$body <- ''
+      private$body_ <- ''
       
       invisible(self)
     },
 
-    add_body = function(value) {
-      assert_that(is.character(value))
-      private$body <- value
-    },
-    get_body = function() {
-      private$body
-    },
-    
     append = function(field, value) {
       assert_that(is.character(field), is.character(value))
 
@@ -201,7 +135,7 @@ response__ <- R6Class(
       if (!is.null(body)) {
         assert_that(is.character(body) | is.list(body) | is.data.frame(body))
 
-        private$body <- jsonlite::toJSON(body)
+        private$body_ <- jsonlite::toJSON(body)
       }
 
       self$set('Content-Type', 'application/json')
@@ -255,7 +189,7 @@ response__ <- R6Class(
           self$json(body)
         } else {
           self$set('Content-Type', 'text/html')
-          private$body <- body
+          private$body_ <- body
         }
       }
 
@@ -278,7 +212,7 @@ response__ <- R6Class(
         stop('option `root` must be specified or `path` must be absolute')
       }
 
-      full_path <- httpuv::encodeURI(file.path(root, path))
+      full_path <- encodeURI(file.path(root, path))
 
       if (!is.null(all_options$headers)) {
         if (!is_named(all_options$headers)) {
@@ -309,26 +243,20 @@ response__ <- R6Class(
         warning('option `dot_files` is not implemented')
       }
 
-      private$body <- setNames(full_path, 'file')
+      private$body_ <- setNames(full_path, 'file')
       
       invisible(self)
     },
     send_status = function(status) {
       assert_that(is.numeric(status))
       self$status(status)
-      private$body <- get_status_description(status)
+      private$body_ <- get_status_description(status)
 
       invisible(self)
     },
     set = function(field, value) {
-      assert_that(is.character(field), is.null(value) || is.character(value))
-      private$headers[[field]] <- value
-      
-      invisible(self)
-    },
-    status = function(code) {
-      assert_that(is.numeric(code))
-      private$status_code <- code
+      assert_that(is.character(field))
+      private$headers[[field]] <- if (is.null(value)) NULL else as.character(value)
       
       invisible(self)
     },
@@ -360,10 +288,10 @@ response__ <- R6Class(
           sep = ''
         )
       }
-      if (nchar(private$body) > 0) {
+      if (nchar(private$body_) > 0) {
         cat(
           '\r\n\r\n',
-          paste0(private$body),
+          paste0(private$body_),
           '\r\n',
           sep = ''
         )
@@ -373,7 +301,7 @@ response__ <- R6Class(
       list(
         status = private$status_code,
         headers = private$headers,
-        body = private$body
+        body = private$body_
       )
     },
 
@@ -383,7 +311,7 @@ response__ <- R6Class(
   ),
   private = list(
     status_code = NULL,
-    body = NULL,
+    body_ = NULL,
     headers = NULL
   )
 )

@@ -8,9 +8,6 @@
 #' 
 #' @param \ldots Routes or objects to coerce to routes.
 #'   
-#' @details
-#' 
-#'  
 #' @export
 #' @name app
 app <- function(...) {
@@ -19,13 +16,18 @@ app <- function(...) {
   application__$new(routes)  
 }
 
-#' Run application
+#' Run Prairie Application
 #'
-#' Starts \code{application} at \code{host} on \code{port}. 
+#' Starts an \code{\link{app}} at \code{host} on \code{port}. 
+#' 
+#' @param app An \code{application} object.
+#' @param host A character vector specifying the host name.
+#' @param port A numeric specifying the port number.
 #'
 #' @export
 #' @name start
-start <- function(application, host, port) {
-  assert_that(is.application(application), is.character(host), is.numeric(port))
-  application$listen(host, port)
+start <- function(app, host, port) {
+  assert_that(is.application(app), is.character(host), is.numeric(port))
+  
+  app$listen(host, port)
 }

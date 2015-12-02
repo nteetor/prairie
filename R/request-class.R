@@ -21,8 +21,8 @@ request__ <- R6Class(
       private$url_ <- http_request$PATH_INFO
 
       if (!is.null(http_request$ROUTE_PATH) && grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
-        args <- stringr::str_match_all(private$url_, http_request$ROUTE_PATH)[[1]][1,][-1]
-        args_names <- stringr::str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
+        args <- str_match_all(private$url_, http_request$ROUTE_PATH)[[1]][1,][-1]
+        args_names <- str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
         private$args_ <- as.list(setNames(args, args_names))
       } else {

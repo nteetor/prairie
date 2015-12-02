@@ -1,67 +1,65 @@
-library(dull)
-context('route-class')
-
-test_that('route stops on missing arguments', {
-  expect_error(route$new())
-  expect_error(route$new('GET'))
-  expect_error(route$new('GET', '^test/$'))
-})
+library(prairie)
+context('route object')
 
 test_that('route stops on incorrect arguments', {
-  expect_error(route$new(404, '^test/$', function(req, res) NULL))
-  expect_error(route$new('GET', 404, function(req, res) NULL))
-  expect_error(route$new('GET', '^test/$', 404))
+  expect_error(route(3030, '^test/$', function() response()))
+  expect_error(route('get', 3030, function() response()))
+  expect_error(route('get', '^test/$', 'WRONG'))
 })
 
-test_that('callback function formals', {
-  expect_error(route$new('GET', '^test/$', function() NULL))
-  expect_error(route$new('GET', '^test/$', function(req) NULL))
-  expect_error(route$new('GET', '^test/$', function(req, res, extra_arg) NULL))
+test_that('route matching with different paths', {
+  route_hello <- route('get', '^test$', function() response())
+
+  expect_false(route_hello$matches('get', 'hello/world/'))
+  expect_false(route_hello$matches('get', 'unit/test'))
+  expect_false(route_hello$matches('get', 'testing'))
+
+  expect_true(route_hello$matches('get', 'test'))
 })
 
-test_that('route matching works for simple strings', {
-  route_hello <- route$new('GET', '^hello/$', function(req, res) NULL)
-
-  expect_false(route_hello$uri_matches('say/hello/'))
-  expect_false(route_hello$uri_matches('hello/world/'))
-  expect_false(route_hello$uri_matches('helloo/'))
-
-  expect_true(route_hello$uri_matches('hello/'))
+test_that('route matching with different methods', {
+  route_get <- route('get', '^.*', function() response())
+  
+  expect_false(route_get$matches('put', 'path'))
+  expect_false(route_get$matches('head', 'path'))
+  expect_false(route_get$matches('post', 'path'))
+  
+  expect_true(route_get$matches('get', 'path'))
+  expect_true(route_get$matches('get', 'another/path'))
+  expect_true(route_get$matches('get', 'else'))
 })
 
-test_that('index request is correctly matched', {
-  route_index <- route$new('GET', '^$', function(req, res) NULL)
+test_that('index route matches correct paths', {
+  route_index <- route('get', '^$', function() response())
 
-  expect_true(route_index$uri_matches(''))
-  expect_true(route_index$uri_matches('/'))
+  expect_false(route_index$matches('get', 'oops'))
+  
+  expect_true(route_index$matches('get', ''))
 })
 
-test_that('vector of allowed uris is correctly concatenated', {
-  route_vector_4 <- route$new('GET', c('red', 'fish', 'blue', 'fish'), function(req, res) NULL)
-
-  expect_equal(route_vector_4$uri, 'red|fish|blue|fish')
-
-  route_vector_2 <- route$new('GET', c('raj', 'that'), function(req, res) NULL)
-
-  expect_equal(route_vector_2$uri, 'raj|that')
+test_that('path may only be vector of length 1', {
+  expect_error(route('get', c('red', 'fish', 'blue', 'fish'), function() respsonse()))
+  expect_error(route('get', c('one', 'two'), function() response()))
 })
 
-test_that('a single route will catch all matching requests', {
-  route_many <- route$new('GET', c('^number$', '^numeric$', '^numeral$'), function(req, res) NULL)
+test_that('a single route catches matching requests', {
+  route_many <- route('get', c('^number|numeric|numeral$'), function() response())
 
-  expect_true(route_many$uri_matches('number'))
-  expect_true(route_many$uri_matches('numeric'))
-  expect_true(route_many$uri_matches('numeral'))
+  expect_true(route_many$matches('get', 'number'))
+  expect_true(route_many$matches('get', 'numeric'))
+  expect_true(route_many$matches('get', 'numeral'))
 })
 
 test_that('uri named parameters are extracted', {
-  route_groups <- route$new('GET', '^/(?<name>\\w+)/(?<age>\\d+)$', function(req, res) NULL)
+  skip('TODO')
+  
+  route_groups <- route('get', '^/(?<name>\\w+)/(?<age>\\d+)$', function() NULL)
 
   expect_equal(route_groups$params, c('name', 'age'))
 
-  expect_error(route$new('GET', '^/(?<>\\w+)', function(req, res) NULL), 'route URI contains empty')
+  expect_error(route('get', '^/(?<>\\w+)', function() NULL), 'route URI contains empty')
 
-  route_no_groups <- route$new('GET', '^/foo/bar', function(req, res) NULL)
+  route_no_groups <- route('get', '^/foo/bar', function() NULL)
 
   expect_equal(route_no_groups$params, c())
 })

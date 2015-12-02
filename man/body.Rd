@@ -4,21 +4,24 @@
 \alias{body}
 \alias{body.request}
 \alias{body.response}
+\alias{body<-}
 \alias{body<-.response}
 \title{HTTP Message Body}
 \usage{
-\method{body}{request}(req)
+body(x)
 
-\method{body}{response}(res)
+body(x) <- value
 
-\method{body}{response}(res) <- value
+\method{body}{request}(x)
+
+\method{body}{response}(x)
+
+\method{body}{response}(x) <- value
 }
 \arguments{
-\item{req}{A \code{request} object.}
+\item{x}{An \R object.}
 
-\item{res}{A \code{response} object.}
-
-\item{value}{Character vector to set as message body of \code{res}.}
+\item{value}{An \R object, complex objects are converted to JSON, see details.}
 }
 \value{
 A character string if the request contains a message body, otherwise 

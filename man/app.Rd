@@ -16,7 +16,4 @@ and sending back HTTP responses. Route handlers are pure functions, therefore
 for a given HTTP request an application will always return the same HTTP
 response.
 }
-\details{
-
-}
 

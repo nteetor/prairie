@@ -22,7 +22,7 @@ application__ <- R6Class(
       self$handle_request(http_request)
     },
     listen = function(host, port) {
-      httpuv::runServer(host, port, self)
+      runServer(host, port, self)
     },
 
     add_route = function(route) {
@@ -31,7 +31,7 @@ application__ <- R6Class(
     },
     handle_request = function(http_request) {
       rte <- Find(
-        function(r) r$matches(http_request$REQUEST_METHOD, http_request$PATH_INFO), 
+        function(r) with(http_request, r$matches(REQUEST_METHOD, PATH_INFO)), 
         self$routes 
       )
 

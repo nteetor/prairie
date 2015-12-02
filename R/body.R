@@ -47,28 +47,33 @@
 #' )
 NULL
 
-body <- function(x, ...) UseMethod('body')
+#' @param x An \R object.
+#' @export
+#' @rdname body
+body <- function(x) UseMethod('body')
+
+#' @param value An \R object, complex objects are converted to JSON, see details.
+#' @export
+#' @rdname body
 `body<-` <- function(x, value) UseMethod('body<-')
 
-#' @param req A \code{request} object.
 #' @export
 #' @rdname body
-body.request <- function(req) {
-  req$body
+body.request <- function(x) {
+  x$body
 }
 
-#' @param res A \code{response} object.
 #' @export
 #' @rdname body
-body.response <- function(res) {
-  res$get_body()
+body.response <- function(x) {
+  x$body
 }
 
-#' @param value Character vector to set as message body of \code{res}.
 #' @export
 #' @rdname body
-`body<-.response` <- function(res, value) {
+`body<-.response` <- function(x, value) {
   # TODO
   # value <- as.JSON(value)
-  res$add_body(value)
+  x$body <- value
+  invisible(x)
 }

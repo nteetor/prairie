@@ -1,10 +1,8 @@
-#' Coercing to a route
+#' Coercing Objects to Routes
 #' 
 #' The function \code{as.route} provides an alternative way to create 
 #' \code{\link[=route]{routes}} from lists or files.
 #' 
-#' @param x any \R object.
-#'   
 #' @details
 #' 
 #' If \code{x} is a list, \code{x} must have the following named items: 
@@ -26,18 +24,21 @@
 #' 
 #' @export
 #' @name as.route
+NULL
+
+#' @param x An \R object.
+#' @param \ldots Arguments passed on to other methods.
+#' @export
 as.route <- function(x, ...) UseMethod('as.route')
 
-#' @inheritParams as.route
 #' @export
 #' @rdname as.route
-as.route.route <- function(x) x
+as.route.route <- function(x, ...) x
 
-#' @inheritParams as.route
 #' @param path System path to file.
 #' @export
 #' @rdname as.route
-as.route.character <- function(x, path = 'routes') {
+as.route.character <- function(x, path = 'routes', ...) {
   assert_that(
     file.exists(file.path(path, x)),
     is.readable(file.path(path, x))
@@ -49,10 +50,9 @@ as.route.character <- function(x, path = 'routes') {
   route
 }
 
-#' @inheritParams as.route
 #' @export
 #' @rdname as.route
-as.route.list <- function(x) {
+as.route.list <- function(x, ...) {
   assert_that(
     x %has_name% 'method',
     x %has_name% 'path',
@@ -61,7 +61,6 @@ as.route.list <- function(x) {
   route__$new(x$method, x$path, x$handler)
 }
 
-#' @inheritParams as.route
 #' @export
 #' @rdname as.route
 is.route <- function(x) inherits(x, 'route')
@@ -82,7 +81,7 @@ route__ <- R6Class(
       )
       
       self$method <- tolower(method)
-      self$path <- self$sanitize_path(path)
+      self$path <- path
       self$handler <- handler
 
       invisible(self)
@@ -95,24 +94,8 @@ route__ <- R6Class(
       (method %in% self$method || self$method == 'all') && grepl(self$path, path)
     },
     dispatch = function(request_environment) {
-      print(environment())
+      assign('__request_environment', request_environment)
       self$handler()
-#       tryCatch(
-#         self$handler(),
-#         error = function(e) {
-#           list(
-#             status = 500,
-#             headers = list('Content-Type' = 'text/plain'),
-#             body = paste0('Server error: ', e$message)
-#           )
-#         }
-#       )
-    },
-    
-    sanitize_path = function(path) {
-      # I typically would not modify the user's specification, however
-      # the fact that ^$, in R, does not match the empty string is bonkers
-      if (path == '^$') '^\\B$' else paste(path, collapse = '|')
     }
   )
 )

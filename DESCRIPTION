@@ -33,8 +33,8 @@ Collate:
     'response-class.R'
     'response-header.R'
     'response.R'
+    'status.R'
     'body.R'
     'application-class.R'
     'application.R'
-    'expectations.R'
 RoxygenNote: 5.0.1

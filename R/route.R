@@ -1,14 +1,14 @@
 #' Routing
 #' 
 #' Within prairie, a route is a \emph{a mapping between any number of 
-#' \link[=method]{methods} and a single \link{path}.} A route may never have 
-#' more than one path, however a path may be defined as a regular expression. In
-#' this case a single route would match multiple URIs.
+#' \code{methods} and a single \code{path}.} A route may never have more than
+#' one path, however a path may be defined as a regular expression. In this case
+#' a single route would match multiple URIs.
 #' 
 #' @param method A character vector specifying an HTTP method(s), such as 
 #'   \code{"get"}, \code{"post"}, or \code{"put"}
 #' @param path A character vector specifying which URIs the route will handle
-#' @param handler A function which returns a \link{repsonse} object, see below 
+#' @param handler A function which returns a \code{response} object, see below 
 #'   for more information
 #'   
 #' @details
@@ -32,9 +32,9 @@
 #' For example, if \code{path} is 
 #' \tabular{c}{\code{"^wizard/(?<alias>[a-z]+)/([a-z]+)$"}} and the application 
 #' receives a request for \tabular{c}{\code{/wizard/sparrowhawk/ged}} then 
-#' \code{args} would be the character vector \code{c("alias" = "sparrowhawk", ""
-#' = "ged")} during the evaluation of \code{handler}. See next section for
-#' details about \code{args} and \code{handler}.
+#' \code{args} would be the character vector \tabular{c}{\code{c("alias" =
+#' "sparrowhawk", "" = "ged")}} during evaluation of \code{handler}. See
+#' next section for details about \code{args} and \code{handler}.
 #' 
 #' \strong{\code{handler}}
 #' 
@@ -50,6 +50,8 @@
 #' @return
 #' 
 #' A route object.
+#' 
+#' @seealso \code{\link{request}}, \code{\link{response}}
 #' 
 #' @export
 #' @name route

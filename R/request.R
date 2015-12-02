@@ -5,8 +5,8 @@
 #' @export
 #' @name request
 request <- function() {
-  if (exists('request_environment', sys.frame(1), inherits = FALSE)) {
-    envir <- get('request_environment', sys.frame(1))
+  if (exists('__request_environment', sys.frame(1), inherits = FALSE)) {
+    envir <- get('__request_environment', sys.frame(1))
   } else {
     envir <- list()
   }

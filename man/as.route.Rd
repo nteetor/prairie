@@ -6,22 +6,24 @@
 \alias{as.route.list}
 \alias{as.route.route}
 \alias{is.route}
-\title{Coercing to a route}
+\title{Coercing Objects to Routes}
 \usage{
 as.route(x, ...)
 
-\method{as.route}{route}(x)
+\method{as.route}{route}(x, ...)
 
-\method{as.route}{character}(x, path = "routes")
+\method{as.route}{character}(x, path = "routes", ...)
 
-\method{as.route}{list}(x)
+\method{as.route}{list}(x, ...)
 
 is.route(x)
 }
 \arguments{
-\item{x}{any \R object.}
+\item{x}{An \R object.}
 
 \item{path}{System path to file.}
+
+\item{\ldots}{Arguments passed on to other methods.}
 }
 \value{
 An object of class \code{route}.
