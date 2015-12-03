@@ -256,7 +256,7 @@ response__ <- R6Class(
     },
     set = function(field, value) {
       assert_that(is.character(field))
-      private$headers[[field]] <- if (is.null(value)) NULL else as.character(value)
+      private$headers[[field]] <- value
       
       invisible(self)
     },
@@ -278,13 +278,14 @@ response__ <- R6Class(
     },
 
     as_HTTP_response = function() {
+      headers <- lapply(private$headers, as.character)
       cat(
         paste('HTTP/1.1', private$status_code, get_status_description(private$status_code, FALSE))
       )
-      if (!is.null(private$headers)) {
+      if (!is.null(headers)) {
         cat(
           '\r\n',
-          paste0(names(private$headers), ': ', private$headers, collapse = '\r\n'),
+          paste0(names(headers), ': ', headers, collapse = '\r\n'),
           sep = ''
         )
       }
@@ -300,7 +301,7 @@ response__ <- R6Class(
     as_Rook_response = function() {
       list(
         status = private$status_code,
-        headers = private$headers,
+        headers = lapply(private$headers, as.character),
         body = private$body_
       )
     },
