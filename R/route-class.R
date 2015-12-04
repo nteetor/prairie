@@ -44,7 +44,7 @@ as.route.character <- function(x, path = 'routes', ...) {
     is.readable(file.path(path, x))
   )
   
-  route <- source(file.path(path, x))$value
+  route <- tryCatch(source(file.path(path, x))$value, error = function(e) NULL)
   if (!is.route(route)) stop('Could not parse route from "', file.path(path, x), '"', call. = FALSE)
   
   route

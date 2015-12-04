@@ -49,4 +49,6 @@ test_that('get_status_description', {
   
   expect_equal('3030', get_status_description(3030))
   expect_null(get_status_description(3030, default_to_status = FALSE))
+  expect_error(get_status_description(list()))
+  expect_error(get_status_description(NULL))
 })
