@@ -1,6 +1,6 @@
 is.request <- function(obj) inherits(obj, 'request')
 
-request__ <- R6Class(
+request__ <- R6::R6Class(
   'request',
   active = list(
     args = function() private$args_, # TODO: take this out?
@@ -15,6 +15,8 @@ request__ <- R6Class(
   public = list(
     initialize = function(http_request) {
       assert_that(is.environment(http_request) || is.list(http_request))
+      
+      http_request <- as.list(http_request)
       
       private$body_ <- tryCatch(http_request$rook.input$read_lines(), error = function(e) NULL)
       private$ip_ <- http_request$SERVER_NAME
@@ -86,16 +88,23 @@ request__ <- R6Class(
     get = function(field) {
       assert_that(is.character(field))
 
-      if (tolower(field) %in% c('referer', 'referrer')) {
+      if (field %in% c('Referer', 'Referrer')) {
         private$header_fields$referer %||% private$header_fields$referrer
       } else {
         private$header_fields[[tolower(field)]]
       }
     },
+    set = function(field, value) {
+      assert_that(is.character(field))
+      
+      private$header_fields[[tolower(field)]] <- value
+      
+      invisible(self)
+    },
     type_is = function(type) {
       assert_that(is.character(type))
 
-      accepted_type <- sub('\\s*;.*$', '', private$get('content-type'))
+      accepted_type <- sub('\\s*;.*$', '', self$get('content-type'))
       accepted_regex <- gsub('\\*', '.*', accepted_type)
 
       if (grepl('/', type)) {
@@ -106,7 +115,9 @@ request__ <- R6Class(
 
       # this will need -plenty- of testing
       grepl(accepted_regex, type) || grepl(type_regex, accepted_type)
-    }
+    },
+    
+    headers = function() private$header_fields
   ),
   private = list(
     header_fields = NULL,

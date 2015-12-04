@@ -1,6 +1,6 @@
 is.application <- function(obj) inherits(obj, 'application')
 
-application__ <- R6Class(
+application__ <- R6::R6Class(
   'application',
   public = list(
     initialize = function(routes) {

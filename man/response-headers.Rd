@@ -7,21 +7,21 @@
 \alias{response-headers}
 \title{HTTP Response Header Fields}
 \usage{
-\method{[}{response}(res, name)
+\method{[}{response}(x, field)
 
-\method{[[}{response}(res, name)
+\method{[[}{response}(x, field)
 
-\method{[[}{response}(res, name) <- value
+\method{[[}{response}(x, field) <- value
 }
 \arguments{
-\item{res}{A \code{response} object}
+\item{x}{A \code{response} object.}
 
-\item{name}{HTTP response header field(s), case sensitive}
+\item{field}{An HTTP response header field name.}
 
-\item{value}{Value to assign to field \code{name}}
+\item{value}{Value to assign to \code{field}.}
 }
 \value{
-A list of corresponding header field values. If \code{name} is not set for 
+A list of corresponding header field values. If \code{field} is not set for 
 \code{res} then \code{NULL} is returned.
 }
 \description{

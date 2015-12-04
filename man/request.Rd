@@ -4,7 +4,7 @@
 \alias{request}
 \title{Get an HTTP Request}
 \usage{
-request()
+request(envir)
 }
 \description{
 Request objects, yeah

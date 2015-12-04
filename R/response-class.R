@@ -16,7 +16,7 @@
 #' is.response(3030)
 is.response <- function(obj) inherits(obj, 'response')
 
-response__ <- R6Class(
+response__ <- R6::R6Class(
   'response',
   active = list(
     body = function(value) {

@@ -65,7 +65,7 @@ as.route.list <- function(x, ...) {
 #' @rdname as.route
 is.route <- function(x) inherits(x, 'route')
 
-route__ <- R6Class(
+route__ <- R6::R6Class(
   'route',
   public = list(
     method = NULL,

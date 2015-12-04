@@ -25,13 +25,12 @@
 #'   })
 host <- function(req) {
   assert_that(is.request(req))
-  req$host
+  req$host_name
 }
 
-#' HTTP Request Types
+#' HTTP Request Content Type
 #' 
-#' Get the accepted content types for a request. Accepted types are specified by
-#' the header field \emph{Accept}.
+#' Get the content types of a request.
 #' 
 #' @param req A \code{request} object
 #'   
@@ -42,7 +41,7 @@ host <- function(req) {
 #' @name type
 type <- function(req) {
   assert_that(is.request(req))
-  req$get('Accept')
+  req$get('Content-Type')
 }
 
 #' HTTP Request URL
@@ -55,7 +54,40 @@ type <- function(req) {
 #'   \code{\link{url}}
 #'   
 #' @export
+#' @name url
 url <- function(req) {
   assert_that(is.request(req))
   req$url
 }
+
+#' HTTP Request Header Fields
+#' 
+#' Get and header field values for \code{request} objects.
+#' 
+#' @details
+#' 
+#' For more information regarding specific HTTP request header fields refer to 
+#' \url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}.
+#' 
+#' @name request-headers
+#' @examples
+#' req <- request()
+#' 
+#' req[['Accept']] <- 'text/*'
+#' req[['From']] <- '127.0.0.1'
+NULL
+
+#' @param x A \code{request} object.
+#' @param field An HTTP request header field name.
+#' @export
+#' @rdname request-headers
+`[.request` <- function(x, field) sapply(field, x$get, simplify = FALSE, USE.NAMES = TRUE)
+
+#' @export
+#' @rdname request-headers
+`[[.request` <- function(x, field) x$get(field)
+
+#' @param value Value to assign to \code{field}.
+#' @export
+#' @rdname request-headers
+`[[<-.request` <- function(x, field, value) x$set(field, value)

@@ -4,10 +4,8 @@
 #'
 #' @export
 #' @name request
-request <- function() {
-  if (exists('__request_environment', sys.frame(1), inherits = FALSE)) {
-    envir <- get('__request_environment', sys.frame(1))
-  } else {
+request <- function(envir) {
+  if (missing(envir)) {
     envir <- list()
   }
   request__$new(envir)
