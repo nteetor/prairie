@@ -1,4 +1,3 @@
-library(prairie)
 context('request object')
 
 template_request <- list(

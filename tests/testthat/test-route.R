@@ -1,4 +1,3 @@
-library(prairie)
 context('route object')
 
 test_that('route stops on incorrect arguments', {

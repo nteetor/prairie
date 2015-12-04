@@ -1,4 +1,3 @@
-library(prairie)
 context('response class')
 
 test_that('responses created properly', {
@@ -24,13 +23,7 @@ test_that('response defaults set when created', {
 test_that('get values with `[[`', {
   res <- response()
   
-  res[['Content-Type']] <- 'text/html'
-  
-  expect_equal(res[['Content-Type']], 'text/html')
-
-  res[['Warning']] <- 'challenger approaching'
-  expect_equal(res[['Warning']], 'challenger approaching')
-
+  expect_equal(res[['Content-Type']], 'text/plain')
   expect_null(res[['missing']])
   expect_null(res[['whoops']])
 })
@@ -40,7 +33,9 @@ test_that('set field values `[[<-`', {
 
   res[['Connection']] <- 'close'
   res[['Content-Length']] <- 3030
+  res[['Warning']] <- 'challenger approaching'
 
   expect_equal(res[['Connection']], 'close')
   expect_equal(res[['Content-Length']], 3030)
+  expect_equal(res[['Warning']], 'challenger approaching')
 })
