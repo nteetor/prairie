@@ -2,7 +2,7 @@
 % Please edit documentation in R/request-header.R
 \name{type}
 \alias{type}
-\title{HTTP Request Types}
+\title{HTTP Request Content Type}
 \usage{
 type(req)
 }
@@ -10,8 +10,7 @@ type(req)
 \item{req}{A \code{request} object}
 }
 \description{
-Get the accepted content types for a request. Accepted types are specified by
-the header field \emph{Accept}.
+Get the content types of a request.
 }
 \seealso{
 \code{\link{body}}, \code{\link{host}}, \code{\link{type}},

@@ -6,7 +6,16 @@
 \usage{
 request(envir)
 }
+\arguments{
+\item{envir}{An optional environment to create the request from.}
+}
 \description{
 Request objects, yeah
+}
+\details{
+The \code{envir} argument is necessary for testing and other fringe cases.
+Typically a \code{request} object is implicity instantiated from the Rook
+request environment \code{httpuv} passes to the \code{call} function. See the
+\code{httpuv::startServer} documentation for more information.
 }
 
