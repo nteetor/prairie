@@ -5,9 +5,9 @@ application__ <- R6::R6Class(
   public = list(
     initialize = function(routes) {
       assert_that(all(vapply(routes, is.route, logical(1))))
-      
-      self$routes <- routes
-      self$default_404 <- list(
+
+      private$routes <- routes
+      private$default_404 <- list(
         status = 404,
         headers = list(
           'Content-Type' = 'text/html'
@@ -26,16 +26,16 @@ application__ <- R6::R6Class(
     },
 
     add_route = function(route) {
-      self$routes <- append(self$routes, route)
+      private$routes <- append(private$routes, route)
       invisible(self)
     },
     handle_request = function(http_request) {
       rte <- Find(
-        function(r) with(http_request, r$matches(REQUEST_METHOD, PATH_INFO)), 
-        self$routes 
+        function(r) with(http_request, r$matches(REQUEST_METHOD, PATH_INFO)),
+        private$routes
       )
 
-      if (length(rte) == 0) return(self$default_404)
+      if (length(rte) == 0) return(private$default_404)
 
       http_request$ROUTE_PATH <- rte$path
       rte$dispath(http_request)$as_Rook_response()
