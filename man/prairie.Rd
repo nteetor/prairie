@@ -10,7 +10,8 @@ A web framework for R, prairie is based on existing
 frameworks like Express (JS), Django (python), Wookie (lisp), and
 Sinatra (ruby) and provides R users with a set of tools to create
 web applications from scratch. Alternatively, users can coerce and
-combine existing R objects into routes and applications.
+combine existing R code and custom classes into responses, routes,
+and applications to serve their code and data across the web.
 }
 \seealso{
 \code{\link{app}}, \code{\link{route}}, \code{\link{request}}, and

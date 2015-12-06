@@ -1,17 +1,17 @@
 #' Test if response
-#' 
+#'
 #' \code{TRUE} if object is a response.
-#' 
+#'
 #' @param obj An \R object
-#' 
+#'
 #' @export
 #' @examples
 #' # FALSE
 #' is.response(logical(1))
-#' 
+#'
 #' # TRUE
 #' is.response(response())
-#' 
+#'
 #' # FALSE
 #' is.response(3030)
 is.response <- function(obj) inherits(obj, 'response')
@@ -23,7 +23,12 @@ response__ <- R6::R6Class(
       if (missing(value)) {
         private$body_
       } else {
-        private$body_ <- value
+        if (is.list(value) || is.data.frame(value)) {
+          private$body_ <- as.json(value)
+          self$set('Content-Type', 'application/json')
+        } else {
+          private$body_ <- value
+        }
         invisible(self)
       }
     },
@@ -32,7 +37,7 @@ response__ <- R6::R6Class(
         private$status_code
       } else {
         assert_that(is.numeric(code))
-        
+
         private$status_code <- code
         invisible(self)
       }
@@ -43,7 +48,7 @@ response__ <- R6::R6Class(
       private$status_code <- 200
       private$headers <- list('Content-Type' = 'text/plain')
       private$body_ <- ''
-      
+
       invisible(self)
     },
 
@@ -75,21 +80,21 @@ response__ <- R6::R6Class(
     },
     cookie = function(name, value, expires = NULL) {
       assert_that(is.character(name), is.character(value), is.list(options))
-      
+
       cookie_string <- paste0(name, '=', value)
-      
+
       if (!is.null(expires)) {
         assert_that(is.time(expires) || is.date(expires))
         cookie_string <- paste0(cookie_string, '; ', 'Expires=', http_date(expires))
       }
-      
+
       private$headers <- append(private$headers, list('Set-Cookie' = cookie_string))
-      
+
       invisible(self)
     },
     clear_cookie = function(name) {
       assert_that(is.character(name))
-      
+
       self$cookie(name, '', expires = Sys.time())
 
       invisible(self)
@@ -100,17 +105,17 @@ response__ <- R6::R6Class(
       # self$set('Content-Disposition', paste0('attachment; filename=\"', filename, '\"'))
 
       self$send_file(path, list('Content-Disposition' = paste0('attachment; filename=\"', filename, '\"')))
-      
+
       invisible(self)
     },
 #     format = function(callbacks) {
 #       assert_that(is.list(callbacks), is_named(callbacks))
-# 
+#
 #       default_callback <- callbacks$default
 #       callbacks$default <- NULL
-# 
+#
 #       accepted_type <- Find(private$req$accepts, names(callbacks), nomatch = NULL)
-# 
+#
 #       if (!is.null(accepted_type)) {
 #         self$set('Content-Type', mime::guess_type(accepted_type))
 #         callbacks[[accepted_type]]()
@@ -124,7 +129,7 @@ response__ <- R6::R6Class(
 #     },
     get = function(field) {
       assert_that(is.character(field))
-      
+
       private$headers[[field]]
     },
     json = function(body = NULL) {
@@ -175,7 +180,7 @@ response__ <- R6::R6Class(
 
       self$status(status)
       self$location(path)
-      
+
       invisible(self)
     },
     render = function(view, locals) {
@@ -244,7 +249,7 @@ response__ <- R6::R6Class(
       }
 
       private$body_ <- setNames(full_path, 'file')
-      
+
       invisible(self)
     },
     send_status = function(status) {
@@ -257,13 +262,13 @@ response__ <- R6::R6Class(
     set = function(field, value) {
       assert_that(is.character(field))
       private$headers[[field]] <- value
-      
+
       invisible(self)
     },
     type = function(type) {
       assert_that(is.character(type))
       self$set('Content-Type', mime::guess_type(type, empty = type, mime_extra = mimeextra))
-      
+
       invisible(self)
     },
     vary = function(field) {
@@ -273,7 +278,7 @@ response__ <- R6::R6Class(
       } else {
         self$append('Vary', paste0(',', field))
       }
-      
+
       invisible(self)
     },
 
