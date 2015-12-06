@@ -22,7 +22,7 @@ application__ <- R6::R6Class(
       self$handle_request(http_request)
     },
     listen = function(host, port) {
-      runServer(host, port, self)
+      httpuv::runServer(host, port, self)
     },
 
     add_route = function(route) {

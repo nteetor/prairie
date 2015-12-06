@@ -15,16 +15,16 @@ request__ <- R6::R6Class(
   public = list(
     initialize = function(http_request) {
       assert_that(is.environment(http_request) || is.list(http_request))
-      
+
       http_request <- as.list(http_request)
-      
+
       private$body_ <- tryCatch(http_request$rook.input$read_lines(), error = function(e) NULL)
       private$ip_ <- http_request$SERVER_NAME
       private$url_ <- http_request$PATH_INFO
 
       if (!is.null(http_request$ROUTE_PATH) && grepl('\\?<[a-zA-Z]+>', http_request$ROUTE_PATH)) {
-        args <- str_match_all(private$url_, http_request$ROUTE_PATH)[[1]][1,][-1]
-        args_names <- str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
+        args <- stringr::str_match_all(private$url_, http_request$ROUTE_PATH)[[1]][1,][-1]
+        args_names <- stringr::str_match_all(http_request$ROUTE_PATH, '\\?<([a-zA-Z]+)>')[[1]][,2]
 
         private$args_ <- as.list(setNames(args, args_names))
       } else {
@@ -96,9 +96,9 @@ request__ <- R6::R6Class(
     },
     set = function(field, value) {
       assert_that(is.character(field))
-      
+
       private$header_fields[[tolower(field)]] <- value
-      
+
       invisible(self)
     },
     type_is = function(type) {
@@ -116,7 +116,7 @@ request__ <- R6::R6Class(
       # this will need -plenty- of testing
       grepl(accepted_regex, type) || grepl(type_regex, accepted_type)
     },
-    
+
     headers = function() private$header_fields
   ),
   private = list(
