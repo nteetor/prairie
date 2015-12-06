@@ -14,7 +14,20 @@
 #'
 #' @name json
 #' @examples
-#' as.json()
+#' as.json(list(one = 'fish', two = 'fish'))
+#' as.json(data.frame(red = 'fish', blue = 'fish'))
+#'
+#' # setting a response object body as a data.frame or list
+#' # will automatically convert the object to JSON and set
+#' # Content-Type of the response as "application/json"
+#'
+#' res <- response()
+#' body(res) <- list(
+#'   list(name = 'ged', occupation = 'wizard'),
+#'   list(name = 'sparrowhawk', occupation = 'wizard')
+#' )
+#' is.json(body(res))  # TRUE
+#' res[['Content-Type']] == 'application/json' # TRUE
 NULL
 
 #' @param x Any \R object.
@@ -30,7 +43,7 @@ as.json <- function(x, ...) UseMethod('as.json')
 #' @export
 #' @rdname json
 as.json.list <- function(x, ...) {
-  if (!requireNamespace('jsonlite')) {
+  if (!requireNamespace('jsonlite', quietly = TRUE)) {
     stop('package "jsonlite" must be installed', call. = FALSE)
   }
   jsonlite::toJSON(x, ...)
@@ -39,7 +52,7 @@ as.json.list <- function(x, ...) {
 #' @export
 #' @rdname json
 as.json.data.frame <- function(x, ...) {
-  if (!requireNamespace('jsonlite')) {
+  if (!requireNamespace('jsonlite', quietly = TRUE)) {
     stop('package "jsonlite" must be installed', call. = FALSE)
   }
   jsonlite::toJSON(x, ...)

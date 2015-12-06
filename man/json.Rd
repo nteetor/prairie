@@ -34,6 +34,19 @@ is straightforward to use and is recommended for those who wish to create
 further \code{as.json} functions.
 }
 \examples{
-as.json()
+as.json(list(one = 'fish', two = 'fish'))
+as.json(data.frame(red = 'fish', blue = 'fish'))
+
+# setting a response object body as a data.frame or list
+# will automatically convert the object to JSON and set
+# Content-Type of the response as "application/json"
+
+res <- response()
+body(res) <- list(
+  list(name = 'ged', occupation = 'wizard'),
+  list(name = 'sparrowhawk', occupation = 'wizard')
+)
+is.json(body(res))  # TRUE
+res[['Content-Type']] == 'application/json' # TRUE
 }
 
