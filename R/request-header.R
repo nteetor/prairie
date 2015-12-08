@@ -1,65 +1,3 @@
-#' HTTP Request Host
-#' 
-#' The host portion of the Host request header field.
-#' 
-#' @param req A \code{request} object
-#'   
-#' @seealso \code{\link{body}}, \code{\link{host}}, \code{\link{type}},
-#'   \code{\link{url}}
-#'   
-#' @export
-#' @name host
-#' @examples
-#' route(
-#'   'get',
-#'   '^.*',
-#'   function() {
-#'     req <- request()
-#'     res <- response()
-#'     
-#'     status(res) <- 200
-#'     body(res) <- paste0('<p>Hey there ', host(req), '!</p>')
-#'     res[['Content-Type']] <- 'text/html'
-#'     
-#'     res
-#'   })
-host <- function(req) {
-  assert_that(is.request(req))
-  req$host_name
-}
-
-#' HTTP Request Content Type
-#' 
-#' Get the content types of a request.
-#' 
-#' @param req A \code{request} object
-#'   
-#' @seealso \code{\link{body}}, \code{\link{host}}, \code{\link{type}},
-#'   \code{\link{url}}
-#'   
-#' @export
-#' @name type
-type <- function(req) {
-  assert_that(is.request(req))
-  req$get('Content-Type')
-}
-
-#' HTTP Request URL
-#' 
-#' Get the URL for a request.
-#' 
-#' @param req A \code{request} object
-#'   
-#' @seealso \code{\link{body}}, \code{\link{host}}, \code{\link{type}},
-#'   \code{\link{url}}
-#'   
-#' @export
-#' @name url
-url <- function(req) {
-  assert_that(is.request(req))
-  req$url
-}
-
 #' HTTP Request Header Fields
 #' 
 #' Get and header field values for \code{request} objects.
@@ -75,19 +13,39 @@ url <- function(req) {
 #' 
 #' req[['Accept']] <- 'text/*'
 #' req[['From']] <- '127.0.0.1'
+#' 
+#' req[] <- list(
+#'  Connection = 'close',
+#'  Date = Sys.time()
+#' )
+#' 
+#' req
 NULL
+
 
 #' @param x A \code{request} object.
 #' @param field An HTTP request header field name.
 #' @export
 #' @rdname request-headers
-`[.request` <- function(x, field) sapply(field, x$get, simplify = FALSE, USE.NAMES = TRUE)
-
-#' @export
-#' @rdname request-headers
 `[[.request` <- function(x, field) x$get(field)
 
-#' @param value Value to assign to \code{field}.
+#' @param value A value to assign to \code{field}.
 #' @export
 #' @rdname request-headers
 `[[<-.request` <- function(x, field, value) x$set(field, value)
+
+#' @export
+#' @rdname request-headers
+`[.request` <- function(x, field) x$get_all(field)
+
+#' @export
+#' @rdname request-headers
+`[<-.request` <- function(x, field, value) {
+  if (missing(field)) {
+    assert_that(is_named(value))
+    x$set_all(names(value), value)
+  } else {
+    x$set_all(field, value)
+  }
+  invisible(x)
+}

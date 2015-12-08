@@ -2,7 +2,7 @@
 % Please edit documentation in R/request.R
 \name{request}
 \alias{request}
-\title{Get an HTTP Request}
+\title{Create an HTTP Request}
 \usage{
 request(envir)
 }

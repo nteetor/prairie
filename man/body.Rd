@@ -5,6 +5,7 @@
 \alias{body.request}
 \alias{body.response}
 \alias{body<-}
+\alias{body<-.request}
 \alias{body<-.response}
 \title{HTTP Message Body}
 \usage{
@@ -13,6 +14,8 @@ body(x)
 body(x) <- value
 
 \method{body}{request}(x)
+
+\method{body}{request}(x) <- value
 
 \method{body}{response}(x)
 
@@ -49,9 +52,6 @@ route(
     )
 
     status(res) <- 200
-
-    # set body of response as data.frame
-    # coerced to JSON string with as.JSON
     body(res) <- mogrified
 
     res

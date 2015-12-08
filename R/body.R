@@ -37,9 +37,6 @@
 #'     )
 #'
 #'     status(res) <- 200
-#'
-#'     # set body of response as data.frame
-#'     # coerced to JSON string with as.JSON
 #'     body(res) <- mogrified
 #'
 #'     res
@@ -61,6 +58,13 @@ body <- function(x) UseMethod('body')
 #' @rdname body
 body.request <- function(x) {
   x$body
+}
+
+#' @export
+#' @rdname body
+`body<-.request` <- function(x, value) {
+  x$body <- value
+  invisible(x)
 }
 
 #' @export

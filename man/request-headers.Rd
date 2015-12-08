@@ -2,23 +2,26 @@
 % Please edit documentation in R/request-header.R
 \name{request-headers}
 \alias{[.request}
+\alias{[<-.request}
 \alias{[[.request}
 \alias{[[<-.request}
 \alias{request-headers}
 \title{HTTP Request Header Fields}
 \usage{
-\method{[}{request}(x, field)
-
 \method{[[}{request}(x, field)
 
 \method{[[}{request}(x, field) <- value
+
+\method{[}{request}(x, field)
+
+\method{[}{request}(x, field) <- value
 }
 \arguments{
 \item{x}{A \code{request} object.}
 
 \item{field}{An HTTP request header field name.}
 
-\item{value}{Value to assign to \code{field}.}
+\item{value}{A value to assign to \code{field}.}
 }
 \description{
 Get and header field values for \code{request} objects.
@@ -32,5 +35,12 @@ req <- request()
 
 req[['Accept']] <- 'text/*'
 req[['From']] <- '127.0.0.1'
+
+req[] <- list(
+ Connection = 'close',
+ Date = Sys.time()
+)
+
+req
 }
 
