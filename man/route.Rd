@@ -60,9 +60,9 @@ the order of the capture groups in \code{path} from left to right. If
 \code{character(0)}.
 }
 \examples{
-## typically, route() is called inside of 
-## app(), but creation of standalone route 
-## objects is possible
+# typically, route() is called inside of 
+# app(), but creation of standalone route 
+# objects is possible
 
 # accepts only GET requests
 # path has capture groups, include args

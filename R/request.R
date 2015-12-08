@@ -32,7 +32,9 @@ request__ <- R6::R6Class(
       if (missing(value)) {
         private$body_
       } else {
-        value <- as.character(value)
+        if (is.json(value)) {
+          self$set('Content-Type', 'application/json')
+        }
         private$body_ <- value
         invisible(self)
       }

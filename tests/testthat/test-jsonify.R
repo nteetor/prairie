@@ -9,24 +9,25 @@ test_that('arguments passed to `as.json` pass to `toJSON`', {
   expect_equal(jsonlite::toJSON(frame_data, dataframe = 'columns', Date = 'epoch'), as.json(frame_data, dataframe = 'columns', Date = 'epoch'))
 })
 
-test_that('setting body as data.frame automatically calls as.json', {
+test_that('response object content-type is set to application/json if json', {
   skip_if_not_installed('jsonlite')
   res <- response()
-  body(res) <- data.frame(one = 'fish', two = 'fish')
+  body(res) <- as.json(data.frame(one = 'fish', two = 'fish'))
   expect_true(is.json(body(res)))
   expect_true(is.character(body(res)))
   expect_false(is.data.frame(body(res)))
   expect_true(is.response(res))
   expect_equal(res[['Content-Type']], 'application/json')
+  
 })
 
-test_that('setting body as list automatically calls as.json', {
+test_that('request object content-type is set to application/json if json', {
   skip_if_not_installed('jsonlite')
-  res <- response()
-  body(res) <- list(red = 'fish', blue = 'fish')
-  expect_true(is.json(body(res)))
-  expect_true(is.character(body(res)))
-  expect_false(is.list(body(res)))
-  expect_true(is.response(res))
-  expect_equal(res[['Content-Type']], 'application/json')
+  req <- request()
+  body(req) <- list(red = 'fish', blue = 'fish')
+  expect_true(is.json(body(req)))
+  expect_true(is.character(body(req)))
+  expect_false(is.list(body(req)))
+  expect_true(is.reqponse(req))
+  expect_equal(req[['Content-Type']], 'application/json')
 })
