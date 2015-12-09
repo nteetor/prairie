@@ -6,12 +6,10 @@ test_that('`%||%`', {
 })
 
 test_that('http_date', {
-  skip_on_os('mac')
-
-  date1 <- strptime('11/06/1994 08:49:37', '%m/%d/%Y %H:%M:%S')
+  date1 <- strptime('11/06/1994 08:49:37', '%m/%d/%Y %H:%M:%S', tz = 'UTC')
   expect_equal('Sun, 06 Nov 1994 08:49:37 UTC', http_date(date1))
 
-  date2 <- strptime('12/04/2015', '%m/%d/%Y')
+  date2 <- strptime('12/04/2015', '%m/%d/%Y', tz = 'UTC')
   expect_equal('Fri, 04 Dec 2015 00:00:00 UTC', http_date(date2))
 
   expect_error(http_date('01/01/3030'))

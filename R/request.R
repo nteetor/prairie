@@ -129,7 +129,7 @@ request__ <- R6::R6Class(
     get_all = function(fields) {
       assert_that(is.character(fields))
       
-      sapply(fields, self$get, simplify = FALSE, use.names = TRUE)
+     sapply(fields, self$get, simplify = FALSE, USE.NAMES = TRUE)
     },
     set = function(field, value) {
       assert_that(is.character(field))

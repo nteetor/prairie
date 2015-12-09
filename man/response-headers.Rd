@@ -2,16 +2,19 @@
 % Please edit documentation in R/response-header.R
 \name{response-headers}
 \alias{[.response}
+\alias{[<-.response}
 \alias{[[.response}
 \alias{[[<-.response}
 \alias{response-headers}
 \title{HTTP Response Header Fields}
 \usage{
-\method{[}{response}(x, field)
-
 \method{[[}{response}(x, field)
 
 \method{[[}{response}(x, field) <- value
+
+\method{[}{response}(x, field)
+
+\method{[}{response}(x, field) <- value
 }
 \arguments{
 \item{x}{A \code{response} object.}
@@ -34,7 +37,16 @@ field.
 # create new response
 res <- response()
 
-res[["Content-Type"]] <- "text/html"
+# add single field to header
+res[["Connection"]] <- "keep-alive"
+
+# add multiple fields in one go
+res[] <- list(
+  Date = Sys.time(),
+  Server = 'R/prairie'
+)
+
+res
 }
 \seealso{
 For more information regarding specific HTTP response header fields refer to 

@@ -52,16 +52,13 @@ route(
     )
 
     status(res) <- 200
-    body(res) <- mogrified
+    body(res) <- as.json(mogrified)
 
     res
   }
 )
 }
 \seealso{
-Additional \code{request} functions: \code{\link{body}}, \code{\link{host}},
-\code{\link{type}}, \code{\link{url}}
-
 For more information about HTTP requests please refer to the
 \href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request}
 section of www.w3.org.

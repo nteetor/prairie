@@ -47,13 +47,6 @@ test_that('`[[<-` properly sets header fields', {
   expect_equal(req[['Accept']], 'text/*')
 })
 
-test_that('type() helper function', {
-  expect_error(type('check'))
-  expect_error(type(2))
-  req <- request(template_request)
-  expect_equal(type(req), 'text/html; charset=utf-8')
-})
-
 test_that('url() helper function', {
   expect_error(url('request'))
   expect_error(url(3030))
@@ -61,9 +54,3 @@ test_that('url() helper function', {
   expect_equal(url(req), '/foo/bar')
 })
 
-test_that('host() helper function', {
-  expect_error(host('har har har'))
-  expect_error(host(3030))
-  req <- request(template_request)
-  expect_equal(host(req), '127.0.0.1:3030')
-})

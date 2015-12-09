@@ -120,14 +120,28 @@ response__ <- R6::R6Class(
       
       private$headers[[field]]
     },
+    get_all = function(fields) {
+      assert_that(is.character(fields))
+      
+      sapply(fields, self$get, simplify = FALSE, USE.NAMES = TRUE)
+    },
     set = function(field, value) {
       assert_that(is.character(field))
+      
       private$headers[[field]] <- value
+      
+      invisible(self)
+    },
+    set_all = function(fields, values) {
+      assert_that(is.character(fields), length(fields) == length(values))
+      
+      sapply(seq_along(fields), function(i) self$set(fields[[i]], values[[i]]), simplify = FALSE, USE.NAMES = TRUE)
       
       invisible(self)
     },
     type = function(type) {
       assert_that(is.character(type))
+      
       self$set('Content-Type', mime::guess_type(type, empty = type, mime_extra = mimeextra))
       
       invisible(self)
