@@ -4,18 +4,19 @@
 \alias{request}
 \title{Create an HTTP Request}
 \usage{
-request(envir)
-}
-\arguments{
-\item{envir}{An optional environment to create the request from.}
+request()
 }
 \description{
-Request objects, yeah
+Request objects store relevant information sent from the client to the server
+as a part of an HTTP request. Request objects are not typically explicitly 
+created. Instead, a request object is passed as an argument to a route
+handler.
 }
 \details{
-The \code{envir} argument is necessary for testing and other fringe cases.
-Typically a \code{request} object is implicity instantiated from the Rook
-request environment \code{httpuv} passes to the \code{call} function. See the
-\code{httpuv::startServer} documentation for more information.
+Request objects contain the following information.
+
+\subsection{method:}{
+  
+}
 }
 

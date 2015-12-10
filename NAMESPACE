@@ -2,11 +2,9 @@
 
 S3method("[",request)
 S3method("[",response)
-S3method("[<-",request)
 S3method("[<-",response)
 S3method("[[",request)
 S3method("[[",response)
-S3method("[[<-",request)
 S3method("[[<-",response)
 S3method("body<-",request)
 S3method("body<-",response)
