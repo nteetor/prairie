@@ -2,45 +2,44 @@
 % Please edit documentation in R/request-header.R
 \name{request-headers}
 \alias{[.request}
-\alias{[<-.request}
 \alias{[[.request}
-\alias{[[<-.request}
 \alias{request-headers}
-\title{HTTP Request Header Fields}
+\title{Request Header Fields}
 \usage{
 \method{[[}{request}(x, field)
 
-\method{[[}{request}(x, field) <- value
-
 \method{[}{request}(x, field)
-
-\method{[}{request}(x, field) <- value
 }
 \arguments{
 \item{x}{A \code{request} object.}
 
 \item{field}{An HTTP request header field name.}
-
-\item{value}{A value to assign to \code{field}.}
 }
 \description{
-Get and header field values for \code{request} objects.
+To get the values of request header fields [ or [[ may be used to get a 
+single or multiple values respectively. Request field names are 
+case-insensitive, so \code{"Accept"} and \code{"accept"} are equivalent.
 }
 \details{
-For more information regarding specific HTTP request header fields refer to 
-\url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}.
+For more information regarding specific HTTP request header fields please
+refer to \url{https://tools.ietf.org/html/rfc2616#section-5.3}.
 }
 \examples{
 req <- request()
 
-req[['Accept']] <- 'text/*'
-req[['From']] <- '127.0.0.1'
+req[['Accept']] # NULL
+req[['From']]   # NULL
 
-req[] <- list(
- Connection = 'close',
- Date = Sys.time()
+route(
+  'POST',
+  '^$',
+  function(req) {
+    # Now there will be values
+    print(req[['Accept']])
+    print(req[['From']])
+    
+    response()
+  }
 )
-
-req
 }
 
