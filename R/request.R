@@ -18,29 +18,49 @@
 #' 
 #' \subsection{uri:}{
 #' 
-#' The uri indicates the server resource requested by the client. A request
+#' The uri indicates the server resource requested by the client. A request 
 #' object's uri may be accessed with \link{uri}.
 #' 
 #' }
 #' 
 #' \subsection{query:}{
 #' 
-#' TODO
+#' A request query is set of key value pairs following the uri. A query is 
+#' indicated by a ? and is, optionally, ended with a #. Query keys are case- 
+#' sensitive. A request object's query list may be accessed with \link{query}. 
+#' If an incoming request does not have a query string then \code{query} will 
+#' return an empty list.
+#' 
+#' }
+#' 
+#' \subsection{headers:}{
+#' 
+#' Request header fields may be accessed by treating a request object like a
+#' list. Using [ or [[, one can get a single or multiple header field values.
+#' Header fields are case-insensitive.  
+#' 
+#' }
+#' 
+#' \subsection{body:}{
+#' 
+#' The body message of a request object may be retreived with \link{body}. 
 #' 
 #' }
 #' 
 #' @export
 #' @name request
+#' @examples
+#' 
 request <- function() {
   structure(
     list(
       method = NULL,
       uri = NULL,
-      query = NULL,
+      query = list(),
       headers = list(),
       body = ''
     ),
-    class = c('request', 'http_message')
+    class = 'request'
   )
 }
 
@@ -67,18 +87,20 @@ print.request <- function(x) {
   }
 }
 
-rook_to_request <- function(rook) {
+as.request <- function(x) UseMethod('as.request')
+
+as.request.environment <- function(envir) {
   req <- request()
   
-  req$method <- rook$REQUEST_METHOD
-  req$uri <- rook$PATH_INFO
+  req$method <- envir$REQUEST_METHOD
+  req$uri <- envir$PATH_INFO
   
-  req$headers <- mget(grep('^HTTP_', rook, value = TRUE), envir = rook)
+  req$headers <- mget(grep('^HTTP_', envir, value = TRUE), envir = envir)
   names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
   names(req$headers) <- gsub('_', '-', names(req$headers))
   names(req$headers) <- tolower(names(req$headers))
   
-  req$body <- rook$rook.input$read_lines()
+  req$body <- envir$envir.input$read_lines()
   
   req
 }
