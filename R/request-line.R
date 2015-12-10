@@ -33,14 +33,14 @@ method <- function(x) {
 
 #' @export
 #' @rdname request-line
-url <- function(x) {
+uri <- function(x) {
   assert_that(is.request(x))
-  x$url
+  x$uri
 }
 
 #' @export
 #' @rdname request-line
-protocol <- function(x) {
+query <- function(x) {
   assert_that(is.request(x))
-  x$protocol
+  x$query
 }
