@@ -40,7 +40,7 @@ mockup.route <- function(x) {
       if (!is.response(res)) {
         warning(quote(x), 'returned object of class', class(res), 'instead of response')
       }
-      res
+      invisible(res)
     },
     class = c('mockup', class(x))
   )

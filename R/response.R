@@ -21,7 +21,30 @@
 #' status(res_404) <- 404
 #' body(res_404) <- 'Sorry, page not found'
 response <- function() {
-  response__$new()
+  structure(
+    list(
+      status_code = 200,
+      headers = list(
+        `Content-Type` = 'plain/text'
+      ),
+      body = ''
+    ),
+    class = 'response'
+  )
+}
+
+print.response <- function(x) {
+  headers <- lapply(x$headers, as.character)
+  
+  cat('HTTP/1.1', x$status_code, get_status_description(private$status_code, FALSE), '\r\n')
+  
+  if (!is.null(headers) && length(headers)) {
+    cat(paste0(names(headers), ': ', headers, collapse = '\r\n'), sep = '')
+  }
+  
+  if (nchar(x$body) > 0) {
+    cat('\r\n\r\n', as.character(x$body), '\r\n', sep = '')
+  }
 }
 
 response__ <- R6::R6Class(

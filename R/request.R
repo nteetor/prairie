@@ -94,7 +94,7 @@ print.request <- function(x) {
   )
   names(headers) <- sapply(names(headers), stringr::str_to_title)
   
-  if (!is.null(headers)) {
+  if (!is.null(headers) && length(headers)) {
     cat(paste0(names(headers), ': ', headers, collapse = '\r\n'))
   }
   
@@ -108,11 +108,16 @@ print.request <- function(x) {
   }
 }
 
-#' Coerce Requests
+#' Coerce Request Environments
 #' 
+#' Internally, this function is used to coerce the request environment objects 
+#' \code{httpuv} passes to an application's \code{call} function. Request 
+#' environment objects are coerced to objects.
 #' 
-#' 
+#' @seealso \code{\link{request}}
+#'   
 #' @keywords internal
+#'   
 #' @export
 #' @rdname as.request
 #' @examples
@@ -120,8 +125,16 @@ print.request <- function(x) {
 #' 
 #' e$REQUEST_METHOD <- 'GET'
 #' e$PATH_INFO <- '/file/download'
+#' e$HTTP_ACCEPT <- 'application/json'
+#' e$HTTP_CONTENT_LENGTH <- '3030'
 #' 
-#' as.request(e)
+#' req <- as.request(e)
+#' is.request(req) # TRUE
+#' 
+#' method(req)
+#' uri(req)
+#' req[['Accept']]
+#' req[['Content-Length']]
 as.request <- function(x) UseMethod('as.request')
 
 #' @export
