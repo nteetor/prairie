@@ -94,8 +94,7 @@ route__ <- R6::R6Class(
       (method %in% self$method || self$method == 'all') && grepl(self$path, path)
     },
     dispatch = function(request_environment) {
-      assign('__request_environment', request_environment)
-      self$handler()
+      self$handler(request_environment)
     }
   )
 )

@@ -50,7 +50,25 @@
 #' @export
 #' @name request
 #' @examples
+#' # not much to see here
+#' req <- request()
+#' print(req)
 #' 
+#' # try out this route to see more
+#' route(
+#'   'GET',
+#'   '^/print/request$',
+#'   function(req) {
+#'     print('Request received:')
+#'     print(req)
+#'     
+#'     response()
+#'   }
+#' )
+NULL
+
+#' @export
+#' @rdname request
 request <- function() {
   structure(
     list(
@@ -64,6 +82,9 @@ request <- function() {
   )
 }
 
+#' @param x A request object.
+#' @export
+#' @rdname request
 print.request <- function(x) {
   cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
   
@@ -77,30 +98,46 @@ print.request <- function(x) {
     cat(paste0(names(headers), ': ', headers, collapse = '\r\n'))
   }
   
-  if (nchar(private$body_) > 0) {
+  if (nchar(x$body) > 0) {
     cat(
       '\r\n\r\n',
-      paste0(private$body_),
+      paste0(x$body),
       '\r\n',
       sep = ''
     )
   }
 }
 
+#' Coerce Requests
+#' 
+#' 
+#' 
+#' @keywords internal
+#' @export
+#' @rdname as.request
+#' @examples
+#' e <- new.env(parent = baseenv())
+#' 
+#' e$REQUEST_METHOD <- 'GET'
+#' e$PATH_INFO <- '/file/download'
+#' 
+#' as.request(e)
 as.request <- function(x) UseMethod('as.request')
 
+#' @export
+#' @rdname as.request
 as.request.environment <- function(envir) {
   req <- request()
   
   req$method <- envir$REQUEST_METHOD
   req$uri <- envir$PATH_INFO
   
-  req$headers <- mget(grep('^HTTP_', envir, value = TRUE), envir = envir)
+  req$headers <- mget(grep('^HTTP_', names(envir), value = TRUE), envir = envir)
   names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
   names(req$headers) <- gsub('_', '-', names(req$headers))
   names(req$headers) <- tolower(names(req$headers))
   
-  req$body <- envir$envir.input$read_lines()
+  req$body <- if (!is.null(envir$envir.input)) envir$envir.input$read_lines() else ''
   
   req
 }

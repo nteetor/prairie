@@ -4,7 +4,7 @@
 #' uri, the query component, or the requset HTTP protocol.
 #' 
 #' @param x A \code{request} object.
-#'
+#'   
 #' @export
 #' @name method
 #' @examples
