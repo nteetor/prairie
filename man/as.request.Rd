@@ -3,22 +3,35 @@
 \name{as.request}
 \alias{as.request}
 \alias{as.request.environment}
-\title{Coerce Requests}
+\title{Coerce Request Environments}
 \usage{
 as.request(x)
 
 \method{as.request}{environment}(envir)
 }
 \description{
-Coerce Requests
+Internally, this function is used to coerce the request environment objects 
+\code{httpuv} passes to an application's \code{call} function. Request 
+environment objects are coerced to objects.
 }
 \examples{
 e <- new.env(parent = baseenv())
 
 e$REQUEST_METHOD <- 'GET'
 e$PATH_INFO <- '/file/download'
+e$HTTP_ACCEPT <- 'application/json'
+e$HTTP_CONTENT_LENGTH <- '3030'
 
-as.request(e)
+req <- as.request(e)
+is.request(req) # TRUE
+
+method(req)
+uri(req)
+req[['Accept']]
+req[['Content-Length']]
+}
+\seealso{
+\code{\link{request}}
 }
 \keyword{internal}
 

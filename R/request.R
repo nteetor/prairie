@@ -55,7 +55,7 @@
 #' print(req)
 #' 
 #' # try out this route to see more
-#' route(
+#' printreq <- route(
 #'   'GET',
 #'   '^/print/request$',
 #'   function(req) {
@@ -65,10 +65,16 @@
 #'     response()
 #'   }
 #' )
-NULL
-
-#' @export
-#' @rdname request
+#' 
+#' printreq_m <- mockup(printreq)
+#' printreq_m('get', '/print/request')
+#' printreq_m(
+#'   'get', '/print/request', 
+#'   headers = list(
+#'     Accept = 'text/html',
+#'     Host = 'with the most'
+#'   )
+#' )
 request <- function() {
   structure(
     list(
@@ -82,9 +88,23 @@ request <- function() {
   )
 }
 
-#' @param x A request object.
+#' Printing Requests
+#' 
+#' Print a request.
+#' 
+#' @param x Object of class \code{request}.
+#' 
+#' @details
+#' 
+#' Formats the request as an HTTP request.
+#' 
+#' @seealso
+#' 
+#' \code{\link{request}}
+#' 
+#' @keywords internal
 #' @export
-#' @rdname request
+#' @name print.request
 print.request <- function(x) {
   cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
   
@@ -135,6 +155,11 @@ print.request <- function(x) {
 #' uri(req)
 #' req[['Accept']]
 #' req[['Content-Length']]
+NULL
+
+#' @param x Any \R object.
+#' @export
+#' @rdname as.request
 as.request <- function(x) UseMethod('as.request')
 
 #' @export

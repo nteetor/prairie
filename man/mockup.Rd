@@ -3,11 +3,14 @@
 \name{mockup}
 \alias{mockup}
 \alias{mockup.route}
+\alias{print.mockup}
 \title{Mockup a Route}
 \usage{
 mockup(x)
 
 \method{mockup}{route}(x)
+
+\method{print}{mockup}(x)
 }
 \arguments{
 \item{x}{Any \R object}

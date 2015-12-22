@@ -30,16 +30,25 @@ req <- request()
 req[['Accept']] # NULL
 req[['From']]   # NULL
 
-route(
+checkin <- route(
   'POST',
   '^$',
   function(req) {
-    # Now there will be values
     print(req[['Accept']])
     print(req[['From']])
     
     response()
   }
+)
+
+checkin_m <- mockup(checkin)
+# More interesting output
+checkin_m(
+  'POST', '/', 
+  headers = list(
+    Accept = 'text/html', 
+    From = 'Russia w/ Love'
+  )
 )
 }
 

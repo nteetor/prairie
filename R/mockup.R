@@ -45,3 +45,11 @@ mockup.route <- function(x) {
     class = c('mockup', class(x))
   )
 }
+
+#' @export
+#' @rdname mockup
+print.mockup <- function(x) {
+  assert_that(length(class(x)) > 1)
+  class(x) <- class(x)[-1]
+  print(x)
+}
