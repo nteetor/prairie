@@ -13,8 +13,9 @@ uri(x)
 Get a request uri.
 }
 \examples{
-route(
-  'POST',
+
+name_generator <- route(
+  'GET',
   '^/wizard/[a-z]+$',
   function(req) {
     res <- response()
@@ -39,6 +40,17 @@ route(
     res
   }
 )
+
+name_gen_m <- mockup(name_generator)
+
+res <- name_gen_m('GET', '/wizard/jenkins')
+body(res)
+
+res <- name_gen_m('GET', '/wizard/merlin')
+body(res)
+
+res <- name_gen_m('GET', '/wizard/sparrowhawk')
+body(res)
 }
 \seealso{
 Other requests: \code{\link{query}}

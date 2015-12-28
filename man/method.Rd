@@ -14,7 +14,8 @@ Get information about a request such as method type, the requested resource
 uri, the query component, or the requset HTTP protocol.
 }
 \examples{
-route(
+
+methodical <- route(
  c('GET', 'POST'),
  '^',
  function(req) {
@@ -33,5 +34,12 @@ route(
  }
 )
 
+methodical_m <- mockup(methodical)
+
+res <- methodical_m('GET', '/')
+res
+
+res <- methodical_m('POST', '/')
+body(res)
 }
 

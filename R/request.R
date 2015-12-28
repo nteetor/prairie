@@ -54,7 +54,8 @@
 #' req <- request()
 #' print(req)
 #' 
-#' # try out this route to see more
+#' # the request object is loaded with information
+#' # from the client
 #' printreq <- route(
 #'   'GET',
 #'   '^/print/request$',
@@ -66,14 +67,16 @@
 #'   }
 #' )
 #' 
+#' # create mockup
 #' printreq_m <- mockup(printreq)
+#' 
+#' # now there's something to see
 #' printreq_m('get', '/print/request')
-#' printreq_m(
-#'   'get', '/print/request', 
-#'   headers = list(
-#'     Accept = 'text/html',
-#'     Host = 'with the most'
-#'   )
+#' printreq_m('get', '/print/request', 
+#'            headers = list(
+#'              Accept = 'text/html',
+#'              Host = 'with the most'
+#'            )
 #' )
 request <- function() {
   structure(
@@ -105,14 +108,14 @@ request <- function() {
 #' @keywords internal
 #' @export
 #' @name print.request
-print.request <- function(x) {
-  cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
-  
+print.request <- function(x, ...) {
   headers <- lapply(
     x$headers,
     function(hdr) if (is.time(hdr) || is.date(hdr)) http_date(hdr) else as.character(hdr)
   )
   names(headers) <- sapply(names(headers), stringr::str_to_title)
+  
+  cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
   
   if (!is.null(headers) && length(headers)) {
     cat(paste0(names(headers), ': ', headers, collapse = '\r\n'))
@@ -139,7 +142,7 @@ print.request <- function(x) {
 #' @keywords internal
 #'   
 #' @export
-#' @rdname as.request
+#' @name as.request
 #' @examples
 #' e <- new.env(parent = baseenv())
 #' 
@@ -164,18 +167,22 @@ as.request <- function(x) UseMethod('as.request')
 
 #' @export
 #' @rdname as.request
-as.request.environment <- function(envir) {
+as.request.environment <- function(x) {
   req <- request()
   
-  req$method <- envir$REQUEST_METHOD
-  req$uri <- envir$PATH_INFO
+  req$method <- x$REQUEST_METHOD
+  req$uri <- x$PATH_INFO
   
-  req$headers <- mget(grep('^HTTP_', names(envir), value = TRUE), envir = envir)
+  req$headers <- mget(grep('^HTTP_', names(x), value = TRUE), envir = x)
   names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
   names(req$headers) <- gsub('_', '-', names(req$headers))
   names(req$headers) <- tolower(names(req$headers))
   
-  req$body <- if (!is.null(envir$envir.input)) envir$envir.input$read_lines() else ''
+  req$body <- if (!is.null(x$envir.input)) x$envir.input$read_lines() else ''
   
   req
 }
+
+#' @export
+#' @rdname as.request
+is.request <- function(x) inherits(x, 'request')

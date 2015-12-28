@@ -11,8 +11,8 @@ A response object represents the HTTP response returned by a route handler. A
 response is typically made up of a status, HTTP headers, and a body. A 
 response body is optional.
 }
-\details{
-\section{Components}
+\section{Components}{
+
 
 \subsection{status:}{
 
@@ -55,14 +55,16 @@ phrase10 <- route(
     status(res) <- 200
     body(res) <- paste(stat, reason_phrase(stat))
     
+    print(res)
+    
     res
   }
 )
 
 phrase10_m <- mockup(phrase10)
 
-body(phrase10_m('get', '302'))
-body(phrase10_m('get', '203'))
+phrase10_m('get', '302')
+phrase10_m('get', '203')
 }
 \seealso{
 \code{\link{route}}, \code{\link{request}}

@@ -4,7 +4,7 @@
 \alias{print.request}
 \title{Printing Requests}
 \usage{
-\method{print}{request}(x)
+\method{print}{request}(x, ...)
 }
 \arguments{
 \item{x}{Object of class \code{request}.}
@@ -18,4 +18,5 @@ Formats the request as an HTTP request.
 \seealso{
 \code{\link{request}}
 }
+\keyword{internal}
 

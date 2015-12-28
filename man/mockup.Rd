@@ -10,7 +10,7 @@ mockup(x)
 
 \method{mockup}{route}(x)
 
-\method{print}{mockup}(x)
+\method{print}{mockup}(x, ...)
 }
 \arguments{
 \item{x}{Any \R object}

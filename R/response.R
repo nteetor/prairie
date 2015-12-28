@@ -4,7 +4,7 @@
 #' response is typically made up of a status, HTTP headers, and a body. A 
 #' response body is optional.
 #' 
-#' \section{Components}
+#' @section Components:
 #' 
 #' \subsection{status:}{
 #' 
@@ -91,7 +91,7 @@ response <- function() {
 #' @keywords internal
 #' @export 
 #' @name print.response
-print.response <- function(x) {
+print.response <- function(x, ...) {
   headers <- lapply(x$headers, as.character)
   
   cat('HTTP/1.1', x$status_code, reason_phrase(x$status_code), '\r\n')

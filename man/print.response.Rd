@@ -4,7 +4,7 @@
 \alias{print.response}
 \title{Printing Response}
 \usage{
-\method{print}{response}(x)
+\method{print}{response}(x, ...)
 }
 \arguments{
 \item{x}{Object of class \code{response}.}

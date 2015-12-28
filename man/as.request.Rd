@@ -3,11 +3,17 @@
 \name{as.request}
 \alias{as.request}
 \alias{as.request.environment}
+\alias{is.request}
 \title{Coerce Request Environments}
 \usage{
 as.request(x)
 
-\method{as.request}{environment}(envir)
+\method{as.request}{environment}(x)
+
+is.request(x)
+}
+\arguments{
+\item{x}{Any \R object.}
 }
 \description{
 Internally, this function is used to coerce the request environment objects 

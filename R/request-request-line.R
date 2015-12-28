@@ -8,7 +8,8 @@
 #' @export
 #' @name method
 #' @examples
-#' route(
+#' 
+#' methodical <- route(
 #'  c('GET', 'POST'),
 #'  '^',
 #'  function(req) {
@@ -27,6 +28,13 @@
 #'  }
 #' )
 #' 
+#' methodical_m <- mockup(methodical)
+#' 
+#' res <- methodical_m('GET', '/')
+#' res
+#' 
+#' res <- methodical_m('POST', '/')
+#' body(res)
 method <- function(x) {
   assert_that(is.request(x))
   x$method
@@ -43,8 +51,9 @@ method <- function(x) {
 #' @export
 #' @name uri
 #' @examples
-#' route(
-#'   'POST',
+#' 
+#' name_generator <- route(
+#'   'GET',
 #'   '^/wizard/[a-z]+$',
 #'   function(req) {
 #'     res <- response()
@@ -69,6 +78,17 @@ method <- function(x) {
 #'     res
 #'   }
 #' )
+#' 
+#' name_gen_m <- mockup(name_generator)
+#' 
+#' res <- name_gen_m('GET', '/wizard/jenkins')
+#' body(res)
+#' 
+#' res <- name_gen_m('GET', '/wizard/merlin')
+#' body(res)
+#' 
+#' res <- name_gen_m('GET', '/wizard/sparrowhawk')
+#' body(res)
 uri <- function(x) {
   assert_that(is.request(x))
   x$uri

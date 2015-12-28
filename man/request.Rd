@@ -58,7 +58,8 @@ The body message of a request object may be retreived with \link{body}.
 req <- request()
 print(req)
 
-# try out this route to see more
+# the request object is loaded with information
+# from the client
 printreq <- route(
   'GET',
   '^/print/request$',
@@ -70,16 +71,16 @@ printreq <- route(
   }
 )
 
+# create mockup
 printreq_m <- mockup(printreq)
-print(printreq_m('get', '/print/request'))
-print(
-  printreq_m(
-    'get', '/print/request', 
-    headers = list(
-      Accept = 'text/html',
-      Host = 'with the most'
-    )
-  )
+
+# now there's something to see
+printreq_m('get', '/print/request')
+printreq_m('get', '/print/request', 
+           headers = list(
+             Accept = 'text/html',
+             Host = 'with the most'
+           )
 )
 }
 
