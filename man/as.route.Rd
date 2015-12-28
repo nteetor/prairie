@@ -21,7 +21,7 @@ is.route(x)
 \arguments{
 \item{x}{An \R object.}
 
-\item{path}{System path to file.}
+\item{path}{System path to the folder containing the route file.}
 
 \item{\ldots}{Arguments passed on to other methods.}
 }
@@ -45,5 +45,37 @@ The S3 generic function \code{as.route} is exported by prairie to encourage
 creation of \code{as.route.*} functions. Custom \code{as.route} functions 
 allow users to coerce their classes to routes and quickly serve them over
 HTTP.
+}
+\examples{
+# Easily reuse routes and keep your
+# applications modular by storing routes
+# in separate files.
+
+\dontrun{
+
+as.route('file1.R')
+
+as.route('file2.R', path = 'app')
+}
+
+# but, choose better file names
+
+# This one's a thin wrapper
+route_route <- route(
+  'POST',
+  '^$',
+  function(req) response()
+)
+
+list_route <- list(
+  method = 'POST',
+  path = '^$',
+  handler = function(req) response()
+)
+
+all.equal(route_route, list_route)
+
+is.route(route_route)
+is.route(list_route)
 }
 

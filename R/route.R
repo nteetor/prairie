@@ -3,16 +3,18 @@
 #' Within prairie, a route is thought of as \emph{a mapping between any number 
 #' of methods, specified by} \code{method}\emph{, and a URI,} \code{path}. A 
 #' route is never assigned more than a single path. However, because \code{path}
-#' is treated as a \link[base:regex]{regular expression} a single route could 
-#' match many different client requests. Further details below.
+#' is treated as a \link[base:regex]{regular expression} a single route may be 
+#' created to match different client requests. Further details below.
 #' 
 #' @param method A character vector specifying an HTTP method(s), such as 
 #'   \code{"get"}, \code{"post"}, or \code{"put"}, case-insensitive.
 #' @param path A character string specifying which URI the route will handle.
 #' @param handler A function whose return value is an object of class 
-#'   \code{response} object, see details below.
+#'   \code{response}, see the Details section below.
 #'   
 #' @details
+#' 
+#' \subsection{Arguments:}{
 #' 
 #' \strong{\code{method}}
 #' 
@@ -28,39 +30,48 @@
 #' 
 #' \code{path} is a character string and is treated as a regular expression. 
 #' When specifying a \code{path} it is unnecessary to include a beginning 
-#' \code{/} and a resource located at the root of a web application is specified
-#' by \code{^$}.
+#' \code{/}. To create a route for the root resource, \code{'/'}, one may 
+#' specify \code{'^$'} as \code{path}.
 #' 
 #' \strong{\code{handler}}
 #' 
 #' \code{handler} is a function with a single argument \code{req}. When an 
-#' application receives a request from a client said request is parsed into a
-#' \link{request} object and is made available to \code{handler}. This allows
-#' routes to handle specific HTTP header fields included by the client as part 
-#' of their request.
+#' application receives a request, this HTTP request is parsed into a 
+#' \link{request} object and is made available to \code{handler} as \code{req}. 
+#' This allows routes to handle specific HTTP header fields included in the
+#' request as well as arguments passed as part of the URI.
 #' 
-#' @return
+#' }
 #' 
-#' A route object.
+#' \subsection{Matching:}{
+#' 
+#' An incoming request is matched to a route by pattern matching each route's 
+#' \code{path} to the request's URI. Matches are tested for using 
+#' \code{\link{grepl}}. The order routes are added to an application is 
+#' important as matches are checked for sequentially and only the handler of the
+#' first matching route is run.
+#' 
+#' }
+#' 
+#' @return An object of class route.
 #' 
 #' @seealso \code{\link{request}}, \code{\link{response}}
 #'   
 #' @export
 #' @name routing
 #' @examples
-#' # typically, route() is called inside of 
-#' # app(), but creation of standalone route 
-#' # objects is possible
+#' # Typically, routes are created and added to an
+#' # application inside app(), but standalone route 
+#' # objects may be created and later added, too.
 #' 
-#' # accepts only GET requests
-#' # path has capture groups, include args
+#' # matches only GET requests
 #' route(
-#'   'get',
-#'   '^transformers/(?<series>[a-z_]+)$',
-#'   function(args) {
+#'   'GET',
+#'   '^transformers/[a-z_]+$',
+#'   function(req) {
 #'     res <- response()
 #'     
-#'     if (args['series'] == 'beast_wars') {
+#'     if (uri(req) == '/transformers/beast_wars') {
 #'       body(res) <- 'Right on!'
 #'     } else {
 #'       body(res) <- 'I can dig that.'
@@ -70,10 +81,9 @@
 #'   }
 #' )
 #' 
-#' # accepts both GET and POST requests
-#' # no capture groups, no need for args
+#' # matches both GET and POST requests
 #' route(
-#'   c('get', 'post'),
+#'   c('GET', 'POST'),
 #'   '^blog/comments$',
 #'   function() {
 #'     req <- request()
@@ -105,39 +115,60 @@ route <- function(method, path, handler) {
     class = 'route'
   )
 } 
-R6::R6Class(
-  'route',
-  public = list(
-    method = NULL,
-    path = NULL,
-    handler = NULL,
     
-    initialize = function(method, path, handler) {
-      assert_that(
-        is.character(method),
-        is.character(path),
-        length(path) == 1,
-        is.function(handler)
-      )
-      
-      self$method <- tolower(method)
-      self$path <- path
-      self$handler <- handler
-      
-      invisible(self)
-    },
-    
-    is = function(methods, path) {
-      all(methods %in% self$method) && path == self$path
-    },
-    matches = function(method, path) {
-      (method %in% self$method || self$method == 'all') && grepl(self$path, path)
-    },
-    dispatch = function(request_environment) {
-      self$handler(request_environment)
-    }
-  )
-)
+#     is = function(methods, path) {
+#       all(methods %in% self$method) && path == self$path
+#     },
+#     matches = function(method, path) {
+#       (method %in% self$method || self$method == 'all') && grepl(self$path, path)
+#     },
+#     dispatch = function(request_environment) {
+#       self$handler(request_environment)
+#     }
+
+#' Test if Two Routes are (Nearly) Equal
+#'
+#' This implementation of \code{all.equal} allows comparison of two routes.
+#' 
+#' @param target,current Two routes to compare.
+#' @param identical If FALSE, test for equivalency.
+#'   
+#' @return
+#' 
+#' TRUE if both routes have the same path and method. The special method
+#' \code{"ALL"} is considered equal to any number of other methods.
+#' 
+#' @export
+#' @name all.equal.route
+#' @examples
+#' rte80 <- route(
+#'   'GET',
+#'   '^/route/to/ohio$',
+#'   function(req) {
+#'     response()  
+#'   }
+#' )
+#' 
+#' rte90 <- route(
+#'   'all',
+#'   '^/route/to/ohio$',
+#'   function(req) {
+#'    res <- response()
+#'    status(res) <- 300
+#'    res
+#'   }
+#' )
+#' 
+#' all.equal(rte80, rte90)
+all.equal.route <- function(target, current, ...) {
+  if ("all" %in% c(target$method, current$method)) {
+    target$path == current$path
+  } else {
+    (target$path == current$path) && 
+      (length(target$method) == length(current$method)) &&
+      (sort(target$method) == sort(current$method))
+  }
+}
 
 #' Coercing Objects to Routes
 #' 
@@ -170,15 +201,30 @@ NULL
 #' @param x An \R object.
 #' @param \ldots Arguments passed on to other methods.
 #' @export
+#' @rdname as.route
 as.route <- function(x, ...) UseMethod('as.route')
 
 #' @export
 #' @rdname as.route
 as.route.route <- function(x, ...) x
 
-#' @param path System path to file.
+#' @param path System path to the folder containing the route file.
 #' @export
 #' @rdname as.route
+#' @examples
+#' # Easily reuse routes and keep your
+#' # applications modular by storing routes
+#' # in separate files.
+#' 
+#' \dontrun{
+#' 
+#' as.route('file1.R')
+#' 
+#' as.route('file2.R', path = 'app')
+#' }
+#' 
+#' # but, choose better file names
+#'
 as.route.character <- function(x, path = 'routes', ...) {
   assert_that(
     file.exists(file.path(path, x)),
@@ -193,6 +239,25 @@ as.route.character <- function(x, path = 'routes', ...) {
 
 #' @export
 #' @rdname as.route
+#' @examples
+#' # as.route.list is a thin wrapper
+#' 
+#' route_route <- route(
+#'   'POST',
+#'   '^$',
+#'   function(req) response()
+#' )
+#' 
+#' list_route <- list(
+#'   method = 'POST',
+#'   path = '^$',
+#'   handler = function(req) response()
+#' )
+#' 
+#' all.equal(route_route, list_route)
+#' 
+#' is.route(route_route)
+#' is.route(list_route)
 as.route.list <- function(x, ...) {
   assert_that(
     x %has_name% 'method',

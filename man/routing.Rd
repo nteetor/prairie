@@ -8,73 +8,77 @@
 route(method, path, handler)
 }
 \arguments{
-\item{method}{A character string specifying an HTTP method(s), such as 
+\item{method}{A character vector specifying an HTTP method(s), such as 
 \code{"get"}, \code{"post"}, or \code{"put"}, case-insensitive.}
 
 \item{path}{A character string specifying which URI the route will handle.}
 
-\item{handler}{A function whose return value is an object of class
-\code{response} object, see details below.}
+\item{handler}{A function whose return value is an object of class 
+\code{response}, see the Details section below.}
 }
 \value{
-A route object.
+An object of class route.
 }
 \description{
 Within prairie, a route is thought of as \emph{a mapping between any number 
 of methods, specified by} \code{method}\emph{, and a URI,} \code{path}. A 
 route is never assigned more than a single path. However, because \code{path}
-is treated as a \link[base:regex]{regular expression} a single route could
-match many different client requests.
+is treated as a \link[base:regex]{regular expression} a single route may be 
+created to match different client requests. Further details below.
 }
 \details{
+\subsection{Arguments:}{
+
 \strong{\code{method}}
 
-\code{method} is a character vector with at least one element. Multiple 
-methods may be specified or if \code{"all"} is specified then all HTTP 
-methods are accepted. Custom methods are possible, but not advised.
+\code{method} is a character vector which specifies at least one HTTP method.
+Alternatively, the keywords \code{"all"} or \code{"ALL"} may be used to 
+specifiy the route must accept any HTTP method. Custom methods may be used, 
+but are not advised.
 
-\code{method} is converted to lower case, so \code{"GET"} and \code{"get"}
+\code{method} is converted to lower case, so \code{"GET"} and \code{"get"} 
 are equivalent.
 
 \strong{\code{path}}
 
-\code{path} may be a regular expression. \code{path} never needs to include a
-beginning \code{/}. The root of a web application is specified by \code{^$}. 
-If \code{path} is a regular expression capture groups may be used to extract 
-substrings.
-
-For example, if \code{path} is 
-\tabular{c}{\code{"^wizard/(?<alias>[a-z]+)/([a-z]+)$"}} and the application 
-receives a request for \tabular{c}{\code{/wizard/sparrowhawk/ged}} then 
-\code{args} would be the character vector \tabular{c}{\code{c("alias" =
-"sparrowhawk", "" = "ged")}} during evaluation of \code{handler}. See
-next section for details about \code{args} and \code{handler}.
+\code{path} is a character string and is treated as a regular expression. 
+When specifying a \code{path} it is unnecessary to include a beginning 
+\code{/}. To create a route for the root resource, \code{'/'}, one may 
+specify \code{'^$'} as \code{path}.
 
 \strong{\code{handler}}
 
-\code{handler} is a function with an optional argument \code{args}, may be 
-included. If \code{path} is a regular expression with capture groups the 
-captured values are passed as \code{args} to \code{handler}. \code{args} will
-always be a character vector. Values in \code{args} are ordered according to 
-the order of the capture groups in \code{path} from left to right. If 
-\code{path} does not contain a capture group and \code{handler} includes 
-\code{args} as a parameter, then the value of \code{args} will be
-\code{character(0)}.
+\code{handler} is a function with a single argument \code{req}. When an 
+application receives a request, this HTTP request is parsed into a 
+\link{request} object and is made available to \code{handler} as \code{req}. 
+This allows routes to handle specific HTTP header fields included in the
+request as well as arguments passed as part of the URI.
+
+}
+
+\subsection{Matching:}{
+
+An incoming request is matched to a route by pattern matching each route's 
+\code{path} to the request's URI. Matches are tested for using 
+\code{\link{grepl}}. The order routes are added to an application is 
+important as matches are checked for sequentially and only the handler of the
+first matching route is run.
+
+}
 }
 \examples{
-# typically, route() is called inside of 
-# app(), but creation of standalone route 
-# objects is possible
+# Typically, routes are created and added to an
+# application inside app(), but standalone route 
+# objects may be created and later added, too.
 
-# accepts only GET requests
-# path has capture groups, include args
+# matches only GET requests
 route(
-  'get',
-  '^transformers/(?<series>[a-z_]+)$',
-  function(args) {
+  'GET',
+  '^transformers/[a-z_]+$',
+  function(req) {
     res <- response()
     
-    if (args['series'] == 'beast_wars') {
+    if (uri(req) == '/transformers/beast_wars') {
       body(res) <- 'Right on!'
     } else {
       body(res) <- 'I can dig that.'
@@ -84,10 +88,9 @@ route(
   }
 )
 
-# accepts both GET and POST requests
-# no capture groups, no need for args
+# matches both GET and POST requests
 route(
-  c('get', 'post'),
+  c('GET', 'POST'),
   '^blog/comments$',
   function() {
     req <- request()
