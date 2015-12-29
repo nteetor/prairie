@@ -1,7 +1,7 @@
 Package: prairie
 Type: Package
 Title: Get Web Applications Growing In R
-Version: 0.0.0.1
+Version: 0.0.0.3
 Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))
 Description: A web framework for R, prairie is based on existing
     frameworks like Express (JS), Django (python), Wookie (lisp), and
@@ -14,9 +14,7 @@ Depends:
     R (>= 3.0.0)
 Imports:
     httpuv (>= 1.3.3),
-    R6 (>= 2.1.0),
-    stringr (>= 1.0.0),
-    mime,
+    stringr,
     assertthat
 Suggests:
     jsonlite,
@@ -26,18 +24,16 @@ BugReports: https://github.com/nteetor/prairie/issues
 Collate:
     'prairie.R'
     'utils.R'
-    'route-class.R'
-    'route.R'
-    'request-coercion.R'
-    'request-line.R'
-    'request-header.R'
     'request.R'
-    'response-coercion.R'
-    'response-header.R'
+    'request-request-line.R'
+    'request-header.R'
     'response.R'
+    'response-header.R'
+    'route.R'
+    'application.R'
     'jsonify.R'
     'status.R'
     'body.R'
-    'application-class.R'
-    'application.R'
+    'mockup.R'
+    'zzz.R'
 RoxygenNote: 5.0.1

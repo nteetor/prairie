@@ -1,25 +1,41 @@
-#' HTTP Request Header Fields
+#' Request Header Fields
 #' 
-#' Get and header field values for \code{request} objects.
+#' To get the values of request header fields [ or [[ may be used to get a 
+#' single or multiple values respectively. Request field names are 
+#' case-insensitive, so \code{"Accept"} and \code{"accept"} are equivalent.
 #' 
 #' @details
 #' 
-#' For more information regarding specific HTTP request header fields refer to 
-#' \url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}.
+#' For more information regarding specific HTTP request header fields please
+#' refer to \url{https://tools.ietf.org/html/rfc2616#section-5.3}.
 #' 
 #' @name request-headers
 #' @examples
 #' req <- request()
 #' 
-#' req[['Accept']] <- 'text/*'
-#' req[['From']] <- '127.0.0.1'
+#' req[['Accept']] # NULL
+#' req[['From']]   # NULL
 #' 
-#' req[] <- list(
-#'  Connection = 'close',
-#'  Date = Sys.time()
+#' checkin <- route(
+#'   'POST',
+#'   '^$',
+#'   function(req) {
+#'     print(req[['Accept']])
+#'     print(req[['From']])
+#'     
+#'     response()
+#'   }
 #' )
 #' 
-#' req
+#' checkin_m <- mockup(checkin)
+#' # More interesting output
+#' checkin_m(
+#'   'POST', '/', 
+#'   headers = list(
+#'     Accept = 'text/html', 
+#'     From = 'Russia w/ Love'
+#'   )
+#' )
 NULL
 
 
@@ -27,25 +43,20 @@ NULL
 #' @param field An HTTP request header field name.
 #' @export
 #' @rdname request-headers
-`[[.request` <- function(x, field) x$get(field)
-
-#' @param value A value to assign to \code{field}.
-#' @export
-#' @rdname request-headers
-`[[<-.request` <- function(x, field, value) x$set(field, value)
-
-#' @export
-#' @rdname request-headers
-`[.request` <- function(x, field) x$get_all(field)
-
-#' @export
-#' @rdname request-headers
-`[<-.request` <- function(x, field, value) {
-  if (missing(field)) {
-    assert_that(is_named(value))
-    x$set_all(names(value), value)
+`[[.request` <- function(x, field) {
+  assert_that(is.character(field))
+  
+  if (field %in% c('Referer', 'Referrer')) {
+    x$headers$referer %||% x$headers$referrer
   } else {
-    x$set_all(field, value)
+    x$headers[[tolower(field)]]
   }
-  invisible(x)
+}
+
+#' @export
+#' @rdname request-headers
+`[.request` <- function(x, field) {
+  assert_that(is.character(field))
+  
+  lapply(field, function(f) x[[f]])
 }

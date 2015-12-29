@@ -1,41 +1,45 @@
 #' HTTP Message Body
-#'
-#' Get the message body of a \code{request} or \code{response} object. The body
+#' 
+#' Get the message body of a \code{request} or \code{response} object. The body 
 #' of \code{response} objects may be set.
-#'
+#' 
 #' @return
-#'
-#' A character string if the request contains a message body, otherwise
+#' 
+#' A character string if the request contains a message body, otherwise 
 #' \code{NULL}.
-#'
+#' 
+#' @details
+#' 
+#' The default versions of both functions call the base version.
+#' 
 #' @seealso
 #' 
-#' For more information about HTTP requests please refer to the
-#' \href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request}
-#' section of www.w3.org.
-#'
+#' For more information about HTTP requests please refer to the 
+#' \href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
+#' of www.w3.org.
+#' 
 #' @export
 #' @name body
 #' @examples
-#' route(
-#'   'post',
+#' transmog <- route(
+#'   'POST',
 #'   '^transmogrify/json$',
 #'   function() {
 #'     req <- request()
 #'     res <- response()
-#'
+#' 
 #'     # get body of request
 #'     raw_body <- body(req)
 #'     data <- jsonlite::fromJSON(raw_body)
-#'
+#' 
 #'     mogrified <- lapply(
 #'       data,
 #'       function(col) paste0(as.character(col), '!!!')
 #'     )
-#'
+#' 
 #'     status(res) <- 200
 #'     body(res) <- as.json(mogrified)
-#'
+#' 
 #'     res
 #'   }
 #' )
@@ -59,13 +63,6 @@ body.request <- function(x) {
 
 #' @export
 #' @rdname body
-`body<-.request` <- function(x, value) {
-  x$body <- value
-  invisible(x)
-}
-
-#' @export
-#' @rdname body
 body.response <- function(x) {
   x$body
 }
@@ -73,6 +70,13 @@ body.response <- function(x) {
 #' @export
 #' @rdname body
 `body<-.response` <- function(x, value) {
+  if (is.json(x)) x[['Content-Type']] <- 'application/json'
   x$body <- value
   invisible(x)
 }
+
+#' @export
+body.default <- base::body
+
+#' @export
+`body<-.default` <- base::`body<-`
