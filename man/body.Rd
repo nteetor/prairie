@@ -5,7 +5,6 @@
 \alias{body.request}
 \alias{body.response}
 \alias{body<-}
-\alias{body<-.request}
 \alias{body<-.response}
 \title{HTTP Message Body}
 \usage{
@@ -14,8 +13,6 @@ body(x)
 body(x) <- value
 
 \method{body}{request}(x)
-
-\method{body}{request}(x) <- value
 
 \method{body}{response}(x)
 
@@ -27,16 +24,19 @@ body(x) <- value
 \item{value}{An \R object, complex objects are converted to JSON, see details.}
 }
 \value{
-A character string if the request contains a message body, otherwise
+A character string if the request contains a message body, otherwise 
 \code{NULL}.
 }
 \description{
-Get the message body of a \code{request} or \code{response} object. The body
+Get the message body of a \code{request} or \code{response} object. The body 
 of \code{response} objects may be set.
 }
+\details{
+The default versions of both functions call the base version.
+}
 \examples{
-route(
-  'post',
+transmog <- route(
+  'POST',
   '^transmogrify/json$',
   function() {
     req <- request()
@@ -59,8 +59,8 @@ route(
 )
 }
 \seealso{
-For more information about HTTP requests please refer to the
-\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request}
-section of www.w3.org.
+For more information about HTTP requests please refer to the 
+\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
+of www.w3.org.
 }
 

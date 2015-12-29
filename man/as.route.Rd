@@ -60,7 +60,8 @@ as.route('file2.R', path = 'app')
 
 # but, choose better file names
 
-# This one's a thin wrapper
+# as.route.list is a thin wrapper
+
 route_route <- route(
   'POST',
   '^$',

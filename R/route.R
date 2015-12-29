@@ -270,4 +270,3 @@ as.route.list <- function(x, ...) {
 #' @export
 #' @rdname as.route
 is.route <- function(x) inherits(x, 'route')
-

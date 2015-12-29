@@ -74,6 +74,27 @@ response <- function() {
   )
 }
 
+#' Coerce Objects to Response
+#' 
+#' TBD, see jsonify.
+#' 
+#' @name as.response
+NULL
+
+#' @param x Any \R object.
+#' @export
+#' @rdname as.response
+as.response <- function(x) UseMethod('as.response')
+
+#' @export
+#' @name as.response
+#' @examples
+#' is.response(logical(1))
+#' is.response(response())
+#' is.response(3030)
+is.response <- function(x) inherits(x, 'response')
+
+
 #' Printing Response
 #' 
 #' Print a response object.
