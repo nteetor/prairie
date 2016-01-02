@@ -83,7 +83,7 @@ request <- function() {
     list(
       method = NULL,
       uri = NULL,
-      query = list(),
+      query = NULL,
       headers = list(),
       body = ''
     ),
@@ -101,19 +101,17 @@ request <- function() {
 #' 
 #' Formats the request as an HTTP request.
 #' 
-#' @seealso
-#' 
-#' \code{\link{request}}
+#' @seealso \code{\link{request}}
 #' 
 #' @keywords internal
 #' @export
 #' @name print.request
 print.request <- function(x, ...) {
-  headers <- lapply(
+  headers <- vapply(
     x$headers,
-    function(hdr) if (is.time(hdr) || is.date(hdr)) http_date(hdr) else as.character(hdr)
+    function(hdr) if (is.time(hdr) || is.date(hdr)) http_date(hdr) else as.character(hdr),
+    character(1)
   )
-  names(headers) <- sapply(names(headers), stringr::str_to_title)
   
   cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
   
@@ -170,15 +168,16 @@ as.request <- function(x) UseMethod('as.request')
 as.request.environment <- function(x) {
   req <- request()
   
-  req$method <- x$REQUEST_METHOD
+  req$method <- tolower(x$REQUEST_METHOD)
   req$uri <- x$PATH_INFO
+  req$query <- x$QUERY_STRING
   
   req$headers <- mget(grep('^HTTP_', names(x), value = TRUE), envir = x)
   names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
   names(req$headers) <- gsub('_', '-', names(req$headers))
-  names(req$headers) <- tolower(names(req$headers))
+  names(req$headers) <- vapply(names(req$headers), capitalize_header, character(1))
   
-  req$body <- if (!is.null(x$envir.input)) x$envir.input$read_lines() else ''
+  req$body <- if (!is.null(x$rook.input)) x$rook.input$read_lines() else ''
   
   req
 }

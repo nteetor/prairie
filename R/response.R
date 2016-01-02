@@ -66,7 +66,7 @@ response <- function() {
     list(
       status_code = 200,
       headers = list(
-        `Content-Type` = 'plain/text'
+        `Content-Type` = 'text/plain'
       ),
       body = ''
     ),
@@ -95,7 +95,7 @@ as.response <- function(x) UseMethod('as.response')
 is.response <- function(x) inherits(x, 'response')
 
 
-#' Printing Response
+#' Printing Responses
 #' 
 #' Print a response object.
 #' 
@@ -105,9 +105,7 @@ is.response <- function(x) inherits(x, 'response')
 #' 
 #' Formats the response as an HTTP response.
 #' 
-#' @seealso
-#' 
-#' \code{\link{response}}
+#' @seealso \code{\link{response}}
 #' 
 #' @keywords internal
 #' @export 

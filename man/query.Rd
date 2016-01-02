@@ -31,6 +31,7 @@ route(
 )
 }
 \seealso{
-Other requests: \code{\link{uri}}
+Other HTTP.request.request.line: \code{\link{method}},
+  \code{\link{uri}}
 }
 

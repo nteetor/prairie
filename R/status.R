@@ -25,7 +25,7 @@ status.response <- function(x) {
 #' @export
 #' @rdname status
 `status<-.response` <- function(x, value) {
-  x$status <- value
+  x$status_code <- value
   invisible(x)
 }
 
@@ -33,11 +33,11 @@ status.response <- function(x) {
 #' 
 #' Get the corresponding reason phrase for a particular status code.
 #' 
-#' @param status An HTTP status code.
+#' @param status_code An HTTP status code.
 #' 
 #' @return
 #' 
-#' If \code{status} is not found, then the empty string is returned.
+#' If \code{status_code} is not found the empty string is returned.
 #'
 #' @keywords internal
 #' @export
@@ -46,10 +46,10 @@ status.response <- function(x) {
 #' reason_phrase('404')
 #' 
 #' reason_phrase(531)
-reason_phrase <- function(status) {
-  assert_that(is.numeric(status) || is.character(status))
+reason_phrase <- function(status_code) {
+  assert_that(is.numeric(status_code) || is.character(status_code))
   switch(
-    as.character(status),
+    as.character(status_code),
     '100' = "Continue",
     '101' = "Switching Protocols",
     '200' = "OK",

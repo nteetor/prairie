@@ -103,7 +103,8 @@ route <- function(method, path, handler) {
     is.character(method),
     is.character(path),
     length(path) == 1,
-    is.function(handler)
+    is.function(handler),
+    length(formals(handler)) == 1
   )
   
   structure(
@@ -270,3 +271,18 @@ as.route.list <- function(x, ...) {
 #' @export
 #' @rdname as.route
 is.route <- function(x) inherits(x, 'route')
+
+#' Printing Routes and Mockups
+#' 
+#' Prints a route or mockup. A mockup prints the underlying route object.
+#' 
+#' @param x A \code{route} or route \code{mockup}.
+#' 
+#' @seealso \code{\link{route}}, \code{\link{mockup}}
+#'   
+#' @export
+#' @name print.route
+print.route <- function(x, ...) {
+  cat('Method:', paste(x$method, collapse = ', '), '\n')
+  cat('  Path:', x$path)
+}

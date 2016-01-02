@@ -42,4 +42,8 @@ res
 res <- methodical_m('POST', '/')
 body(res)
 }
+\seealso{
+Other HTTP.request.request.line: \code{\link{query}},
+  \code{\link{uri}}
+}
 

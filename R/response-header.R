@@ -38,7 +38,7 @@ NULL
 #' @rdname response-headers
 `[[.response` <- function(x, field) {
   assert_that(is.character(field))
-  x$headers[[tolower(field)]]
+  x$headers[[field]]
 }
 
 #' @param value Value to assign to \code{field}.

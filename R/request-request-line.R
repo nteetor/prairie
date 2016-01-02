@@ -4,6 +4,8 @@
 #' uri, the query component, or the requset HTTP protocol.
 #' 
 #' @param x A \code{request} object.
+#' 
+#' @family HTTP request request-line
 #'   
 #' @export
 #' @name method
@@ -46,7 +48,7 @@ method <- function(x) {
 #' 
 #' @inheritParams method
 #' 
-#' @family requests
+#' @family HTTP request request-line
 #' 
 #' @export
 #' @name uri
@@ -100,7 +102,7 @@ uri <- function(x) {
 #' 
 #' @inheritParams method
 #' 
-#' @family requests
+#' @family HTTP request request-line
 #' 
 #' @export
 #' @name query

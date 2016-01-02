@@ -10,8 +10,8 @@ test_that('application constructor constructs properly', {
   expect_true(
     is.application(
       app(
-        route('GET', '^$', function() NULL),
-        route('PUT', '^/putt/putt', function() NULL)
+        route('GET', '^$', function(req) NULL),
+        route('PUT', '^/putt/putt', function(req) NULL)
       )
     )
   )
@@ -25,7 +25,7 @@ test_that('application coerces arguments to routes', {
         list(
           method = 'GET',
           path = '^',
-          handler = function() NULL
+          handler = function(req) NULL
         )
       )
     )
@@ -40,4 +40,3 @@ test_that('starting application fails for incorrect args', {
 })
 
 # deltron 3030, handy because the name is a string and a number
-

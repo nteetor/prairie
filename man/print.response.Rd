@@ -2,7 +2,7 @@
 % Please edit documentation in R/response.R
 \name{print.response}
 \alias{print.response}
-\title{Printing Response}
+\title{Printing Responses}
 \usage{
 \method{print}{response}(x, ...)
 }

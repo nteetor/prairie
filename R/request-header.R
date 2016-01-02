@@ -2,19 +2,19 @@
 #' 
 #' To get the values of request header fields [ or [[ may be used to get a 
 #' single or multiple values respectively. Request field names are 
-#' case-insensitive, so \code{"Accept"} and \code{"accept"} are equivalent.
+#' case-sensitive.
 #' 
 #' @details
 #' 
-#' For more information regarding specific HTTP request header fields please
-#' refer to \url{https://tools.ietf.org/html/rfc2616#section-5.3}.
+#' For more information regarding HTTP request header fields please refer to
+#' \url{https://tools.ietf.org/html/rfc2616#section-5.3}.
 #' 
 #' @name request-headers
 #' @examples
 #' req <- request()
 #' 
 #' req[['Accept']] # NULL
-#' req[['From']]   # NULL
+#' req[['From']]   # NULL, boring
 #' 
 #' checkin <- route(
 #'   'POST',
@@ -28,9 +28,11 @@
 #' )
 #' 
 #' checkin_m <- mockup(checkin)
+#' 
 #' # More interesting output
 #' checkin_m(
-#'   'POST', '/', 
+#'   'POST', 
+#'   '/', 
 #'   headers = list(
 #'     Accept = 'text/html', 
 #'     From = 'Russia w/ Love'
@@ -49,7 +51,7 @@ NULL
   if (field %in% c('Referer', 'Referrer')) {
     x$headers$referer %||% x$headers$referrer
   } else {
-    x$headers[[tolower(field)]]
+    x$headers[[field]]
   }
 }
 
@@ -58,5 +60,5 @@ NULL
 `[.request` <- function(x, field) {
   assert_that(is.character(field))
   
-  lapply(field, function(f) x[[f]])
+  setNames(lapply(field, function(f) x[[f]] %||% NA), field)
 }

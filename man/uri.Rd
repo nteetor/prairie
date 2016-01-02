@@ -53,6 +53,7 @@ res <- name_gen_m('GET', '/wizard/sparrowhawk')
 body(res)
 }
 \seealso{
-Other requests: \code{\link{query}}
+Other HTTP.request.request.line: \code{\link{method}},
+  \code{\link{query}}
 }
 

@@ -28,7 +28,7 @@ template_request <- list2env(
 )
 
 test_that('`[[` and `[` properly gets header fields', {
-  req <- request(template_request)
+  req <- as.request(template_request)
 
   expect_equal(req[['Cache-Control']], 'max-age=0')
   expect_equal(req[['Connection']], 'keep-alive')
@@ -37,20 +37,10 @@ test_that('`[[` and `[` properly gets header fields', {
   expect_equal(req[c('Cache-Control', 'Connection')], list(`Cache-Control` = 'max-age=0', Connection = 'keep-alive'))
 })
 
-test_that('`[[<-` properly sets header fields', {
-  req <- request()
-
-  req[['Cache-Control']] <- 'out of control'
-  req[['Accept']] <- 'text/*'
-
-  expect_equal(req[['Cache-Control']], 'out of control')
-  expect_equal(req[['Accept']], 'text/*')
-})
-
 test_that('url() helper function', {
-  expect_error(url('request'))
-  expect_error(url(3030))
-  req <- request(template_request)
-  expect_equal(url(req), '/foo/bar')
+  expect_error(uri('request'))
+  expect_error(uri(3030))
+  req <- as.request(template_request)
+  expect_equal(uri(req), '/foo/bar')
 })
 

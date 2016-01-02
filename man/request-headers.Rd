@@ -18,17 +18,17 @@
 \description{
 To get the values of request header fields [ or [[ may be used to get a 
 single or multiple values respectively. Request field names are 
-case-insensitive, so \code{"Accept"} and \code{"accept"} are equivalent.
+case-sensitive.
 }
 \details{
-For more information regarding specific HTTP request header fields please
-refer to \url{https://tools.ietf.org/html/rfc2616#section-5.3}.
+For more information regarding HTTP request header fields please refer to
+\url{https://tools.ietf.org/html/rfc2616#section-5.3}.
 }
 \examples{
 req <- request()
 
 req[['Accept']] # NULL
-req[['From']]   # NULL
+req[['From']]   # NULL, boring
 
 checkin <- route(
   'POST',
@@ -42,9 +42,11 @@ checkin <- route(
 )
 
 checkin_m <- mockup(checkin)
+
 # More interesting output
 checkin_m(
-  'POST', '/', 
+  'POST', 
+  '/', 
   headers = list(
     Accept = 'text/html', 
     From = 'Russia w/ Love'

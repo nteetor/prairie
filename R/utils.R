@@ -16,6 +16,21 @@ http_date <- function(date_time) {
   strftime(date_time, format = '%a, %d %b %Y %H:%M:%S', usetz = TRUE)
 }
 
+zfill <- function(n, z = '0') {
+  paste(rep(z, times = n), collapse = '')
+}
+
+bfill <- function(n) zfill(n, ' ')
+
+capitalize_header <- function(s) {
+  cap <- function(s) paste(toupper(substring(s, 1, 1)), tolower(substring(s, 2)), sep = '')
+  paste(vapply(strsplit(s, split = '-')[[1]], cap, character(1), USE.NAMES = FALSE), collapse = '-')
+}
+
+is_match <- function(rte, req) {
+  grepl(rte$path, req$uri) && (rte$method == req$method || rte$method == 'all')
+}
+
 is_named <- function(lst) {
   if (length(lst) == 0) FALSE
   else if (any(names(lst) == '')) FALSE

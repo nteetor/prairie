@@ -2,18 +2,12 @@
 % Please edit documentation in R/mockup.R
 \name{mockup}
 \alias{mockup}
-\alias{mockup.route}
-\alias{print.mockup}
 \title{Mockup a Route}
 \usage{
-mockup(x)
-
-\method{mockup}{route}(x)
-
-\method{print}{mockup}(x, ...)
+mockup(r)
 }
 \arguments{
-\item{x}{Any \R object}
+\item{r}{A \code{route} object.}
 }
 \description{
 Creates a mockup of a route object. A mockup simulates a route's response to
@@ -32,6 +26,6 @@ logger <- route(
 
 logger_m <- mockup(logger)
 logger_m('GET', '/yellow/brick/path')
-logger_m('GET', '/pho', headers = list(Accepts = 'text/html'))
+logger_m('GET', '/phonday', headers = list(Accepts = 'text/html'))
 }
 

@@ -70,7 +70,7 @@ body.response <- function(x) {
 #' @export
 #' @rdname body
 `body<-.response` <- function(x, value) {
-  if (is.json(x)) x[['Content-Type']] <- 'application/json'
+  if (is.json(value)) x[['Content-Type']] <- 'application/json'
   x$body <- value
   invisible(x)
 }

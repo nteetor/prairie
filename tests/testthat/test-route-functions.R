@@ -1,7 +1,7 @@
 context('route functions')
 
 test_that('is.route returns TRUE/FALSE appropriately', {
-  expect_true(is.route(route('', '', function() NULL)))
+  expect_true(is.route(route('', '', function(req) NULL)))
   expect_false(is.route('route'))
   expect_false(is.route(c('route', '31')))
   expect_false(is.route(3030))
@@ -9,7 +9,7 @@ test_that('is.route returns TRUE/FALSE appropriately', {
 })
 
 test_that('as.route.route coerces correctly', {
-  route31 <- route('', '', function() NULL)
+  route31 <- route('', '', function(req) NULL)
   expect_true(is.route(route31))
   expect_true(is.route(as.route(route31)))
 })
@@ -21,7 +21,7 @@ test_that('as.route.character coerces correctly', {
 })
 
 test_that('as.route.list coerces correctly', {
-  expect_true(is.route(as.route(list(method = '', path = '', handler = function() NULL))))
-  expect_error(as.route(list(path = '', handler = function() NULL)))
+  expect_true(is.route(as.route(list(method = '', path = '', handler = function(req) NULL))))
+  expect_error(as.route(list(path = '', handler = function(req) NULL)))
   expect_error(as.route(list()))
 })

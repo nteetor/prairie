@@ -4,13 +4,13 @@
 \alias{reason_phrase}
 \title{Status Code Reason Phrase}
 \usage{
-reason_phrase(status)
+reason_phrase(status_code)
 }
 \arguments{
-\item{status}{An HTTP status code.}
+\item{status_code}{An HTTP status code.}
 }
 \value{
-If \code{status} is not found, then the empty string is returned.
+If \code{status_code} is not found the empty string is returned.
 }
 \description{
 Get the corresponding reason phrase for a particular status code.
