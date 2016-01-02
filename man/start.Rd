@@ -2,18 +2,18 @@
 % Please edit documentation in R/application.R
 \name{start}
 \alias{start}
-\title{Run Prairie Application}
+\title{Run a Prairie Application}
 \usage{
 start(app, host, port)
 }
 \arguments{
-\item{app}{An \code{application} object.}
+\item{app}{An object with class \code{application}.}
 
-\item{host}{A character vector specifying the host name.}
+\item{host}{A character string specifying the host name.}
 
-\item{port}{A numeric specifying the port number.}
+\item{port}{An integer specifying the port number.}
 }
 \description{
-Starts an \code{\link{app}} at \code{host} on \code{port}.
+Start an application running at \code{host} on \code{port}.
 }
 

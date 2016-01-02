@@ -2,45 +2,55 @@
 % Please edit documentation in R/request-header.R
 \name{request-headers}
 \alias{[.request}
-\alias{[<-.request}
 \alias{[[.request}
-\alias{[[<-.request}
 \alias{request-headers}
-\title{HTTP Request Header Fields}
+\title{Request Header Fields}
 \usage{
 \method{[[}{request}(x, field)
 
-\method{[[}{request}(x, field) <- value
-
 \method{[}{request}(x, field)
-
-\method{[}{request}(x, field) <- value
 }
 \arguments{
 \item{x}{A \code{request} object.}
 
 \item{field}{An HTTP request header field name.}
-
-\item{value}{A value to assign to \code{field}.}
 }
 \description{
-Get and header field values for \code{request} objects.
+To get the values of request header fields [ or [[ may be used to get a 
+single or multiple values respectively. Request field names are 
+case-sensitive.
 }
 \details{
-For more information regarding specific HTTP request header fields refer to 
-\url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}.
+For more information regarding HTTP request header fields please refer to
+\url{https://tools.ietf.org/html/rfc2616#section-5.3}.
 }
 \examples{
 req <- request()
 
-req[['Accept']] <- 'text/*'
-req[['From']] <- '127.0.0.1'
+req[['Accept']] # NULL
+req[['From']]   # NULL, boring
 
-req[] <- list(
- Connection = 'close',
- Date = Sys.time()
+checkin <- route(
+  'POST',
+  '^$',
+  function(req) {
+    print(req[['Accept']])
+    print(req[['From']])
+    
+    response()
+  }
 )
 
-req
+checkin_m <- mockup(checkin)
+
+# More interesting output
+checkin_m(
+  'POST', 
+  '/', 
+  headers = list(
+    Accept = 'text/html', 
+    From = 'Russia w/ Love'
+  )
+)
 }
 

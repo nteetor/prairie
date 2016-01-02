@@ -1,7 +1,7 @@
 route(
   'nothing',
   'to',
-  function() {
+  function(req) {
     'see here'
   }
 )

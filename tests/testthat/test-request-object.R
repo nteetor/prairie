@@ -1,4 +1,4 @@
-context('request object')
+context('request object / as.request')
 
 template_request <- list2env(
   list(
@@ -19,25 +19,18 @@ template_request <- list2env(
     rook.version = 'nope',
     rook.url_scheme = 'https',
     rook.input = list(
-      read_lines = function() {
-        '<p>Hello, world!</p>'
-      }
+      read_lines = function() '<p>Hello, world!</p>'
     ),
     rook.errors = 'Should I care?'
   )
 )
 
 test_that('request initialize with defaults', {
-  req <- request(template_request)
+  req <- as.request(template_request)
   
-  expect_equal(req$url, '/foo/bar')
+  expect_equal(req$uri, '/foo/bar')
   expect_equal(req$body, '<p>Hello, world!</p>')
+  expect_equal(req$headers$`Accept-Language`, 'en-US,en;q=0.8')
+  expect_equal(req$query, '')
 })
 
-test_that('$type_is returns TRUE/FALSE for correct/incorrect content-type', {
-  req <- request(template_request)
-  
-  expect_true(req$type_is('html'))
-  expect_true(req$type_is('text/html'))
-  expect_true(req$type_is('text/*'))
-})

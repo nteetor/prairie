@@ -36,16 +36,26 @@ NULL
 #' @param field An HTTP response header field name.
 #' @export
 #' @rdname response-headers
-`[[.response` <- function(x, field) x$get(field)
+`[[.response` <- function(x, field) {
+  assert_that(is.character(field))
+  x$headers[[field]]
+}
 
 #' @param value Value to assign to \code{field}.
 #' @export
 #' @rdname response-headers
-`[[<-.response` <- function(x, field, value) x$set(field, value)
+`[[<-.response` <- function(x, field, value) {
+  assert_that(is.character(field))
+  x$headers[[field]] <- value
+  invisible(x)
+}
 
 #' @export 
 #' @rdname response-headers
-`[.response` <- function(x, field) x$get_all(field)
+`[.response` <- function(x, field) {
+  assert_that(is.character(field))
+  sapply(field, function(f) x$headers[[f]], simplify = FALSE, USE.NAMES = TRUE)
+}
 
 #' @export
 #' @rdname response-headers
@@ -53,9 +63,11 @@ NULL
   if (missing(field)) {
     assert_that(is_named(value))
     
-    x$set_all(names(value), value)
+    x$headers <- value
   } else {
-    x$set_all(field, value)    
+    assert_that(is.character(field), length(field) == length(value))
+    lapply()
   }
+  invisible(x)
 }
 

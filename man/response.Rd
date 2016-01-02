@@ -2,27 +2,69 @@
 % Please edit documentation in R/response.R
 \name{response}
 \alias{response}
-\title{Create an HTTP response}
+\title{Create an HTTP Response}
 \usage{
 response()
 }
 \description{
-A response object represents the HTTP response returned by a route handler.
+A response object represents the HTTP response returned by a route handler. A
+response is typically made up of a status, HTTP headers, and a body. A 
+response body is optional.
+}
+\section{Components}{
+
+
+\subsection{status:}{
+
+Set the status of a response to indicate what action, if any, the client 
+needs to take. Otherwise a status of 2XX indicates a client request was valid
+and the response object contains the requested resource.
+
+Below are descriptions for each status code class,
+
+\describe{
+
+\item{1xx:}{Informational - Request received, continuing process}
+
+\item{2xx:}{Success - The action was successfully received, understood, and 
+accepted}
+
+\item{3xx:}{Redirection - Further action must be taken in order to complete
+the request}
+
+\item{4xx:}{Client Error - The request contains bad syntax or cannot be 
+fulfilled}
+
+\item{5xx:}{Server Error - The server failed to fulfill an apparently valid 
+request}
+
+}
+}
 }
 \examples{
-# simple 301 response
-res_301 <- response()
+# a route to return a client-requested status
+# and reason phrase
+phrase10 <- route(
+  'GET', 
+  '^\\\\d+',
+  function(req) {
+    stat <- sub('/', '', uri(req))
     
-res_301[['Connection']] <- 'close'
-status(res_301) <- 301
-body(res_301) <- 'Sorry, this page has moved'
+    res <- response()
+    
+    status(res) <- 200
+    body(res) <- paste(stat, reason_phrase(stat))
+    
+    print(res)
+    
+    res
+  }
+)
 
-# simple 404 response
-res_404 <- response()
+phrase10_m <- mockup(phrase10)
 
-res_404[['Connection']] <- 'close'
-status(res_404) <- 404
-body(res_404) <- 'Sorry, page not found'
+phrase10_m('get', '302')
+phrase10_m('get', '203')
 }
 \seealso{
 \code{\link{route}}, \code{\link{request}}

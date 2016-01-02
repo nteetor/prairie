@@ -6,8 +6,6 @@
 #' @docType package
 #' @name prairie
 #' @import assertthat
-#' @importFrom R6 R6Class
 #' @importFrom httpuv runServer encodeURI
 #' @importFrom stringr str_match_all
-#' @importFrom mime guess_type
 "_PACKAGE"
