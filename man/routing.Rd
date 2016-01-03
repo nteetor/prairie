@@ -8,22 +8,22 @@
 route(method, path, handler)
 }
 \arguments{
-\item{method}{A character vector specifying an HTTP method(s), such as 
+\item{method}{A character vector specifying an HTTP method(s), such as
 \code{"get"}, \code{"post"}, or \code{"put"}, case-insensitive.}
 
 \item{path}{A character string specifying which URI the route will handle.}
 
-\item{handler}{A function whose return value is an object of class 
+\item{handler}{A function whose return value is an object of class
 \code{response}, see the Details section below.}
 }
 \value{
 An object of class route.
 }
 \description{
-Within prairie, a route is thought of as \emph{a mapping between any number 
-of methods, specified by} \code{method}\emph{, and a URI,} \code{path}. A 
+Within prairie, a route is thought of as \emph{a mapping between any number
+of methods, specified by} \code{method}\emph{, and a URI,} \code{path}. A
 route is never assigned more than a single path. However, because \code{path}
-is treated as a \link[base:regex]{regular expression} a single route may be 
+is treated as a \link[base:regex]{regular expression} a single route may be
 created to match different client requests. Further details below.
 }
 \details{
@@ -32,25 +32,25 @@ created to match different client requests. Further details below.
 \strong{\code{method}}
 
 \code{method} is a character vector which specifies at least one HTTP method.
-Alternatively, the keywords \code{"all"} or \code{"ALL"} may be used to 
-specifiy the route must accept any HTTP method. Custom methods may be used, 
+Alternatively, the keywords \code{"all"} or \code{"ALL"} may be used to
+specifiy the route must accept any HTTP method. Custom methods may be used,
 but are not advised.
 
-\code{method} is converted to lower case, so \code{"GET"} and \code{"get"} 
+\code{method} is converted to lower case, so \code{"GET"} and \code{"get"}
 are equivalent.
 
 \strong{\code{path}}
 
-\code{path} is a character string and is treated as a regular expression. 
-When specifying a \code{path} it is unnecessary to include a beginning 
-\code{/}. To create a route for the root resource, \code{'/'}, one may 
+\code{path} is a character string and is treated as a regular expression.
+When specifying a \code{path} it is unnecessary to include a beginning
+\code{/}. To create a route for the root resource, \code{'/'}, one may
 specify \code{'^$'} as \code{path}.
 
 \strong{\code{handler}}
 
-\code{handler} is a function with a single argument \code{req}. When an 
-application receives a request, this HTTP request is parsed into a 
-\link{request} object and is made available to \code{handler} as \code{req}. 
+\code{handler} is a function with a single argument \code{req}. When an
+application receives a request, this HTTP request is parsed into a
+\link{request} object and is made available to \code{handler} as \code{req}.
 This allows routes to handle specific HTTP header fields included in the
 request as well as arguments passed as part of the URI.
 
@@ -58,9 +58,9 @@ request as well as arguments passed as part of the URI.
 
 \subsection{Matching:}{
 
-An incoming request is matched to a route by pattern matching each route's 
-\code{path} to the request's URI. Matches are tested for using 
-\code{\link{grepl}}. The order routes are added to an application is 
+An incoming request is matched to a route by pattern matching each route's
+\code{path} to the request's URI. Matches are tested for using
+\code{\link{grepl}}. The order routes are added to an application is
 important as matches are checked for sequentially and only the handler of the
 first matching route is run.
 
@@ -68,8 +68,8 @@ first matching route is run.
 }
 \examples{
 # Typically, routes are created and added to an
-# application inside app(), but standalone route 
-# objects may be created and later added, too.
+# application inside app(), but standalone route
+# objects may be created and added later.
 
 # matches only GET requests
 route(
@@ -77,13 +77,13 @@ route(
   '^transformers/[a-z_]+$',
   function(req) {
     res <- response()
-    
+
     if (uri(req) == '/transformers/beast_wars') {
       body(res) <- 'Right on!'
     } else {
       body(res) <- 'I can dig that.'
     }
-    
+
     res
   }
 )
@@ -92,16 +92,15 @@ route(
 route(
   c('GET', 'POST'),
   '^blog/comments$',
-  function() {
-    req <- request()
+  function(req) {
     res <- response()
-    
+
     if (method(req) == 'get') {
       body(res) <- 'Get your own comments!'
     } else {
       body(res) <- 'Thanks for commenting'
     }
-    
+
     res
   }
 )

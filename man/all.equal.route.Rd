@@ -9,7 +9,7 @@
 \arguments{
 \item{target, current}{Two routes to compare.}
 
-\item{identical}{If FALSE, test for equivalency.}
+\item{\ldots}{Additional arguments passed on to methods.}
 }
 \value{
 TRUE if both routes have the same path and method. The special method
@@ -23,7 +23,7 @@ rte80 <- route(
   'GET',
   '^/route/to/ohio$',
   function(req) {
-    response()  
+    response()
   }
 )
 

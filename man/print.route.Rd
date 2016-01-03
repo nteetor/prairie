@@ -11,6 +11,8 @@
 }
 \arguments{
 \item{x}{A \code{route} or route \code{mockup}.}
+
+\item{\ldots}{Additional arguments passed on to methods.}
 }
 \description{
 Prints a route or mockup. A mockup prints the underlying route object.

@@ -8,8 +8,8 @@ request()
 }
 \description{
 Request objects store relevant information sent from the client to the server
-as a part of an HTTP request. Request objects are not typically explicitly 
-created. Instead, a request object is passed as an argument to a route 
+as a part of an HTTP request. Request objects are not typically explicitly
+created. Instead, a request object is passed as an argument to a route
 handler.
 }
 \details{
@@ -24,17 +24,17 @@ for a specified resource. This value may be accessed with \link{method}.
 
 \subsection{uri:}{
 
-The uri indicates the server resource requested by the client. A request 
+The uri indicates the server resource requested by the client. A request
 object's uri may be accessed with \link{uri}.
 
 }
 
 \subsection{query:}{
 
-A request query is set of key value pairs following the uri. A query is 
-indicated by a ? and is, optionally, ended with a #. Query keys are case- 
-sensitive. A request object's query list may be accessed with \link{query}. 
-If an incoming request does not have a query string then \code{query} will 
+A request query is set of key value pairs following the uri. A query is
+indicated by a ? and is, optionally, ended with a #. Query keys are case-
+sensitive. A request object's query list may be accessed with \link{query}.
+If an incoming request does not have a query string then \code{query} will
 return an empty list.
 
 }
@@ -43,13 +43,13 @@ return an empty list.
 
 Request header fields may be accessed by treating a request object like a
 list. Using [ or [[, one can get a single or multiple header field values.
-Header fields are case-insensitive.  
+Header fields are case-insensitive.
 
 }
 
 \subsection{body:}{
 
-The body message of a request object may be retreived with \link{body}. 
+The body message of a request object may be retreived with \link{body}.
 
 }
 }
@@ -66,7 +66,7 @@ printreq <- route(
   function(req) {
     print('Request received:')
     print(req)
-    
+
     response()
   }
 )
@@ -76,7 +76,7 @@ printreq_m <- mockup(printreq)
 
 # now there's something to see
 printreq_m('get', '/print/request')
-printreq_m('get', '/print/request', 
+printreq_m('get', '/print/request',
            headers = list(
              Accept = 'text/html',
              Host = 'with the most'

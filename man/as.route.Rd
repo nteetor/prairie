@@ -29,20 +29,20 @@ is.route(x)
 An object of class \code{route}.
 }
 \description{
-The function \code{as.route} provides an alternative way to create 
+The function \code{as.route} provides an alternative way to create
 \code{\link[=route]{routes}} from lists or files.
 }
 \details{
-If \code{x} is a list, \code{x} must have the following named items: 
+If \code{x} is a list, \code{x} must have the following named items:
 \code{method}, \code{path}, and \code{handler}.
 
-If \code{x} is a character vector, \code{x} is interpreted as a file name. 
-The file must contain a route defined using the \link{route} function. The 
-default directory for route files is "routes", but a different folder may be 
+If \code{x} is a character vector, \code{x} is interpreted as a file name.
+The file must contain a route defined using the \link{route} function. The
+default directory for route files is "routes", but a different folder may be
 specified by the argument \code{path}.
 
-The S3 generic function \code{as.route} is exported by prairie to encourage 
-creation of \code{as.route.*} functions. Custom \code{as.route} functions 
+The S3 generic function \code{as.route} is exported by prairie to encourage
+creation of \code{as.route.*} functions. Custom \code{as.route} functions
 allow users to coerce their classes to routes and quickly serve them over
 HTTP.
 }
