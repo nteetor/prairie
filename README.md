@@ -8,7 +8,7 @@ app(
   route(
     'get',
     '^$',
-    function() {
+    function(req) {
       res <- response()
       
       status(res) <- 200
@@ -22,12 +22,17 @@ app(
   list(
     method = c('get', 'post'),
     path = '^data$',
-    handler = function() {
-      res <- as.response(iris)
-      
-      # change status, headers, etc.
-      
-      res
+    handler = function(req) {
+      if (method(req) == 'get') {
+        as.response(iris)
+      } else {
+        print(body(req))
+        
+        res <- response()
+        body(res) <- 'Thank you for the data'
+        
+        res
+      }
     }
   )
 )
