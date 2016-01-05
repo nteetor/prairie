@@ -1,59 +1,59 @@
 #' Create an HTTP Request
-#' 
+#'
 #' Request objects store relevant information sent from the client to the server
-#' as a part of an HTTP request. Request objects are not typically explicitly 
-#' created. Instead, a request object is passed as an argument to a route 
+#' as a part of an HTTP request. Request objects are not typically explicitly
+#' created. Instead, a request object is passed as an argument to a route
 #' handler.
-#' 
+#'
 #' @details
-#' 
+#'
 #' Request objects contain the following information.
-#' 
+#'
 #' \subsection{method:}{
-#' 
+#'
 #' Most often \code{GET} or \code{POST} the method indicates what action to take
 #' for a specified resource. This value may be accessed with \link{method}.
-#' 
+#'
 #' }
-#' 
+#'
 #' \subsection{uri:}{
-#' 
-#' The uri indicates the server resource requested by the client. A request 
+#'
+#' The uri indicates the server resource requested by the client. A request
 #' object's uri may be accessed with \link{uri}.
-#' 
+#'
 #' }
-#' 
+#'
 #' \subsection{query:}{
-#' 
-#' A request query is set of key value pairs following the uri. A query is 
-#' indicated by a ? and is, optionally, ended with a #. Query keys are case- 
-#' sensitive. A request object's query list may be accessed with \link{query}. 
-#' If an incoming request does not have a query string then \code{query} will 
+#'
+#' A request query is set of key value pairs following the uri. A query is
+#' indicated by a ? and is, optionally, ended with a #. Query keys are case-
+#' sensitive. A request object's query list may be accessed with \link{query}.
+#' If an incoming request does not have a query string then \code{query} will
 #' return an empty list.
-#' 
+#'
 #' }
-#' 
+#'
 #' \subsection{headers:}{
-#' 
+#'
 #' Request header fields may be accessed by treating a request object like a
 #' list. Using [ or [[, one can get a single or multiple header field values.
-#' Header fields are case-insensitive.  
-#' 
+#' Header fields are case-insensitive.
+#'
 #' }
-#' 
+#'
 #' \subsection{body:}{
-#' 
-#' The body message of a request object may be retreived with \link{body}. 
-#' 
+#'
+#' The body message of a request object may be retreived with \link{body}.
+#'
 #' }
-#' 
+#'
 #' @export
 #' @name request
 #' @examples
 #' # not much to see here
 #' req <- request()
 #' print(req)
-#' 
+#'
 #' # the request object is loaded with information
 #' # from the client
 #' printreq <- route(
@@ -62,17 +62,17 @@
 #'   function(req) {
 #'     print('Request received:')
 #'     print(req)
-#'     
+#'
 #'     response()
 #'   }
 #' )
-#' 
+#'
 #' # create mockup
 #' printreq_m <- mockup(printreq)
-#' 
+#'
 #' # now there's something to see
 #' printreq_m('get', '/print/request')
-#' printreq_m('get', '/print/request', 
+#' printreq_m('get', '/print/request',
 #'            headers = list(
 #'              Accept = 'text/html',
 #'              Host = 'with the most'
@@ -84,7 +84,7 @@ request <- function() {
       method = NULL,
       uri = NULL,
       query = NULL,
-      headers = list(),
+      headers = list(`Content-Type` = 'plain/text'),
       body = ''
     ),
     class = 'request'
@@ -92,17 +92,17 @@ request <- function() {
 }
 
 #' Printing Requests
-#' 
+#'
 #' Print a request.
-#' 
+#'
 #' @param x Object of class \code{request}.
-#' 
+#'
 #' @details
-#' 
+#'
 #' Formats the request as an HTTP request.
-#' 
+#'
 #' @seealso \code{\link{request}}
-#' 
+#'
 #' @keywords internal
 #' @export
 #' @name print.request
@@ -112,13 +112,13 @@ print.request <- function(x, ...) {
     function(hdr) if (is.time(hdr) || is.date(hdr)) http_date(hdr) else as.character(hdr),
     character(1)
   )
-  
+
   cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
-  
+
   if (!is.null(headers) && length(headers)) {
     cat(paste0(names(headers), ': ', headers, collapse = '\r\n'))
   }
-  
+
   if (nchar(x$body) > 0) {
     cat(
       '\r\n\r\n',
@@ -130,28 +130,28 @@ print.request <- function(x, ...) {
 }
 
 #' Coerce Request Environments
-#' 
-#' Internally, this function is used to coerce the request environment objects 
-#' \code{httpuv} passes to an application's \code{call} function. Request 
+#'
+#' Internally, this function is used to coerce the request environment objects
+#' \code{httpuv} passes to an application's \code{call} function. Request
 #' environment objects are coerced to objects.
-#' 
+#'
 #' @seealso \code{\link{request}}
-#'   
+#'
 #' @keywords internal
-#'   
+#'
 #' @export
 #' @name as.request
 #' @examples
 #' e <- new.env(parent = baseenv())
-#' 
+#'
 #' e$REQUEST_METHOD <- 'GET'
 #' e$PATH_INFO <- '/file/download'
 #' e$HTTP_ACCEPT <- 'application/json'
 #' e$HTTP_CONTENT_LENGTH <- '3030'
-#' 
+#'
 #' req <- as.request(e)
 #' is.request(req) # TRUE
-#' 
+#'
 #' method(req)
 #' uri(req)
 #' req[['Accept']]
@@ -167,18 +167,18 @@ as.request <- function(x) UseMethod('as.request')
 #' @rdname as.request
 as.request.environment <- function(x) {
   req <- request()
-  
+
   req$method <- tolower(x$REQUEST_METHOD)
   req$uri <- x$PATH_INFO
   req$query <- x$QUERY_STRING
-  
+
   req$headers <- mget(grep('^HTTP_', names(x), value = TRUE), envir = x)
   names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
   names(req$headers) <- gsub('_', '-', names(req$headers))
   names(req$headers) <- vapply(names(req$headers), capitalize_header, character(1))
-  
+
   req$body <- if (!is.null(x$rook.input)) x$rook.input$read_lines() else ''
-  
+
   req
 }
 

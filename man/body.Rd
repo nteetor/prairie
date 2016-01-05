@@ -24,22 +24,18 @@ body(x) <- value
 \item{value}{An \R object, complex objects are converted to JSON, see details.}
 }
 \value{
-A character string if the request contains a message body, otherwise 
+A character string if the request contains a message body, otherwise
 \code{NULL}.
 }
 \description{
-Get the message body of a \code{request} or \code{response} object. The body 
+Get the message body of a \code{request} or \code{response} object. The body
 of \code{response} objects may be set.
-}
-\details{
-The default versions of both functions call the base version.
 }
 \examples{
 transmog <- route(
   'POST',
   '^transmogrify/json$',
-  function() {
-    req <- request()
+  function(req) {
     res <- response()
 
     # get body of request
@@ -59,7 +55,7 @@ transmog <- route(
 )
 }
 \seealso{
-For more information about HTTP requests please refer to the 
+For more information about HTTP requests please refer to the
 \href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
 of www.w3.org.
 }

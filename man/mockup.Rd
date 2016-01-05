@@ -19,7 +19,6 @@ logger <- route(
   '^',
   function(req) {
     print(req)
-    
     response()
   }
 )

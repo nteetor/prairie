@@ -16,8 +16,8 @@ is.request(x)
 \item{x}{Any \R object.}
 }
 \description{
-Internally, this function is used to coerce the request environment objects 
-\code{httpuv} passes to an application's \code{call} function. Request 
+Internally, this function is used to coerce the request environment objects
+\code{httpuv} passes to an application's \code{call} function. Request
 environment objects are coerced to objects.
 }
 \examples{
