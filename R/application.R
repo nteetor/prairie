@@ -25,7 +25,7 @@
 #' have worked hard on your code and prairie is along to grow it onwards and 
 #' upwards.
 #' 
-#' @seealso \code{\link{as.route}}, \code{\link{start}}
+#' @seealso \code{\link{as.route}}, \code{\link{run}}
 #'   
 #' @export
 #' @name application

@@ -2,10 +2,13 @@
 % Please edit documentation in R/response.R
 \name{as.response}
 \alias{as.response}
+\alias{as.response.data.frame}
 \alias{is.response}
 \title{Coerce Objects to Response}
 \usage{
 as.response(x)
+
+\method{as.response}{data.frame}(x)
 
 is.response(x)
 }

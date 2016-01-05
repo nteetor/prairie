@@ -66,8 +66,10 @@ NULL
     x$headers <- value
   } else {
     assert_that(is.character(field), length(field) == length(value))
-    lapply()
+    
+    x$headers <- setNames(value, field)
   }
+  
   invisible(x)
 }
 

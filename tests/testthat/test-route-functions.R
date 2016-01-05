@@ -25,3 +25,9 @@ test_that('as.route.list coerces correctly', {
   expect_error(as.route(list(path = '', handler = function(req) NULL)))
   expect_error(as.route(list()))
 })
+
+test_that('print function', {
+  sesame_route <- route('PUT', 'down/the/ducky', function(req) response())
+  route_output <- paste(capture.output(print(sesame_route)), collapse = '')
+  expect_equal(route_output, 'route   put    down/the/ducky')
+})

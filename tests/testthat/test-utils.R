@@ -1,11 +1,11 @@
 context('util functions')
 
-test_that('`%||%`', {
+test_that('`%||%` function', {
   expect_true(is.function(`%||%`))
   expect_equal(3030, NULL %||% 3030)
 })
 
-test_that('http_date', {
+test_that('http_date function', {
   date1 <- strptime('11/06/1994 08:49:37', '%m/%d/%Y %H:%M:%S', tz = 'UTC')
   expect_equal('Sun, 06 Nov 1994 08:49:37 UTC', http_date(date1))
 
@@ -16,7 +16,7 @@ test_that('http_date', {
   expect_error(http_date(3030))
 })
 
-test_that('is_named', {
+test_that('is_named function', {
   expect_false(is_named('voldemort'))
   expect_false(is_named(9.75))
   dark_lord <- 'voldemort'
@@ -32,7 +32,7 @@ test_that('is_named', {
   expect_false(is_named(1:5))
 })
 
-test_that('is_absolute', {
+test_that('is_absolute function', {
   expect_false(is_absolute('edward'))
   expect_error(is_absolute(36))
 
@@ -43,6 +43,16 @@ test_that('is_absolute', {
   expect_true(is_absolute('\\\\tires\\tires\\not\\really'))
 })
 
-test_that('now reason_phrase', {
-  skip('need to test new function reason_pharse')
+test_that('zfill and bfill functions', {
+  expect_equal(zfill(5), '00000')
+  expect_equal(zfill(3, '|'), '|||')
+  expect_equal(bfill(2), '  ')
+  expect_equal(bfill(6), '      ')
+})
+
+test_that('status reason_phrase function', {
+  expect_error(reason_phrase(TRUE), 'is.numeric(status_code) || is.character(status_code)')
+  expect_equal(reason_phrase(100), 'Continue')
+  expect_equal(reason_phrase(404), 'Not Found')
+  expect_equal(reason_phrase(515), '')
 })

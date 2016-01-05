@@ -49,7 +49,7 @@ NULL
   assert_that(is.character(field))
   
   if (field %in% c('Referer', 'Referrer')) {
-    x$headers$referer %||% x$headers$referrer
+    x$headers$Referer %||% x$headers$Referrer
   } else {
     x$headers[[field]]
   }
