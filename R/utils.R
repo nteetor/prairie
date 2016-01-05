@@ -28,7 +28,7 @@ capitalize_header <- function(s) {
 }
 
 is_match <- function(rte, req) {
-  grepl(rte$path, req$uri) && (rte$method == req$method || rte$method == 'all')
+  grepl(rte$path, req$uri) && (req$method %in% rte$method || rte$method == 'all')
 }
 
 is_named <- function(lst) {

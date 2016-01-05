@@ -230,7 +230,24 @@ is.route <- function(x) inherits(x, 'route')
 #'
 #' @export
 #' @name print.route
+#' @examples
+#' route(
+#'   c('GET', 'POST'),
+#'   '^path$',
+#'   function(req) {
+#'     response()
+#'   }
+#' )
+#' 
+#' route(
+#'   'put',
+#'   '^another/path$',
+#'   function(req) {
+#'     response()
+#'   }
+#' )
 print.route <- function(x, ...) {
-  cat('Method:', paste(x$method, collapse = ', '), '\n')
-  cat('  Path:', x$path)
+  cat('route\n')
+  cat('  ', paste(x$method, collapse = ', '), '\n')
+  cat('  ', x$path)
 }

@@ -34,9 +34,9 @@ test_that('application coerces arguments to routes', {
 })
 
 test_that('starting application fails for incorrect args', {
-  expect_error(start(route(), 'deltron', 3030))
-  expect_error(start(app(), 30, 30))
-  expect_error(start(app(), 'del', 'tron'))
+  expect_error(run(route(), 'deltron', 3030))
+  expect_error(run(app(), 30, 30))
+  expect_error(run(app(), 'del', 'tron'))
 })
 
 # deltron 3030, handy because the name is a string and a number

@@ -42,32 +42,29 @@ app <- function(...) {
 
 is.application <- function(x) inherits(x, 'application')
   
-#' Run a Prairie Application
+#' Start Up a Prairie Application
 #'
-#' Start an application running at \code{host} on \code{port}. 
+#' Run an application at \code{host} on \code{port}. 
 #' 
 #' @param app An object with class \code{application}.
 #' @param host A character string specifying the host name.
 #' @param port An integer specifying the port number.
 #'
 #' @export
-#' @name start
-start <- function(app, host, port) {
-  assert_that(is.application(app), is.character(host), is.numeric(port))
+#' @name run
+run <- function(app, host, port) {
+  assert_that(
+    is.application(app), 
+    is.character(host), 
+    is.numeric(port)
+  )
   
   httpuv::runServer(
     host, 
     port,
     list(
       call = function(req) {
-        matching_rt <- Find(
-          function(rt) {
-            (tolower(req$REQUEST_METHOD) %in% rt$method || rt$method == 'all') && 
-              grepl(rt$path, req$PATH_INFO)
-          },
-          app$routes,
-          nomatch = NULL
-        )
+        matching_rt <- Find(function(rt) is_match(rt, req), app$routes, nomatch = NULL)
         
         if (is.null(matching_rt)) {
           return(

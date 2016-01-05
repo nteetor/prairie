@@ -17,6 +17,23 @@
 \description{
 Prints a route or mockup. A mockup prints the underlying route object.
 }
+\examples{
+route(
+  c('GET', 'POST'),
+  '^path$',
+  function(req) {
+    response()
+  }
+)
+
+route(
+  'put',
+  '^another/path$',
+  function(req) {
+    response()
+  }
+)
+}
 \seealso{
 \code{\link{route}}, \code{\link{mockup}}
 }
