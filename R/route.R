@@ -85,8 +85,7 @@
 #' route(
 #'   c('GET', 'POST'),
 #'   '^blog/comments$',
-#'   function() {
-#'     req <- request()
+#'   function(req) {
 #'     res <- response()
 #'     
 #'     if (method(req) == 'get') {
@@ -103,9 +102,11 @@ route <- function(method, path, handler) {
     is.character(method),
     is.character(path),
     length(path) == 1,
-    is.function(handler),
-    length(formals(handler)) == 1
+    is.function(handler)
   )
+  if (length(formals(handler)) != 1) {
+    stop('`handler` must be a function with a single arg')
+  }
   
   structure(
     list(
@@ -115,60 +116,6 @@ route <- function(method, path, handler) {
     ),
     class = 'route'
   )
-} 
-    
-#     is = function(methods, path) {
-#       all(methods %in% self$method) && path == self$path
-#     },
-#     matches = function(method, path) {
-#       (method %in% self$method || self$method == 'all') && grepl(self$path, path)
-#     },
-#     dispatch = function(request_environment) {
-#       self$handler(request_environment)
-#     }
-
-#' Test if Two Routes are (Nearly) Equal
-#'
-#' This implementation of \code{all.equal} allows comparison of two routes.
-#' 
-#' @param target,current Two routes to compare.
-#' @param identical If FALSE, test for equivalency.
-#'   
-#' @return
-#' 
-#' TRUE if both routes have the same path and method. The special method
-#' \code{"ALL"} is considered equal to any number of other methods.
-#' 
-#' @export
-#' @name all.equal.route
-#' @examples
-#' rte80 <- route(
-#'   'GET',
-#'   '^/route/to/ohio$',
-#'   function(req) {
-#'     response()  
-#'   }
-#' )
-#' 
-#' rte90 <- route(
-#'   'all',
-#'   '^/route/to/ohio$',
-#'   function(req) {
-#'    res <- response()
-#'    status(res) <- 300
-#'    res
-#'   }
-#' )
-#' 
-#' all.equal(rte80, rte90)
-all.equal.route <- function(target, current, ...) {
-  if ("all" %in% c(target$method, current$method)) {
-    target$path == current$path
-  } else {
-    (target$path == current$path) && 
-      (length(target$method) == length(current$method)) &&
-      (sort(target$method) == sort(current$method))
-  }
 }
 
 #' Coercing Objects to Routes
@@ -214,7 +161,7 @@ as.route.route <- function(x, ...) x
 #' @rdname as.route
 #' @examples
 #' # Easily reuse routes and keep your
-#' # applications modular by storing routes
+#' # application modular by storing routes
 #' # in separate files.
 #' 
 #' \dontrun{

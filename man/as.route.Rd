@@ -48,7 +48,7 @@ HTTP.
 }
 \examples{
 # Easily reuse routes and keep your
-# applications modular by storing routes
+# application modular by storing routes
 # in separate files.
 
 \dontrun{

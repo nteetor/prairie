@@ -92,8 +92,7 @@ route(
 route(
   c('GET', 'POST'),
   '^blog/comments$',
-  function() {
-    req <- request()
+  function(req) {
     res <- response()
     
     if (method(req) == 'get') {
