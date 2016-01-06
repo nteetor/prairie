@@ -147,7 +147,7 @@ route <- function(method, path, handler) {
 NULL
 
 #' @param x An \R object.
-#' @param \ldots Arguments passed on to other methods.
+#' @param \ldots Additional arguments passed on to methods.
 #' @export
 #' @rdname as.route
 as.route <- function(x, ...) UseMethod('as.route')
@@ -224,7 +224,7 @@ is.route <- function(x) inherits(x, 'route')
 #' Prints a route or mockup. A mockup prints the underlying route object.
 #'
 #' @param x A \code{route} or route \code{mockup}.
-#' @param \ldots Additional arguments passed on to methods.
+#' @param \ldots Ignored.
 #'
 #' @seealso \code{\link{route}}, \code{\link{mockup}}
 #'

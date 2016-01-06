@@ -31,7 +31,7 @@ status.response <- function(x) {
 
 #' Status Code Reason Phrase
 #' 
-#' Get the corresponding reason phrase for a particular status code.
+#' Get the corresponding reason phrase for a status code.
 #' 
 #' @param status_code An HTTP status code.
 #' 

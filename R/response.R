@@ -109,6 +109,7 @@ is.response <- function(x) inherits(x, 'response')
 #' Print a response object.
 #' 
 #' @param x Object of class \code{response}.
+#' @param \ldots Ignored.
 #' 
 #' @details
 #' 

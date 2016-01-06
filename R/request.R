@@ -95,7 +95,8 @@ request <- function() {
 #'
 #' Print a request.
 #'
-#' @param x Object of class \code{request}.
+#' @param x A \code{request} object.
+#' @param \ldots Ignored.
 #'
 #' @details
 #'

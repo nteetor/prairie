@@ -7,7 +7,9 @@
 \method{print}{request}(x, ...)
 }
 \arguments{
-\item{x}{Object of class \code{request}.}
+\item{x}{A \code{request} object.}
+
+\item{\ldots}{Ignored.}
 }
 \description{
 Print a request.

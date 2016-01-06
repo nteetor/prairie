@@ -64,20 +64,39 @@ run <- function(app, host, port) {
     port,
     list(
       call = function(req) {
-        matching_rt <- Find(function(rt) is_match(rt, req), app$routes, nomatch = NULL)
+        req <- as.request(req)
         
-        if (is.null(matching_rt)) {
+        matching_route <- Find(function(rt) is_match(rt, req), app$routes, nomatch = NULL)
+        
+        if (is.null(matching_route)) {
           return(
             list(
               status = 404,
               headers = list(`Content-Type` = 'text/plain'),
-              body = paste('Sorry, page not found')
+              body = 'Sorry, page not found.'
             )
           )
         }
         
-        req$ROUTE_PATH <- matching_rt$path
-        rt$handler(req)
+        req$ROUTE_PATH <- matching_route$path
+        res <- matching_route$handler(req)
+        
+        if (!is.response(res)) {
+          return(
+            list(
+              status = 500,
+              headers = list(`Content-Type` = 'text/plain'),
+              body = 'Internal error, no response generated.'
+            )
+          )
+        }
+        
+        as.list(res)
+      },
+      onWSOpen = function(ws) {
+        ws$onMessage(function(binary, message) {
+          ws$send(message)
+        })
       }
     )
   )

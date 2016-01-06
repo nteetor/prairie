@@ -13,7 +13,7 @@ reason_phrase(status_code)
 If \code{status_code} is not found the empty string is returned.
 }
 \description{
-Get the corresponding reason phrase for a particular status code.
+Get the corresponding reason phrase for a status code.
 }
 \examples{
 reason_phrase(200)
