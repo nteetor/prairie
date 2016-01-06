@@ -8,6 +8,8 @@
 }
 \arguments{
 \item{x}{Object of class \code{response}.}
+
+\item{\ldots}{Ignored.}
 }
 \description{
 Print a response object.

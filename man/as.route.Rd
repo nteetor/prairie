@@ -23,7 +23,7 @@ is.route(x)
 
 \item{path}{System path to the folder containing the route file.}
 
-\item{\ldots}{Arguments passed on to other methods.}
+\item{\ldots}{Additional arguments passed on to methods.}
 }
 \value{
 An object of class \code{route}.
