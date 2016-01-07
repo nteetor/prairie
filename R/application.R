@@ -92,11 +92,6 @@ run <- function(app, host, port) {
         }
         
         as.list(res)
-      },
-      onWSOpen = function(ws) {
-        ws$onMessage(function(binary, message) {
-          ws$send(message)
-        })
       }
     )
   )
