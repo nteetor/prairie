@@ -99,7 +99,8 @@ test_that('create response from data.frame', {
 
 test_that('print function', {
   res <- response()
+  body(res) <- 'If I only had a body...'
   
   res_output <- paste(capture.output(print(res)), collapse = '')
-  expect_equal(res_output, 'HTTP/1.1 200 OK \rContent-Type: text/plain')
+  expect_equal(res_output, 'HTTP/1.1 200 OK \rContent-Type: text/plain\r\rIf I only had a body...\r')
 })
