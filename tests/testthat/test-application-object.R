@@ -21,7 +21,7 @@ test_that('application coerces arguments to routes', {
   expect_true(
     is.application(
       app(
-        as.route('sample-route.R', path = '.'),
+        as.route('sample-route.R', directory = '.'),
         list(
           method = 'GET',
           path = '^',

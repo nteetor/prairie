@@ -12,7 +12,7 @@ as.route(x, ...)
 
 \method{as.route}{route}(x, ...)
 
-\method{as.route}{character}(x, path = "routes", ...)
+\method{as.route}{character}(x, directory = "routes", ...)
 
 \method{as.route}{list}(x, ...)
 
@@ -21,7 +21,7 @@ is.route(x)
 \arguments{
 \item{x}{An \R object.}
 
-\item{path}{System path to the folder containing the route file.}
+\item{directory}{System path to the folder containing the route file.}
 
 \item{\ldots}{Additional arguments passed on to methods.}
 }
@@ -51,14 +51,10 @@ HTTP.
 # application modular by storing routes
 # in separate files.
 
-\dontrun{
+tmp <- tempfile()
+writeLines('route("GET", "^$", function(req) response())', tmp)
 
-as.route('file1.R')
-
-as.route('file2.R', path = 'app')
-}
-
-# but, choose better file names
+droute <- as.route(tmp, dir = '')
 
 # as.route.list is a thin wrapper
 

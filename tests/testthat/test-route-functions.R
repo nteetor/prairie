@@ -15,9 +15,9 @@ test_that('as.route.route coerces correctly', {
 })
 
 test_that('as.route.character coerces correctly', {
-  expect_true(is.route(as.route('sample-route.R', path = '.')))
-  expect_error(as.route('does-not-exist-route.R', path = '.'))
-  expect_error(as.route('whoops-route.R', path = '.'), '^Error : Could not parse')
+  expect_true(is.route(as.route('sample-route.R', directory = '.')))
+  expect_error(as.route('does-not-exist-route.R', directory = '.'))
+  expect_error(as.route('whoops-route.R', directory = '.'), '^Error : Could not parse')
 })
 
 test_that('as.route.list coerces correctly', {
@@ -29,5 +29,5 @@ test_that('as.route.list coerces correctly', {
 test_that('print function', {
   sesame_route <- route('PUT', 'down/the/ducky', function(req) response())
   route_output <- paste(capture.output(print(sesame_route)), collapse = '')
-  expect_equal(route_output, 'route   put    down/the/ducky')
+  expect_equal(route_output, 'route  put   down/the/ducky')
 })

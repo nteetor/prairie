@@ -107,7 +107,7 @@ route <- function(method, path, handler) {
   if (length(formals(handler)) != 1) {
     stop('`handler` must be a function with a single argument')
   }
-  
+
   structure(
     list(
       method = tolower(method),
@@ -156,7 +156,7 @@ as.route <- function(x, ...) UseMethod('as.route')
 #' @rdname as.route
 as.route.route <- function(x, ...) x
 
-#' @param path System path to the folder containing the route file.
+#' @param directory System path to the folder containing the route file.
 #' @export
 #' @rdname as.route
 #' @examples
@@ -164,23 +164,21 @@ as.route.route <- function(x, ...) x
 #' # application modular by storing routes
 #' # in separate files.
 #'
-#' \dontrun{
+#' tmp <- tempfile()
+#' writeLines('route("GET", "^$", function(req) response())', tmp)
 #'
-#' as.route('file1.R')
+#' droute <- as.route(tmp, dir = '')
 #'
-#' as.route('file2.R', path = 'app')
-#' }
-#'
-#' # but, choose better file names
-#'
-as.route.character <- function(x, path = 'routes', ...) {
+as.route.character <- function(x, directory = 'routes', ...) {
+  path <- file.path(directory, x)
+
   assert_that(
-    file.exists(file.path(path, x)),
-    is.readable(file.path(path, x))
+    file.exists(path),
+    is.readable(path)
   )
 
-  route <- tryCatch(source(file.path(path, x))$value, error = function(e) NULL)
-  if (!is.route(route)) stop('Could not parse route from "', file.path(path, x), '"', call. = FALSE)
+  route <- tryCatch(source(path)$value, error = function(e) NULL)
+  if (!is.route(route)) stop('Could not parse route from "', path, '"', call. = FALSE)
 
   route
 }
@@ -238,7 +236,7 @@ is.route <- function(x) inherits(x, 'route')
 #'     response()
 #'   }
 #' )
-#' 
+#'
 #' route(
 #'   'put',
 #'   '^another/path$',
@@ -248,6 +246,6 @@ is.route <- function(x) inherits(x, 'route')
 #' )
 print.route <- function(x, ...) {
   cat('route\n')
-  cat('  ', paste(x$method, collapse = ', '), '\n')
-  cat('  ', x$path)
+  cat(' ', paste(x$method, collapse = ', '), '\n')
+  cat('  ', x$path, '\n', sep = '')
 }
