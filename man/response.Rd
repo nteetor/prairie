@@ -8,56 +8,68 @@ response()
 }
 \description{
 A response object represents the HTTP response returned by a route handler. A
-response is typically made up of a status, HTTP headers, and a body. A 
+response is typically made up of a status, HTTP headers, and a body. A
 response body is optional.
 }
 \section{Components}{
 
-  
+
   \subsection{status:}{
-  
-  Set the status of a response to indicate what action, if any, the client 
-  needs to take. Otherwise a status of 2XX indicates a client request was 
+
+  Set the status of a response to indicate what action, if any, the client
+  needs to take. Otherwise a status of 2XX indicates a client request was
   valid and the response object contains the requested resource.
-  
+
   Below are descriptions for each status code class,
-  
+
   \describe{
-  
+
   \item{1xx:}{Informational - Request received, continuing process}
-  
+
   \item{2xx:}{Success - The action was successfully received, understood, and
   accepted}
-  
+
   \item{3xx:}{Redirection - Further action must be taken in order to complete
   the request}
-  
-  \item{4xx:}{Client Error - The request contains bad syntax or cannot be 
+
+  \item{4xx:}{Client Error - The request contains bad syntax or cannot be
   fulfilled}
-  
+
   \item{5xx:}{Server Error - The server failed to fulfill an apparently valid
   request}
-  
+
   }
-  
+
+  }
+
+  \subsection{headers:}{
+
+  stub
+
+  }
+
+  \subsection{body:}{
+
+  stub
+
   }
 }
 \examples{
 # a route to return a client-requested status
 # and reason phrase
 phrase10 <- route(
-  'GET', 
+  'GET',
   '^\\\\d+',
   function(req) {
     stat <- sub('/', '', uri(req))
-    
+
     res <- response()
-    
+
     status(res) <- 200
     body(res) <- paste(stat, reason_phrase(stat))
-    
+
     print(res)
-    
+
     res
   }
 )

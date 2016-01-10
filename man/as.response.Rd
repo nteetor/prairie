@@ -2,18 +2,26 @@
 % Please edit documentation in R/response.R
 \name{as.response}
 \alias{as.response}
+\alias{as.response.character}
 \alias{as.response.data.frame}
 \alias{is.response}
 \title{Coerce Objects to Response}
 \usage{
-as.response(x)
+as.response(x, ...)
 
-\method{as.response}{data.frame}(x)
+\method{as.response}{character}(x, directory = "views", ...)
+
+\method{as.response}{data.frame}(x, ...)
 
 is.response(x)
 }
 \arguments{
 \item{x}{Any \R object.}
+
+\item{directory}{A character string specifying the system folder of the file
+\code{x}.}
+
+\item{\ldots}{Additional arguments passed on to methods.}
 }
 \description{
 TBD, see jsonify.
