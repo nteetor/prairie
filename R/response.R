@@ -104,7 +104,7 @@ as.response <- function(x, ...) UseMethod('as.response')
 #'   \code{x}.
 #' @export
 #' @rdname as.response
-as.response.character <- function(x, directory = 'views', ...) {
+as.response.character <- function(x, directory = 'views', collapse = '\n', ...) {
   path <- file.path(directory, x)
 
   assert_that(
@@ -112,7 +112,7 @@ as.response.character <- function(x, directory = 'views', ...) {
     is.readable(path)
   )
 
-  contents <- readLines(path, warn = FALSE)
+  contents <- paste(readLines(path, warn = FALSE), collapse = collapse)
 
   res <- response()
   res[['Content-Type']] <- mime::guess_type(path)

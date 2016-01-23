@@ -97,7 +97,16 @@ test_that('create response from data.frame', {
   expect_equal(res[['Content-Type']], 'application/json')
 })
 
-test_that('print function', {
+test_that('create response from character (name of file)', {
+  expect_error(as.response('does-not-exist.html'))
+  limerick <- as.response('sample-response.html', dir = '.')
+  expect_is(limerick, 'response')
+  expect_equal(limerick[['Content-Type']], 'text/html')
+  expect_true(grepl('krill', body(limerick)))
+  expect_equal(length(body(limerick)), 1)
+})
+
+test_that('print response', {
   res <- response()
   body(res) <- 'If I only had a body...'
   
