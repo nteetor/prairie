@@ -9,7 +9,8 @@
 \usage{
 as.response(x, ...)
 
-\method{as.response}{character}(x, directory = "views", ...)
+\method{as.response}{character}(x, directory = "views", collapse = "\\n",
+  ...)
 
 \method{as.response}{data.frame}(x, ...)
 
@@ -20,6 +21,9 @@ is.response(x)
 
 \item{directory}{A character string specifying the system folder of the file
 \code{x}.}
+
+\item{collapse}{A character string specifying how to collapse the lines read
+from \code{x}.}
 
 \item{\ldots}{Additional arguments passed on to methods.}
 }

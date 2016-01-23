@@ -102,6 +102,8 @@ as.response <- function(x, ...) UseMethod('as.response')
 
 #' @param directory A character string specifying the system folder of the file
 #'   \code{x}.
+#' @param collapse A character string specifying how to collapse the lines read
+#'   from \code{x}.
 #' @export
 #' @rdname as.response
 as.response.character <- function(x, directory = 'views', collapse = '\n', ...) {
