@@ -1,7 +1,7 @@
 #' Routing
 #'
-#' Within prairie, a route is thought of as \emph{a mapping between any number
-#' of methods, specified by} \code{method}\emph{, and a URI,} \code{path}. A
+#' Within prairie, a route is thought of as a mapping between any number
+#' of methods, specified by \code{method}\emph{, and a URI,} \code{path}. A
 #' route is never assigned more than a single path. However, because \code{path}
 #' is treated as a \link[base:regex]{regular expression} a single route may be
 #' created to match different client requests. Further details below.
@@ -20,10 +20,10 @@
 #'
 #' \code{method} is a character vector which specifies at least one HTTP method.
 #' Alternatively, the keywords \code{"all"} or \code{"ALL"} may be used to
-#' specifiy the route must accept any HTTP method. Custom methods may be used,
+#' specifiy the route to accept any HTTP method. Custom methods may be used,
 #' but are not advised.
 #'
-#' \code{method} is converted to lower case, so \code{"GET"} and \code{"get"}
+#' \code{method} is converted to upper case, so \code{"GET"} and \code{"get"}
 #' are equivalent.
 #'
 #' \strong{\code{path}}
@@ -53,12 +53,13 @@
 #'
 #' }
 #'
-#' @return An object of class route.
+#' @return
+#'
+#' A route object.
 #'
 #' @seealso \code{\link{request}}, \code{\link{response}}
 #'
 #' @export
-#' @name routing
 #' @examples
 #' # Typically, routes are created and added to an
 #' # application inside app(), but standalone route
@@ -98,19 +99,31 @@
 #'   }
 #' )
 route <- function(method, path, handler) {
-  assert_that(
-    is.character(method),
-    is.character(path),
-    length(path) == 1,
-    is.function(handler)
-  )
-  if (length(formals(handler)) != 1) {
-    stop('`handler` must be a function with a single argument')
+  if (!is.character(method)) {
+    stop('argument `method` must be of class character', call. = FALSE)
   }
+
+  if (!is.character(path)) {
+    stop('argument `path` must be of class character', call. = FALSE)
+  }
+
+  if (length(path) != 1) {
+    stop('argument `path` must be a single character string', call. = FALSE)
+  }
+
+  if (!is.function(handler)) {
+    stop('argument `handler` must be a function', call. = FALSE)
+  }
+
+  if (length(formals(handler)) != 1) {
+    formals(handler) <- alist(.req = )
+  }
+
+  method <- toupper(method)
 
   structure(
     list(
-      method = tolower(method),
+      method = method,
       path = path,
       handler = handler
     ),
@@ -118,20 +131,29 @@ route <- function(method, path, handler) {
   )
 }
 
+#' @rdname route
+#' @export
+is.route <- function(x) {
+  inherits(x, 'route')
+}
+
 #' Coercing Objects to Routes
 #'
-#' The function \code{as.route} provides an alternative way to create
-#' \code{\link[=route]{routes}} from lists or files.
+#' The function \code{as.route} provides an alternative means of creating an
+#' application route.
+#'
+#' @param x An \R object.
+#' @param \ldots Additional arguments passed on to methods.
 #'
 #' @details
 #'
-#' If \code{x} is a list, \code{x} must have the following named items:
+#' If \code{x} is a list, \code{x} must have the following named elements:
 #' \code{method}, \code{path}, and \code{handler}.
 #'
 #' If \code{x} is a character vector, \code{x} is interpreted as a file name.
-#' The file must contain a route defined using the \link{route} function. The
+#' The file must contain a route defined using the \code{route} function. The
 #' default directory for route files is "routes", but a different folder may be
-#' specified by the argument \code{path}.
+#' specified with the \code{directory} argument.
 #'
 #' The S3 generic function \code{as.route} is exported by prairie to encourage
 #' creation of \code{as.route.*} functions. Custom \code{as.route} functions
@@ -140,94 +162,112 @@ route <- function(method, path, handler) {
 #'
 #' @return
 #'
-#' An object of class \code{route}.
+#' A \code{route} object.
 #'
-#' @export
+#' @seealso \code{\link{route}}
+#'
 #' @name as.route
-NULL
+#' @export
+#' @examples
+#' # Easily reuse routes and keep applications
+#' # modular by storing routes in separate files.
+#'
+#' tmp <- tempfile()
+#' writeLines(
+#'   'route("GET", "^$", function(req) response())\n',
+#'   con = tmp
+#' )
+#'
+#' as.route(tmp, dir = '')
+#'
+#' file.remove(tmp)
+#'
+#' # as.route.list is a minimal wrapper
+#' # around route()
+#'
+#' route(
+#'   'POST',
+#'   '^$',
+#'   function(req) {
+#'     response()
+#'   }
+#' )
+#'
+#' as.route(
+#'   list(
+#'     method = 'POST',
+#'     path = '^$',
+#'     handler = function(req) {
+#'       response()
+#'     }
+#'   )
+#' )
+as.route <- function(x, ...) {
+  UseMethod('as.route')
+}
 
-#' @param x An \R object.
-#' @param \ldots Additional arguments passed on to methods.
 #' @export
 #' @rdname as.route
-as.route <- function(x, ...) UseMethod('as.route')
-
-#' @export
-#' @rdname as.route
-as.route.route <- function(x, ...) x
+as.route.route <- function(x, ...) {
+  x
+}
 
 #' @param directory System path to the folder containing the route file.
 #' @export
 #' @rdname as.route
-#' @examples
-#' # Easily reuse routes and keep your
-#' # application modular by storing routes
-#' # in separate files.
-#'
-#' tmp <- tempfile()
-#' writeLines('route("GET", "^$", function(req) response())', tmp)
-#'
-#' droute <- as.route(tmp, dir = '')
-#'
 as.route.character <- function(x, directory = 'routes', ...) {
   path <- file.path(directory, x)
 
-  assert_that(
-    file.exists(path),
-    is.readable(path)
+  if (!file.exists(path)) {
+    stop('file "', path, '" does not exist', call. = FALSE)
+  }
+
+  if (!is_readable(path)) {
+    stop('do not have read permissions for "', path, '"', call. = FALSE)
+  }
+
+  route <- tryCatch(
+    source(path)$value,
+    error = function(e) NULL
   )
 
-  route <- tryCatch(source(path)$value, error = function(e) NULL)
-  if (!is.route(route)) stop('Could not parse route from "', path, '"', call. = FALSE)
+  if (!is.route(route)) {
+    stop('could not parse route from "', path, '"', call. = FALSE)
+  }
+
+  # drop 'srcref' from handler function
+  attributes(route$handler) <- NULL
 
   route
 }
 
 #' @export
 #' @rdname as.route
-#' @examples
-#' # as.route.list is a thin wrapper
-#'
-#' route_route <- route(
-#'   'POST',
-#'   '^$',
-#'   function(req) response()
-#' )
-#'
-#' list_route <- list(
-#'   method = 'POST',
-#'   path = '^$',
-#'   handler = function(req) response()
-#' )
-#'
-#' all.equal(route_route, list_route)
-#'
-#' is.route(route_route)
-#' is.route(list_route)
 as.route.list <- function(x, ...) {
-  assert_that(
-    x %has_name% 'method',
-    x %has_name% 'path',
-    x %has_name% 'handler'
-  )
-  route(x$method, x$path, x$handler)
-}
+  if (is.null(x[['method']])) {
+    stop('cannot coerce list to route, missing method', call. = FALSE)
+  }
+  if (is.null(x[['path']])) {
+    stop('cannot coerce list to route, missing path', call. = FALSE)
+  }
+  if (is.null(x[['handler']])) {
+    stop('cannot coerce list to route, missing handler', call. = FALSE)
+  }
 
-#' @export
-#' @rdname as.route
-is.route <- function(x) inherits(x, 'route')
+  route(x[['method']], x[['path']], x[['handler']])
+}
 
 #' Printing Routes and Mockups
 #'
-#' Prints a route or mockup. A mockup prints the underlying route object.
+#' Prints a route or mockup. Printing a mockup prints the underlying route.
 #'
-#' @param x A \code{route} or route \code{mockup}.
+#' @param x A route or route mockup.
 #' @param \ldots Ignored.
 #'
 #' @seealso \code{\link{route}}, \code{\link{mockup}}
 #'
+#' @keywords internal
 #' @export
-#' @name print.route
 #' @examples
 #' route(
 #'   c('GET', 'POST'),
@@ -245,7 +285,26 @@ is.route <- function(x) inherits(x, 'route')
 #'   }
 #' )
 print.route <- function(x, ...) {
-  cat('route\n')
-  cat(' ', paste(x$method, collapse = ', '), '\n')
-  cat('  ', x$path, '\n', sep = '')
+  cat(format(x))
+  invisible(x)
+}
+
+#' @rdname print.route
+#' @export
+format.route <- function(x, ...) {
+  str_m <- collapse(x[['method']])
+  str_p <- x[['path']]
+  str_h <- paste(gsub('\\s+', '', deparse(args(x[['handler']]))[1]), '{..}')
+
+  width <- max(nchar(str_m), nchar(str_p), nchar(str_h))
+  frmt <- paste0('%', width, 's')
+
+  formatted <- c(
+    'A route:',
+    paste(sprintf(frmt, str_m), '<methods>'),
+    paste(sprintf(frmt, str_p), '<path>'),
+    paste(sprintf(frmt, str_h), '<handler>')
+  )
+
+  paste('#', formatted, collapse = '\n')
 }

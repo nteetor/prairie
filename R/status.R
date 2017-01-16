@@ -1,53 +1,64 @@
 #' HTTP Response Status Code
-#' 
-#' Get or set the status code of a \code{response} object.
-#' 
+#'
+#' Get or set the status code of a response object.
+#'
+#' @param x A response object.
+#' @param value An HTTP status code, \code{1xx} through \code{5xx}, see
+#'   \code{\link{response}} for details.
+#'
 #' @export
-#' @name status
-NULL
-
-#' @param x An \R object
-#' @export
-#' @rdname status
-status <- function(x) UseMethod('status')
-
-#' @param value HTTP status code, 1xx through 5xx
-#' @export
-#' @rdname status
-`status<-` <- function(x, value) UseMethod('status<-')
-
-#' @export
-#' @rdname status
-status.response <- function(x) {
-  x$status
+#' @examples
+#' # create a new response
+#' res <- response()
+#'
+#' # default response status
+#' status(res)  # 200
+#'
+#' # set the response status
+#' status(res) <- 301
+#' status(res)
+#'
+status <- function(x) {
+  if (!is.response(x)) {
+    stop('argument `x` must be of class response', call. = FALSE)
+  }
+  x[['status_code']]
 }
 
-#' @export
 #' @rdname status
-`status<-.response` <- function(x, value) {
-  x$status_code <- value
+#' @export
+`status<-` <- function(x, value) {
+  if (!is.response(x)) {
+    stop('argument `x` must be of class response', call. = FALSE)
+  }
+  x[['status_code']] <- value
   invisible(x)
 }
 
 #' Status Code Reason Phrase
-#' 
+#'
 #' Get the corresponding reason phrase for a status code.
-#' 
+#'
 #' @param status_code An HTTP status code.
-#' 
+#'
 #' @return
-#' 
-#' If \code{status_code} is not found the empty string is returned.
+#'
+#' The corresponding description of \code{status_code}, otherwise the empty
+#' string.
 #'
 #' @keywords internal
 #' @export
 #' @examples
 #' reason_phrase(200)
 #' reason_phrase('404')
-#' 
+#'
 #' reason_phrase(531)
+#'
 reason_phrase <- function(status_code) {
-  assert_that(is.numeric(status_code) || is.character(status_code))
+  if (!(is.numeric(status_code) || is.character(status_code))) {
+    stop('argument `status_code` must be of class numeric or character',
+         call. = FALSE)
+  }
   switch(
     as.character(status_code),
     '100' = "Continue",

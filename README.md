@@ -1,7 +1,12 @@
 # prairie
+
 A framework to grow your existing R code into web applications.
 
-[![Travis-CI Build Status](https://travis-ci.org/nteetor/prairie.svg?branch=master)](https://travis-ci.org/nteetor/prairie) [![codecov](https://img.shields.io/codecov/c/github/nteetor/prairie.svg)](https://codecov.io/github/nteetor/prairie)
+[travis]: https://travis-ci.org/nteetor/prairie.svg?branch=master "@travisbyrum"
+[coverage]: https://codecov.io/gh/nteetor/prairie/branch/master/graph/badge.svg "grow the nanobots!"
+[cran]: https://www.r-pkg.org/badges/version/prairie "put down some roots"
+
+![alt text][travis] ![alt text][coverage] ![alt text][cran]
 
 Below is a simple prairie application,
 
@@ -13,10 +18,9 @@ app(
     function(req) {
       res <- response()
       
-      status(res) <- 200
-      
-      res[['Content-Type']] <- 'text/html'
-      body(res) <- '<h1>Welcome to prairie</h1>'
+      status(res) <- 200                     # set status
+      res[['Content-Type']] <- 'text/html'   # set a content type
+      body(res) <- 'Welcome to prairie!'     # set a body
       
       res
     }
@@ -27,10 +31,10 @@ app(
     method = c('get', 'post'),
     path = '^data$',
     handler = function(req) {
-      if (method(req) == 'get') {
-        as.response(iris) # because who doesn't want iris data?
+      if (method(req) == 'GET') {
+        as.response(mtcars)
       } else {
-        print(body(req)) # log to console
+        print(body(req))  # log to console
         
         res <- response()
         body(res) <- 'Thanks for all the data!'

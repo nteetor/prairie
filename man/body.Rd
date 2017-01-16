@@ -2,34 +2,32 @@
 % Please edit documentation in R/body.R
 \name{body}
 \alias{body}
-\alias{body.request}
-\alias{body.response}
 \alias{body<-}
-\alias{body<-.response}
 \title{HTTP Message Body}
 \usage{
 body(x)
 
 body(x) <- value
-
-\method{body}{request}(x)
-
-\method{body}{response}(x)
-
-\method{body}{response}(x) <- value
 }
 \arguments{
 \item{x}{An \R object.}
 
-\item{value}{An \R object, complex objects are converted to JSON, see details.}
+\item{value}{The response body, if JSON the \code{Content-Type} is set to
+\code{application/json}.}
 }
 \value{
-A character string if the request contains a message body, otherwise
-\code{NULL}.
+\code{body} resturns a character string if the request or response contains a
+message body, otherwise \code{NULL}.
+
+\code{body<-} invisibly returns the response.
 }
 \description{
-Get the message body of a \code{request} or \code{response} object. The body
-of \code{response} objects may be set.
+Get the message body of a request or response or set the body of a response.
+}
+\details{
+For more information about HTTP requests please refer to the
+\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
+of www.w3.org.
 }
 \examples{
 transmog <- route(
@@ -53,10 +51,5 @@ transmog <- route(
     res
   }
 )
-}
-\seealso{
-For more information about HTTP requests please refer to the
-\href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
-of www.w3.org.
 }
 

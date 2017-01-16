@@ -2,25 +2,32 @@
 % Please edit documentation in R/status.R
 \name{status}
 \alias{status}
-\alias{status.response}
 \alias{status<-}
-\alias{status<-.response}
 \title{HTTP Response Status Code}
 \usage{
 status(x)
 
 status(x) <- value
-
-\method{status}{response}(x)
-
-\method{status}{response}(x) <- value
 }
 \arguments{
-\item{x}{An \R object}
+\item{x}{A response object.}
 
-\item{value}{HTTP status code, 1xx through 5xx}
+\item{value}{An HTTP status code, \code{1xx} through \code{5xx}, see
+\code{\link{response}} for details.}
 }
 \description{
-Get or set the status code of a \code{response} object.
+Get or set the status code of a response object.
+}
+\examples{
+# create a new response
+res <- response()
+
+# default response status
+status(res)  # 200
+
+# set the response status
+status(res) <- 301
+status(res)
+
 }
 

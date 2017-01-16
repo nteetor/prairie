@@ -5,7 +5,7 @@
 \alias{as.response.character}
 \alias{as.response.data.frame}
 \alias{is.response}
-\title{Coerce Objects to Response}
+\title{Coerce Objects to Responses}
 \usage{
 as.response(x, ...)
 
@@ -28,9 +28,23 @@ from \code{x}.}
 \item{\ldots}{Additional arguments passed on to methods.}
 }
 \description{
-TBD, see jsonify.
+The \code{as.response} functions makes serving up R objects as server
+responses straightfoward.
+}
+\details{
+\code{as.response.character} expects \code{x} is a character string
+specifying a file name. The default directory for the file is "views", but a
+different path may be specified with the \code{directory} argument. If the
+file exists the contents are read and set as the response body. The response
+Content-Type is guessed from the file extension using
+\code{\link[mime]{guess_type}}.
+
+\code{as.response.data.frame} coerces and serves up a data frame as JSON. The
+data frame is coerced using the \code{\link{as.json}} function and additional
+arguments may be passed to \code{as.json} using \code{\ldots}.
 }
 \examples{
+
 is.response(logical(1))
 is.response(response())
 is.response(3030)

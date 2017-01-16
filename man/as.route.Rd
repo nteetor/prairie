@@ -5,7 +5,6 @@
 \alias{as.route.character}
 \alias{as.route.list}
 \alias{as.route.route}
-\alias{is.route}
 \title{Coercing Objects to Routes}
 \usage{
 as.route(x, ...)
@@ -15,8 +14,6 @@ as.route(x, ...)
 \method{as.route}{character}(x, directory = "routes", ...)
 
 \method{as.route}{list}(x, ...)
-
-is.route(x)
 }
 \arguments{
 \item{x}{An \R object.}
@@ -26,20 +23,20 @@ is.route(x)
 \item{\ldots}{Additional arguments passed on to methods.}
 }
 \value{
-An object of class \code{route}.
+A \code{route} object.
 }
 \description{
-The function \code{as.route} provides an alternative way to create
-\code{\link[=route]{routes}} from lists or files.
+The function \code{as.route} provides an alternative means of creating an
+application route.
 }
 \details{
-If \code{x} is a list, \code{x} must have the following named items:
+If \code{x} is a list, \code{x} must have the following named elements:
 \code{method}, \code{path}, and \code{handler}.
 
 If \code{x} is a character vector, \code{x} is interpreted as a file name.
-The file must contain a route defined using the \link{route} function. The
+The file must contain a route defined using the \code{route} function. The
 default directory for route files is "routes", but a different folder may be
-specified by the argument \code{path}.
+specified with the \code{directory} argument.
 
 The S3 generic function \code{as.route} is exported by prairie to encourage
 creation of \code{as.route.*} functions. Custom \code{as.route} functions
@@ -47,32 +44,41 @@ allow users to coerce their classes to routes and quickly serve them over
 HTTP.
 }
 \examples{
-# Easily reuse routes and keep your
-# application modular by storing routes
-# in separate files.
+# Easily reuse routes and keep applications
+# modular by storing routes in separate files.
 
 tmp <- tempfile()
-writeLines('route("GET", "^$", function(req) response())', tmp)
+writeLines(
+  'route("GET", "^$", function(req) response())\\n',
+  con = tmp
+)
 
-droute <- as.route(tmp, dir = '')
+as.route(tmp, dir = '')
 
-# as.route.list is a thin wrapper
+file.remove(tmp)
 
-route_route <- route(
+# as.route.list is a minimal wrapper
+# around route()
+
+route(
   'POST',
   '^$',
-  function(req) response()
+  function(req) {
+    response()
+  }
 )
 
-list_route <- list(
-  method = 'POST',
-  path = '^$',
-  handler = function(req) response()
+as.route(
+  list(
+    method = 'POST',
+    path = '^$',
+    handler = function(req) {
+      response()
+    }
+  )
 )
-
-all.equal(route_route, list_route)
-
-is.route(route_route)
-is.route(list_route)
+}
+\seealso{
+\code{\link{route}}
 }
 

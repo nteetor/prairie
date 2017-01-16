@@ -7,13 +7,13 @@
 run(app, host, port)
 }
 \arguments{
-\item{app}{An object with class \code{application}.}
+\item{app}{An application object.}
 
 \item{host}{A character string specifying the host name.}
 
-\item{port}{An integer specifying the port number.}
+\item{port}{An numeric specifying the port number.}
 }
 \description{
-Run an application at \code{host} on \code{port}.
+Run an application at host \code{host} on port number \code{port}.
 }
 

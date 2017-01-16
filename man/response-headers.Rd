@@ -3,53 +3,46 @@
 \name{response-headers}
 \alias{[.response}
 \alias{[<-.response}
-\alias{[[.response}
-\alias{[[<-.response}
 \alias{response-headers}
 \title{HTTP Response Header Fields}
 \usage{
-\method{[[}{response}(x, field)
-
-\method{[[}{response}(x, field) <- value
-
 \method{[}{response}(x, field)
 
 \method{[}{response}(x, field) <- value
 }
 \arguments{
-\item{x}{A \code{response} object.}
+\item{x}{A response object.}
 
 \item{field}{An HTTP response header field name.}
-
-\item{value}{Value to assign to \code{field}.}
 }
 \value{
-A list of corresponding header field values. If \code{field} is not set for 
-\code{res} then \code{NULL} is returned.
+A list of corresponding header field values. If the response does not contain
+a certain field then \code{NULL} is returned.
 }
 \description{
-Within prairie, getting and setting the fields of the \code{\link{response}} 
-header is much like assigning values to lists. One can use \code{[}, 
-\code{[[} to extract one or more fields or replace a single 
+Within prairie, getting and setting the fields of the \code{\link{response}}
+header is much like assigning values to lists. One can use \code{[} and
+\code{[[} to extract one or more fields or replace a single
 field.
+}
+\details{
+For more information regarding specific HTTP response header fields refer to
+\url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html}.
 }
 \examples{
 # create new response
 res <- response()
 
 # add single field to header
-res[["Connection"]] <- "keep-alive"
+res["Connection"] <- "keep-alive"
 
-# add multiple fields in one go
+# add multiple fields at once
 res[] <- list(
   Date = Sys.time(),
   Server = 'R/prairie'
 )
 
 res
-}
-\seealso{
-For more information regarding specific HTTP response header fields refer to 
-\url{http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html}.
+
 }
 

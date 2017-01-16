@@ -3,17 +3,14 @@
 \name{as.request}
 \alias{as.request}
 \alias{as.request.environment}
-\alias{is.request}
-\title{Coerce Request Environments}
+\title{Coerce Rook Environments to Requests}
 \usage{
 as.request(x)
 
 \method{as.request}{environment}(x)
-
-is.request(x)
 }
 \arguments{
-\item{x}{Any \R object.}
+\item{x}{An \R object.}
 }
 \description{
 Internally, this function is used to coerce the request environment objects
@@ -21,20 +18,21 @@ Internally, this function is used to coerce the request environment objects
 environment objects are coerced to objects.
 }
 \examples{
-e <- new.env(parent = baseenv())
+e <- new.env(parent = emptyenv())
 
 e$REQUEST_METHOD <- 'GET'
 e$PATH_INFO <- '/file/download'
 e$HTTP_ACCEPT <- 'application/json'
-e$HTTP_CONTENT_LENGTH <- '3030'
+e$HTTP_CONTENT_LENGTH <- '0'
 
 req <- as.request(e)
-is.request(req) # TRUE
+is.request(req)  # TRUE
 
 method(req)
 uri(req)
 req[['Accept']]
 req[['Content-Length']]
+
 }
 \seealso{
 \code{\link{request}}

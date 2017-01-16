@@ -2,7 +2,7 @@ Package: prairie
 Type: Package
 Title: Get Web Applications Growing In R
 Version: 0.0.1.3
-Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre","aut"))
+Authors@R: person("Nathan", "Teetor", email = "nathanteetor@gmail.com", role = c("cre", "aut"))
 Description: A web framework for R, prairie is based on existing
     frameworks like Express (JS), Django (python), Wookie (lisp), and
     Sinatra (ruby) and provides R users with a set of tools to create
@@ -10,18 +10,18 @@ Description: A web framework for R, prairie is based on existing
     combine existing R code and custom classes into responses, routes,
     and applications to serve code and data across the web.
 License: MIT + file LICENSE
+URL: https://github.com/nteetor/prairie
+BugReports: https://github.com/nteetor/prairie/issues
+RoxygenNote: 5.0.1
 Depends:
     R (>= 3.0.0)
 Imports:
     httpuv (>= 1.3.3),
     mime,
-    stringr,
-    assertthat
+    stringr
 Suggests:
     jsonlite,
     testthat
-URL: prairie.nteetor.com
-BugReports: https://github.com/nteetor/prairie/issues
 Collate:
     'prairie.R'
     'utils.R'
@@ -38,4 +38,4 @@ Collate:
     'body.R'
     'mockup.R'
     'zzz.R'
-RoxygenNote: 5.0.1
+

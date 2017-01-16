@@ -57,27 +57,26 @@ response body is optional.
 \examples{
 # a route to return a client-requested status
 # and reason phrase
-phrase10 <- route(
-  'GET',
-  '^\\\\d+',
-  function(req) {
-    stat <- sub('/', '', uri(req))
+mkup <- mockup(
+  route(
+    'GET',
+    '^\\\\d+',
+    function(req) {
+      stts <- sub('/', '', uri(req))
 
-    res <- response()
+      res <- response()
 
-    status(res) <- 200
-    body(res) <- paste(stat, reason_phrase(stat))
+      status(res) <- 200
+      body(res) <- paste(stts, reason_phrase(stts))
 
-    print(res)
-
-    res
-  }
+      res
+    }
+  )
 )
 
-phrase10_m <- mockup(phrase10)
+mkup('get', '302')
+mkup('get', '203')
 
-phrase10_m('get', '302')
-phrase10_m('get', '203')
 }
 \seealso{
 \code{\link{route}}, \code{\link{request}}

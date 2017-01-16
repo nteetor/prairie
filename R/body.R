@@ -1,21 +1,25 @@
 #' HTTP Message Body
 #'
-#' Get the message body of a \code{request} or \code{response} object. The body
-#' of \code{response} objects may be set.
+#' Get the message body of a request or response or set the body of a response.
 #'
-#' @return
+#' @param x An \R object.
+#' @param value The response body, if JSON the \code{Content-Type} is set to
+#'   \code{application/json}.
 #'
-#' A character string if the request contains a message body, otherwise
-#' \code{NULL}.
-#'
-#' @seealso
+#' @details
 #'
 #' For more information about HTTP requests please refer to the
 #' \href{http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html}{Request} section
 #' of www.w3.org.
 #'
+#' @return
+#'
+#' \code{body} resturns a character string if the request or response contains a
+#' message body, otherwise \code{NULL}.
+#'
+#' \code{body<-} invisibly returns the response.
+#'
 #' @export
-#' @name body
 #' @examples
 #' transmog <- route(
 #'   'POST',
@@ -38,34 +42,30 @@
 #'     res
 #'   }
 #' )
-NULL
-
-#' @param x An \R object.
-#' @export
-#' @rdname body
-body <- function(x) UseMethod('body')
-
-#' @param value An \R object, complex objects are converted to JSON, see details.
-#' @export
-#' @rdname body
-`body<-` <- function(x, value) UseMethod('body<-')
-
-#' @export
-#' @rdname body
-body.request <- function(x) {
-  x$body
+body <- function(x) {
+  if (!(is.request(x) || is.response(x))) {
+    stop('cannot get body of a ', class(x), call. = FALSE)
+  }
+  unclass(x)[['body']]
 }
 
-#' @export
 #' @rdname body
-body.response <- function(x) {
-  x$body
-}
+#' @export
+`body<-` <- function(x, value) {
+  if (!is.response(x)) {
+    stop('cannot set the body of a ', class(x), call. = FALSE)
+  }
 
-#' @export
-#' @rdname body
-`body<-.response` <- function(x, value) {
-  if (is.json(value)) x[['Content-Type']] <- 'application/json'
-  x$body <- value
+  orig <- class(x)
+  x <- unclass(x)
+
+  x[['body']] <- value
+
+  if (is.json(value)) {
+    x[['headers']][['Content-Type']] <- 'application/json'
+  }
+
+  class(x) <- orig
+
   invisible(x)
 }

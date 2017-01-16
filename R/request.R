@@ -11,15 +11,16 @@
 #'
 #' \subsection{method:}{
 #'
-#' Most often \code{GET} or \code{POST} the method indicates what action to take
-#' for a specified resource. This value may be accessed with \link{method}.
+#' Most often \code{GET} or \code{POST}, the method indicates what action to
+#' take for a specified resource. This value may be accessed with
+#' \code{\link{method}}.
 #'
 #' }
 #'
 #' \subsection{uri:}{
 #'
 #' The uri indicates the server resource requested by the client. A request
-#' object's uri may be accessed with \link{uri}.
+#' object's uri may be accessed with \code{\link{uri}}.
 #'
 #' }
 #'
@@ -48,7 +49,6 @@
 #' }
 #'
 #' @export
-#' @name request
 #' @examples
 #' # not much to see here
 #' req <- request()
@@ -91,86 +91,101 @@ request <- function() {
   )
 }
 
+#' @rdname request
+#' @export
+is.request <- function(x) {
+  inherits(x, 'request')
+}
+
 #' Printing Requests
 #'
-#' Print a request.
+#' Print a request object.
 #'
-#' @param x A \code{request} object.
+#' @param x A request object.
 #' @param \ldots Ignored.
-#'
-#' @details
-#'
-#' Formats the request as an HTTP request.
 #'
 #' @seealso \code{\link{request}}
 #'
 #' @keywords internal
 #' @export
-#' @name print.request
+#' @examples
+#' print(request())
+#'
 print.request <- function(x, ...) {
-  headers <- vapply(
-    x$headers,
-    function(hdr) if (is.time(hdr) || is.date(hdr)) http_date(hdr) else as.character(hdr),
-    character(1)
-  )
-
-  cat(paste(x$method, x$uri, 'HTTP/1.1', '\r\n'))
-
-  if (!is.null(headers) && length(headers)) {
-    cat(paste0(names(headers), ': ', headers, collapse = '\r\n'))
-  }
-
-  if (nchar(x$body) > 0) {
-    cat(
-      '\r\n\r\n',
-      paste0(x$body),
-      '\r\n',
-      sep = ''
-    )
-  }
+  cat(format(x))
+  invisible(x)
 }
 
-#' Coerce Request Environments
+#' @rdname print.request
+#' @export
+format.request <- function(x, ...) {
+  x <- unclass(x)
+
+  str_m <- x[['method']] %||% 'NULL'
+  str_u <- x[['uri']] %||% 'NULL'
+  str_q <- x[['query']] %||% 'NULL'
+  str_b <- if (x[['body']] == '') '-empty-' else x[['body']]
+  str_h <- paste0(names(x[['headers']]), ': ', x[['headers']])
+
+  width <- max(nchar(str_m), nchar(str_u), nchar(str_q), nchar(str_h))
+  frmt <- paste0('%', width, 's')
+
+  formatted <- c(
+    'A request:',
+    paste(sprintf(frmt, str_m), '<method>'),
+    paste(sprintf(frmt, str_u), '<uri>'),
+    paste(sprintf(frmt, str_q), '<query>'),
+    paste(paste(sprintf(frmt, str_h), collapse = '#'), '<header>',
+          collapse = '\n'),
+    paste(sprintf(frmt, str_b), '<body>')
+  )
+
+  paste('#', formatted, collapse = '\n')
+}
+
+#' Coerce Rook Environments to Requests
 #'
 #' Internally, this function is used to coerce the request environment objects
 #' \code{httpuv} passes to an application's \code{call} function. Request
 #' environment objects are coerced to objects.
 #'
+#' @param x An \R object.
+#'
 #' @seealso \code{\link{request}}
 #'
 #' @keywords internal
 #'
 #' @export
-#' @name as.request
 #' @examples
-#' e <- new.env(parent = baseenv())
+#' e <- new.env(parent = emptyenv())
 #'
 #' e$REQUEST_METHOD <- 'GET'
 #' e$PATH_INFO <- '/file/download'
 #' e$HTTP_ACCEPT <- 'application/json'
-#' e$HTTP_CONTENT_LENGTH <- '3030'
+#' e$HTTP_CONTENT_LENGTH <- '0'
 #'
 #' req <- as.request(e)
-#' is.request(req) # TRUE
+#' is.request(req)  # TRUE
 #'
 #' method(req)
 #' uri(req)
 #' req[['Accept']]
 #' req[['Content-Length']]
-NULL
+#'
+as.request <- function(x) {
+  UseMethod('as.request')
+}
 
-#' @param x Any \R object.
-#' @export
 #' @rdname as.request
-as.request <- function(x) UseMethod('as.request')
-
 #' @export
-#' @rdname as.request
 as.request.environment <- function(x) {
   req <- request()
 
-  req$method <- tolower(x$REQUEST_METHOD)
+  req$method <- toupper(x$REQUEST_METHOD)
   req$uri <- x$PATH_INFO
+  if (grepl('^/', req$uri)) {
+    req$uri <- substring(req$uri, 2)
+  }
   req$query <- x$QUERY_STRING
 
   req$headers <- mget(grep('^HTTP_', names(x), value = TRUE), envir = x)
@@ -182,7 +197,3 @@ as.request.environment <- function(x) {
 
   req
 }
-
-#' @export
-#' @rdname as.request
-is.request <- function(x) inherits(x, 'request')

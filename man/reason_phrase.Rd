@@ -10,7 +10,8 @@ reason_phrase(status_code)
 \item{status_code}{An HTTP status code.}
 }
 \value{
-If \code{status_code} is not found the empty string is returned.
+The corresponding description of \code{status_code}, otherwise the empty
+string.
 }
 \description{
 Get the corresponding reason phrase for a status code.
@@ -20,6 +21,7 @@ reason_phrase(200)
 reason_phrase('404')
 
 reason_phrase(531)
+
 }
 \keyword{internal}
 

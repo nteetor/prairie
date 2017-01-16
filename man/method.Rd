@@ -7,7 +7,7 @@
 method(x)
 }
 \arguments{
-\item{x}{A \code{request} object.}
+\item{x}{A request object.}
 }
 \description{
 Get information about a request such as method type, the requested resource
@@ -20,16 +20,16 @@ methodical <- route(
  '^',
  function(req) {
    res <- response()
-   
+
    if (method(req) == 'GET') {
      # handle when method is GET
-     body(res) <- 'I got ya'  
-     
+     body(res) <- 'I got ya'
+
    } else {
      body(res) <- 'Washingtong or Huffington?'
-     
+
    }
-   
+
    res
  }
 )
@@ -41,6 +41,7 @@ res
 
 res <- methodical_m('POST', '/')
 body(res)
+
 }
 \seealso{
 Other HTTP.request.request.line: \code{\link{query}},

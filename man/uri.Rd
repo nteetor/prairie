@@ -7,50 +7,51 @@
 uri(x)
 }
 \arguments{
-\item{x}{A \code{request} object.}
+\item{x}{A request object.}
 }
 \description{
-Get a request uri.
+Get a request's uri.
 }
 \examples{
 
-name_generator <- route(
-  'GET',
-  '^/wizard/[a-z]+$',
-  function(req) {
-    res <- response()
-    
-    # An alternative to passing information
-    # as a request query
-    wizard_name <- gsub('^/wizard/', '', uri(req))
-    
-    picker <- list(
-     title = c('The', 'Dark Lord', 'Sir'),
-     name = wizard_name,
-     of = 'of the',
-     adjective = c('Enduring', 'Swift', 'Red', 'Great'),
-     noun = c('Heavens', 'Coldness', 'Winglelings', 'Stars')
-    )
-    
-    body(res) <- paste(
-      lapply(picker, function(n) n[sample(length(n), 1)]),
-      collapse = ' '
-    )
-    
-    res
-  }
+mkup_name <- mockup(
+  route(
+    'GET',
+    '^/wizard/[a-z]+$',
+    function(req) {
+      res <- response()
+
+      # An alternative to passing information
+      # as a request query
+      wizard_name <- gsub('^/wizard/', '', uri(req))
+
+      picker <- list(
+        title = c('The', 'Dark Lord', 'Sir'),
+        name = wizard_name,
+        of = 'of the',
+        adjective = c('Enduring', 'Swift', 'Red', 'Great'),
+        noun = c('Heavens', 'Coldness', 'Winglelings', 'Stars')
+      )
+
+      body(res) <- paste(
+        lapply(picker, function(n) n[sample(length(n), 1)]),
+        collapse = ' '
+      )
+
+      res
+    }
+  )
 )
 
-name_gen_m <- mockup(name_generator)
-
-res <- name_gen_m('GET', '/wizard/jenkins')
+res <- mkup_name('GET', '/wizard/jenkins')
 body(res)
 
-res <- name_gen_m('GET', '/wizard/merlin')
+res <- mkup_name('GET', '/wizard/merlin')
 body(res)
 
-res <- name_gen_m('GET', '/wizard/sparrowhawk')
+res <- mkup_name('GET', '/wizard/sparrowhawk')
 body(res)
+
 }
 \seealso{
 Other HTTP.request.request.line: \code{\link{method}},

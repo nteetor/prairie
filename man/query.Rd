@@ -7,13 +7,13 @@
 query(x)
 }
 \arguments{
-\item{x}{A \code{request} object.}
+\item{x}{A request object.}
 }
 \description{
 Get a request query.
 }
 \examples{
-#' # This route prints out all query key, value pairs
+# This route prints out all query key, value pairs
 route(
   'ALL',
   '^$',
@@ -25,10 +25,11 @@ route(
     } else {
       print('The request did not contain a query')
     }
-    
+
     response()
   }
 )
+
 }
 \seealso{
 Other HTTP.request.request.line: \code{\link{method}},

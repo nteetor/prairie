@@ -3,35 +3,53 @@
 \name{application}
 \alias{app}
 \alias{application}
+\alias{is.application}
 \title{Create an Application}
 \usage{
+application(...)
+
 app(...)
+
+is.application(x)
 }
 \arguments{
-\item{\ldots}{\R objects, will be coerced to class route.}
+\item{\ldots}{\R objects, coerced to routes.}
 }
 \description{
-A prairie application is quite simply a list of route objects. When creating 
-an application, \ldots may be any combination of \R objects, so long as a 
-corresponding \code{as.route} method is implemented for each object's class. 
-See the Details section for more information.
+A prairie application, simply put, is a list of route objects. When creating
+an application, \code{\ldots} may be any combination of \R objects with a
+\code{as.route} implementation, see details.
 }
 \details{
-In order for prairie to best help \R programmers grow web applications from 
-their existing code many coercion generics have been created and are 
-available for implementation. The, arguably, most important of these generics
-is \code{as.route}. CRAN is ripe with packages which include custom S3 
-classes. prairie aims to provide a streamlined process for serving these 
-classes across the web. An implementation of \code{as.route} might choose a
-resouce path based on a class attribute or choose the HTTP method based on
-object permissions (GET for a read-only database connection or GET and POST
-for a read/write connection).
+In order for prairie to best help \R programmers grow web applications from
+their existing code many coercion generics have been created and are
+available for implementation. The, arguably, most important of generic is
+\code{as.route}. CRAN is ripe with packages which include custom S3 classes.
+prairie aims to provide a streamlined process for serving these classes
+across the web. An implementation of \code{as.route} might choose a resouce
+path based on a class attribute or choose the HTTP method based on object
+permissions (GET for a read-only database connection or GET and POST for a
+read/write connection).
 
 Furthmore, prairie is meant to work on top of, around, and with existing \R
 code. While writing a good implementation of \code{as.route} may take time,
 if this package is succesful, one will not need to modify existing code. You
-have worked hard on your code and prairie is along to grow it onwards and 
-upwards.
+have worked hard on your code and prairie is along to grow that code onwards
+to the web.
+}
+\examples{
+app(
+  route(
+    'GET',
+    '^',
+    function(req) {
+      res <- response()
+      body(res) <- 'Hello, world!'
+      res
+    }
+  )
+)
+
 }
 \seealso{
 \code{\link{as.route}}, \code{\link{run}}

@@ -2,12 +2,9 @@
 % Please edit documentation in R/request-header.R
 \name{request-headers}
 \alias{[.request}
-\alias{[[.request}
 \alias{request-headers}
 \title{Request Header Fields}
 \usage{
-\method{[[}{request}(x, field)
-
 \method{[}{request}(x, field)
 }
 \arguments{
@@ -16,8 +13,8 @@
 \item{field}{An HTTP request header field name.}
 }
 \description{
-To get the values of request header fields [ or [[ may be used to get a 
-single or multiple values respectively. Request field names are 
+To get the values of request header fields \code{[} or \code{[[} may be used
+to get a single or multiple values respectively. Request field names are
 case-sensitive.
 }
 \details{
@@ -30,27 +27,28 @@ req <- request()
 req[['Accept']] # NULL
 req[['From']]   # NULL, boring
 
-checkin <- route(
-  'POST',
-  '^$',
-  function(req) {
-    print(req[['Accept']])
-    print(req[['From']])
-    
-    response()
-  }
+mkup_checkin <- mockup(
+  route(
+    'POST',
+    '^$',
+    function(req) {
+      print(req[['Accept']])
+      print(req[['From']])
+
+      response()
+    }
+  )
 )
 
-checkin_m <- mockup(checkin)
-
 # More interesting output
-checkin_m(
-  'POST', 
-  '/', 
+mkup_checkin(
+  'POST',
+  '/',
   headers = list(
-    Accept = 'text/html', 
+    Accept = 'text/html',
     From = 'Russia w/ Love'
   )
 )
+
 }
 
