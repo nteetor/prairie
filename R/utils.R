@@ -11,6 +11,10 @@ mimeextra <- c(
   NULL
 )
 
+is.date <- function(x) {
+  inherits(x, 'Date') | inherits(x, 'POSIXt')
+}
+
 http_date <- function(x) {
   if (!(inherits(x, 'Date') || inherits(x, 'POSIXt'))) {
     stop('argument `x` must be of class Date or POSIXt', call. = FALSE)
@@ -22,27 +26,20 @@ collapse <- function(..., sep = ', ') {
   paste(..., sep = sep, collapse = sep)
 }
 
-capitalize <- function(s) {
-  paste0(toupper(substring(s, 1, 1)), tolower(substring(s, 2)))
+frmt_header <- function(s) {
+  if (grepl('^HTTP_', s)) {
+    s <- sub('^HTTP_', '', s)
+  }
+
+  cap <- function(.s) {
+    paste0(toupper(substring(.s, 1, 1)), tolower(substring(.s, 2)))
+  }
+
+  collapse(lapply(strsplit(s, '_'), cap)[[1]], sep = '-')
 }
 
-capitalize_header <- function(s) {
-  paste(
-    vapply(
-      strsplit(s, split = '-')[[1]],
-      capitalize,
-      character(1),
-      USE.NAMES = FALSE
-      ),
-    collapse = '-'
-  )
-}
-
-is_named <- function(lst) {
-  if (length(lst) == 0) FALSE
-  else if (any(names(lst) == '')) FALSE
-  else if (any(is.null(names(lst)))) FALSE
-  else TRUE
+is_named <- function(l) {
+  length(l) != 0 && all(names(l) != '') && all(!is.null(names(l)))
 }
 
 set_names <- function(x, names) {

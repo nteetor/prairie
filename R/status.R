@@ -39,11 +39,11 @@ status <- function(x) {
 #'
 #' Get the corresponding reason phrase for a status code.
 #'
-#' @param status_code An HTTP status code.
+#' @param code An HTTP status code.
 #'
 #' @return
 #'
-#' The corresponding description of \code{status_code}, otherwise the empty
+#' The corresponding description of \code{code}, otherwise the empty
 #' string.
 #'
 #' @keywords internal
@@ -54,13 +54,13 @@ status <- function(x) {
 #'
 #' reason_phrase(531)
 #'
-reason_phrase <- function(status_code) {
-  if (!(is.numeric(status_code) || is.character(status_code))) {
-    stop('argument `status_code` must be of class numeric or character',
+reason_phrase <- function(code) {
+  if (!(is.numeric(code) || is.character(code))) {
+    stop('argument `code` must be of class numeric or character',
          call. = FALSE)
   }
   switch(
-    as.character(status_code),
+    as.character(code),
     '100' = "Continue",
     '101' = "Switching Protocols",
     '200' = "OK",

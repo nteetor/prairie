@@ -119,13 +119,13 @@ print.request <- function(x, ...) {
 #' @rdname print.request
 #' @export
 format.request <- function(x, ...) {
-  x <- unclass(x)
-
   str_m <- x[['method']] %||% 'NULL'
   str_u <- x[['uri']] %||% 'NULL'
   str_q <- x[['query']] %||% 'NULL'
-  str_b <- if (x[['body']] == '') '-empty-' else x[['body']]
-  str_h <- paste0(names(x[['headers']]), ': ', x[['headers']])
+  str_b <- if (x[['body']] == '') '""' else x[['body']]
+  str_h <- paste0(names(x[['headers']]), ': ', ifelse(is.date(x[['headers']]),
+                                                      http_date(x[['headers']]),
+                                                      x[['headers']]))
 
   width <- max(nchar(str_m), nchar(str_u), nchar(str_q), nchar(str_h))
   frmt <- paste0('%', width, 's')
@@ -135,8 +135,7 @@ format.request <- function(x, ...) {
     paste(sprintf(frmt, str_m), '<method>'),
     paste(sprintf(frmt, str_u), '<uri>'),
     paste(sprintf(frmt, str_q), '<query>'),
-    paste(paste(sprintf(frmt, str_h), collapse = '#'), '<header>',
-          collapse = '\n'),
+    paste(sprintf(frmt, str_h), '<header>'),
     paste(sprintf(frmt, str_b), '<body>')
   )
 
@@ -182,18 +181,15 @@ as.request.environment <- function(x) {
   req <- request()
 
   req$method <- toupper(x$REQUEST_METHOD)
-  req$uri <- x$PATH_INFO
-  if (grepl('^/', req$uri)) {
-    req$uri <- substring(req$uri, 2)
-  }
+  req$uri <- sub('^/', '', x$PATH_INFO)
   req$query <- x$QUERY_STRING
 
-  req$headers <- mget(grep('^HTTP_', names(x), value = TRUE), envir = x)
-  names(req$headers) <- gsub('^HTTP_', '', names(req$headers))
-  names(req$headers) <- gsub('_', '-', names(req$headers))
-  names(req$headers) <- vapply(names(req$headers), capitalize_header, character(1))
+  headers <- grep('^HTTP_', names(x), value = TRUE)
+  req$headers <- mget(headers, envir = x)
+  names(req$headers) <- vapply(headers, frmt_header, character(1))
 
-  req$body <- if (!is.null(x$rook.input)) x$rook.input$read_lines() else ''
+  req$body <- tryCatch(x[['rook.input']][['read_lines']](),
+                       error = function(e) '')
 
   req
 }

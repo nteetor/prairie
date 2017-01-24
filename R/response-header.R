@@ -1,9 +1,8 @@
 #' HTTP Response Header Fields
 #'
 #' Within prairie, getting and setting the fields of the \code{\link{response}}
-#' header is much like assigning values to lists. One can use \code{[} and
-#' \code{[[} to extract one or more fields or replace a single
-#' field.
+#' header is much like assigning values to lists. One can use \code{[} to
+#' extract one or more fields or replace a single field.
 #'
 #' @param x A response object.
 #' @param field An HTTP response header field name.
@@ -52,7 +51,7 @@
 `[<-.response` <- function(x, field, value) {
   if (missing(field)) {
     if (!is_named(value)) {
-      stop('argument `value` must be a named list', call. = FALSE)
+      stop('argument `value` must be named', call. = FALSE)
     }
 
     x[['headers']] <- value
@@ -66,9 +65,10 @@
       stop('argument `field` must be a character string', call. = FALSE)
     }
 
-    if (inherits(x, 'Date') || inherits(x, 'POSIXt')) {
-      value <- http_date(value)
-    }
+    # @TODO I'm not sold one way or another on this
+    # if (inherits(x, 'Date') || inherits(x, 'POSIXt')) {
+    #   value <- http_date(value)
+    # }
 
     x[['headers']][[field]] <- value
   }

@@ -1,7 +1,7 @@
 #' Request Header Fields
 #'
-#' To get the values of request header fields \code{[} or \code{[[} may be used
-#' to get a single or multiple values respectively. Request field names are
+#' To get the values of request header fields \code{[} may be used to get a
+#' single or multiple values respectively. Request field names are
 #' case-sensitive.
 #'
 #' @param x A \code{request} object.
@@ -16,8 +16,8 @@
 #' @examples
 #' req <- request()
 #'
-#' req[['Accept']] # NULL
-#' req[['From']]   # NULL, boring
+#' req['Accept']  # NULL
+#' req['From']    # NULL, boring
 #'
 #' mkup_checkin <- mockup(
 #'   route(

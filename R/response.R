@@ -191,8 +191,10 @@ print.response <- function(x, ...) {
 format.response <- function(x, ...) {
 
   str_sc <- paste(x[['status_code']], reason_phrase(x[['status_code']]))
-  str_h <- paste0(names(x[['headers']]), ': ', x[['headers']])
-  str_b <- if (x[['body']] == '') '-empty-' else x[['body']]
+  str_h <- paste0(names(x[['headers']]), ': ', ifelse(is.date(x[['headers']]),
+                                                      http_date(x[['headers']]),
+                                                      x[['headers']]))
+  str_b <- if (x[['body']] == '') '""' else x[['body']]
 
   width <- max(nchar(str_sc), nchar(str_h))
   frmt <- paste0('%', width, 's')
@@ -200,8 +202,7 @@ format.response <- function(x, ...) {
   formatted <- c(
     'A response:',
     paste(sprintf(frmt, str_sc), '<status>'),
-    paste(paste(sprintf(frmt, str_h), collapse = '#'), '<header>',
-          collapse = '\n'),
+    paste(sprintf(frmt, str_h), '<header>'),
     paste(sprintf(frmt, str_b), '<body>')
   )
 
