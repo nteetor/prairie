@@ -182,14 +182,24 @@ as.request.environment <- function(x) {
 
   req$method <- toupper(x$REQUEST_METHOD)
   req$uri <- sub('^/', '', x$PATH_INFO)
-  req$query <- x$QUERY_STRING
+
+  if (length(x$QUERY_STRING) && x$QUERY_STRING != "?") {
+    query <- strsplit(sub("^\\?", "", x$QUERY_STRING), "&", fixed = TRUE)[[1]]
+    req$query <- as.list(sub("^.*=", "", query))
+    names(req$query) <- sub("=.*$", "", query)
+  } else {
+    req$query <- list()
+  }
+
+  print(req$query)
 
   headers <- grep('^HTTP_', names(x), value = TRUE)
   req$headers <- mget(headers, envir = x)
   names(req$headers) <- vapply(headers, frmt_header, character(1))
 
-  req$body <- tryCatch(x[['rook.input']][['read_lines']](),
-                       error = function(e) '')
+  if (is.function(x[["rook.input"]][["read_lines"]])) {
+    req$body <- x[['rook.input']][['read_lines']]()
+  }
 
   req
 }
