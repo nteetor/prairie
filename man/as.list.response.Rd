@@ -15,4 +15,3 @@
 Used to format a response object in the acceptable httpuv format.
 }
 \keyword{internal}
-

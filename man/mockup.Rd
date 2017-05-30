@@ -39,4 +39,3 @@ mkup_logger <- mockup(
 mkup_logger('GET', '/yellow/brick/path')
 mkup_logger('GET', '/phonday', headers = list(Accepts = 'text/html'))
 }
-

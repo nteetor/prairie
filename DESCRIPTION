@@ -12,7 +12,7 @@ Description: A web framework for R, prairie is based on existing
 License: MIT + file LICENSE
 URL: https://github.com/nteetor/prairie
 BugReports: https://github.com/nteetor/prairie/issues
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Depends:
     R (>= 3.0.0)
 Imports:
@@ -38,4 +38,3 @@ Collate:
     'body.R'
     'mockup.R'
     'zzz.R'
-

@@ -44,7 +44,6 @@ body(res)
 
 }
 \seealso{
-Other HTTP.request.request.line: \code{\link{query}},
+Other HTTP request request-line: \code{\link{query}},
   \code{\link{uri}}
 }
-

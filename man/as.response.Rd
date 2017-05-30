@@ -49,4 +49,3 @@ is.response(logical(1))
 is.response(response())
 is.response(3030)
 }
-

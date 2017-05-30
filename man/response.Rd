@@ -54,6 +54,7 @@ response body is optional.
 
   }
 }
+
 \examples{
 # a route to return a client-requested status
 # and reason phrase
@@ -81,4 +82,3 @@ mkup('get', '203')
 \seealso{
 \code{\link{route}}, \code{\link{request}}
 }
-

@@ -30,4 +30,3 @@ status(res) <- 301
 status(res)
 
 }
-

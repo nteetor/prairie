@@ -2,9 +2,9 @@
 % Please edit documentation in R/route.R
 \name{as.route}
 \alias{as.route}
+\alias{as.route.route}
 \alias{as.route.character}
 \alias{as.route.list}
-\alias{as.route.route}
 \title{Coercing Objects to Routes}
 \usage{
 as.route(x, ...)
@@ -81,4 +81,3 @@ as.route(
 \seealso{
 \code{\link{route}}
 }
-

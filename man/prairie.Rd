@@ -4,7 +4,8 @@
 \name{prairie}
 \alias{prairie}
 \alias{prairie-package}
-\title{Get Web Applications Growing In R}
+\alias{prairie-package}
+\title{prairie: Get Web Applications Growing In R}
 \description{
 A web framework for R, prairie is based on existing
 frameworks like Express (JS), Django (python), Wookie (lisp), and
@@ -17,4 +18,7 @@ and applications to serve code and data across the web.
 \code{\link{app}}, \code{\link{route}}, \code{\link{request}}, and
 \code{\link{response}}
 }
+\author{
+\strong{Maintainer}: Nathan Teetor \email{nathanteetor@gmail.com}
 
+}

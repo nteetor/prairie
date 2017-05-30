@@ -4,13 +4,13 @@
 \alias{reason_phrase}
 \title{Status Code Reason Phrase}
 \usage{
-reason_phrase(status_code)
+reason_phrase(code)
 }
 \arguments{
-\item{status_code}{An HTTP status code.}
+\item{code}{An HTTP status code.}
 }
 \value{
-The corresponding description of \code{status_code}, otherwise the empty
+The corresponding description of \code{code}, otherwise the empty
 string.
 }
 \description{
@@ -24,4 +24,3 @@ reason_phrase(531)
 
 }
 \keyword{internal}
-
