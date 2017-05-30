@@ -191,8 +191,6 @@ as.request.environment <- function(x) {
     req$query <- list()
   }
 
-  print(req$query)
-
   headers <- grep('^HTTP_', names(x), value = TRUE)
   req$headers <- mget(headers, envir = x)
   names(req$headers) <- vapply(headers, frmt_header, character(1))
