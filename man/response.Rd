@@ -4,7 +4,14 @@
 \alias{response}
 \title{Create an HTTP Response}
 \usage{
-response()
+response(status = 200, content_type = "text/plain", body = "")
+}
+\arguments{
+\item{status}{(numeric) HTTP status code, e.g. 200 for OK, 404 for Not Found}
+
+\item{content_type}{(character) MIME content type, e.g., "text/plain", "text/html".}
+
+\item{body}{(character) Body of the response}
 }
 \description{
 A response object represents the HTTP response returned by a route handler. A

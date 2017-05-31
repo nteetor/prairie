@@ -4,6 +4,10 @@
 #' response is typically made up of a status, HTTP headers, and a body. A
 #' response body is optional.
 #'
+#' @param status (numeric) HTTP status code, e.g. 200 for OK, 404 for Not Found
+#' @param content_type (character) MIME content type, e.g., "text/plain", "text/html".
+#' @param body (character) Body of the response
+#'
 #' @section Components:
 #'
 #'   \subsection{status:}{
@@ -73,14 +77,14 @@
 #' mkup('get', '302')
 #' mkup('get', '203')
 #'
-response <- function() {
+response <- function(status=200, content_type='text/plain', body='') {
   structure(
     list(
-      status_code = 200,
+      status_code = status,
       headers = list(
-        `Content-Type` = 'text/plain'
+        `Content-Type` = content_type
       ),
-      body = ''
+      body = body
     ),
     class = 'response'
   )
@@ -148,10 +152,29 @@ as.response.character <- function(x, directory = 'views', collapse = '\n', ...) 
 
 #' @rdname as.response
 #' @export
-as.response.data.frame <- function(x, ...) {
-  res <- response()
-  body(res) <- as.json(x, ...)
-  res
+as.response.data.frame <- function(x, format="json", ...) {
+  switch(format,
+         json = response(content_type = "application/json",
+                         body = as.json(x, ...) ),
+         html = response(content_type = "text/html",
+                         body = as.character(htmlTable::htmlTable(x)) ),
+         csv = {
+          theText = NULL
+          con = textConnection(theText, open="w", local=TRUE)
+          write.csv(x, file=con, row.names=FALSE)
+          body = paste(textConnectionValue(con), collapse="\n")
+          response(content_type = "text/csv",
+                   body = body )
+         },
+         text = response(content_type = "text/plain",
+                         body = capture.output(print(x)) ),
+         stop("prairie: Invalid response format: ", format) )
+}
+
+#' @rdname as.response
+#' @export
+as.response.matrix <- function(x, ...) {
+  as.response.data.frame(as.data.frame(x), ...)
 }
 
 #' @rdname as.response

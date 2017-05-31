@@ -4,6 +4,7 @@
 \alias{as.response}
 \alias{as.response.character}
 \alias{as.response.data.frame}
+\alias{as.response.matrix}
 \alias{is.response}
 \title{Coerce Objects to Responses}
 \usage{
@@ -12,7 +13,9 @@ as.response(x, ...)
 \method{as.response}{character}(x, directory = "views", collapse = "\\n",
   ...)
 
-\method{as.response}{data.frame}(x, ...)
+\method{as.response}{data.frame}(x, format = "json", ...)
+
+\method{as.response}{matrix}(x, ...)
 
 is.response(x)
 }
