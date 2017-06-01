@@ -72,3 +72,32 @@ conjunction <- function(x, coordinator = 'and') {
            x[[length(x)]])
   }
 }
+
+#'
+#'  Generate a minimal HTML table from a data frame
+#'  
+#'  This internal function is used by as.response()
+#'  to encode a data frame into its HTML representation.
+#'  The encoding is intentionally very minimal.
+#'  Richer encoding would require either a complicated
+#'  function or importing a heavy-weight package.
+#'  
+#' @param dfrm a data frame
+#' @param class an optional CSS class for the table
+#' @param id an optional CSS ID for the table
+#' 
+#' @return an HTML representation of a table (character)
+#'
+#' @import htmltools
+#'
+simpleHtmlTable = function(dfrm, class=NULL, id=NULL) {
+  dfrm.f = format(dfrm)
+  
+  wrapRow = function(i) {
+    tags$tr(
+      lapply(dfrm.f[i,], tags$td)
+    )
+  }
+  
+  tags$table(lapply(1:nrow(dfrm.f), wrapRow), class=class, id=id)
+}
