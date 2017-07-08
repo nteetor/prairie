@@ -4,6 +4,7 @@
 \alias{as.response}
 \alias{as.response.character}
 \alias{as.response.data.frame}
+\alias{as.response.matrix}
 \alias{is.response}
 \title{Coerce Objects to Responses}
 \usage{
@@ -12,7 +13,9 @@ as.response(x, ...)
 \method{as.response}{character}(x, directory = "views", collapse = "\\n",
   ...)
 
-\method{as.response}{data.frame}(x, ...)
+\method{as.response}{data.frame}(x, format = "json", ...)
+
+\method{as.response}{matrix}(x, ...)
 
 is.response(x)
 }
@@ -25,11 +28,14 @@ is.response(x)
 \item{collapse}{A character string specifying how to collapse the lines read
 from \code{x}.}
 
+\item{format}{A character string, determining the form of the HTTP response.
+Can be one of \code{"csv"}, \code{"html"}, \code{"json"}, or \code{"text"}.}
+
 \item{\ldots}{Additional arguments passed on to methods.}
 }
 \description{
-The \code{as.response} functions makes serving up R objects as server
-responses straightfoward.
+The \code{as.response} functions simplify serving up R objects as server
+responses.
 }
 \details{
 \code{as.response.character} expects \code{x} is a character string
@@ -39,9 +45,17 @@ file exists the contents are read and set as the response body. The response
 Content-Type is guessed from the file extension using
 \code{\link[mime]{guess_type}}.
 
-\code{as.response.data.frame} coerces and serves up a data frame as JSON. The
-data frame is coerced using the \code{\link{as.json}} function and additional
-arguments may be passed to \code{as.json} using \code{\ldots}.
+\code{as.response.data.frame} coerces and serves up a data frame.
+Several response types are possible.
+\itemize{
+  \item CSV (text/csv) - Same format as \link{write.csv}, without row names.
+  \item HTML (text/html) - Formatted by \link{simpleHtmlTable}.
+    Additional arguments may be passed to the formatter using \code{\ldots}.
+  \item JSON (application/json) - The
+    data frame is coerced using the \code{\link{as.json}} function and additional
+    arguments may be passed to \code{as.json} using \code{\ldots}.
+  \item Text (text/plain) - Simple text rendering.
+}
 }
 \examples{
 

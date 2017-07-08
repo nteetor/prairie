@@ -4,6 +4,10 @@
 #' response is typically made up of a status, HTTP headers, and a body. A
 #' response body is optional.
 #'
+#' @param status (numeric) HTTP status code, e.g. 200 for OK, 404 for Not Found
+#' @param content_type (character) MIME content type, e.g., "text/plain", "text/html".
+#' @param body (character) Body of the response
+#'
 #' @section Components:
 #'
 #'   \subsection{status:}{
@@ -73,14 +77,14 @@
 #' mkup('get', '302')
 #' mkup('get', '203')
 #'
-response <- function() {
+response <- function(status=200, content_type='text/plain', body='') {
   structure(
     list(
-      status_code = 200,
+      status_code = status,
       headers = list(
-        `Content-Type` = 'text/plain'
+        `Content-Type` = content_type
       ),
-      body = ''
+      body = body
     ),
     class = 'response'
   )
@@ -88,8 +92,8 @@ response <- function() {
 
 #' Coerce Objects to Responses
 #'
-#' The \code{as.response} functions makes serving up R objects as server
-#' responses straightfoward.
+#' The \code{as.response} functions simplify serving up R objects as server
+#' responses.
 #'
 #' @param x Any \R object.
 #' @param \ldots Additional arguments passed on to methods.
@@ -103,9 +107,17 @@ response <- function() {
 #' Content-Type is guessed from the file extension using
 #' \code{\link[mime]{guess_type}}.
 #'
-#' \code{as.response.data.frame} coerces and serves up a data frame as JSON. The
-#' data frame is coerced using the \code{\link{as.json}} function and additional
-#' arguments may be passed to \code{as.json} using \code{\ldots}.
+#' \code{as.response.data.frame} coerces and serves up a data frame.
+#' Several response types are possible.
+#' \itemize{
+#'   \item CSV (text/csv) - Same format as \link{write.csv}, without row names.
+#'   \item HTML (text/html) - Formatted by \link{simpleHtmlTable}.
+#'     Additional arguments may be passed to the formatter using \code{\ldots}.
+#'   \item JSON (application/json) - The
+#'     data frame is coerced using the \code{\link{as.json}} function and additional
+#'     arguments may be passed to \code{as.json} using \code{\ldots}.
+#'   \item Text (text/plain) - Simple text rendering.
+#' }
 #'
 #' @rdname as.response
 #' @export
@@ -146,12 +158,33 @@ as.response.character <- function(x, directory = 'views', collapse = '\n', ...) 
   res
 }
 
+#' @param format A character string, determining the form of the HTTP response.
+#'   Can be one of \code{"csv"}, \code{"html"}, \code{"json"}, or \code{"text"}.
 #' @rdname as.response
 #' @export
-as.response.data.frame <- function(x, ...) {
-  res <- response()
-  body(res) <- as.json(x, ...)
-  res
+as.response.data.frame <- function(x, format="json", ...) {
+  switch(format,
+         json = response(content_type = "application/json",
+                         body = as.json(x, ...) ),
+         html = response(content_type = "text/html",
+                         body = as.character(simpleHtmlTable(x, ...)) ),
+         csv = {
+          theText = NULL
+          con = textConnection(theText, open="w", local=TRUE)
+          write.csv(x, file=con, row.names=FALSE)
+          body = paste(textConnectionValue(con), collapse="\n")
+          response(content_type = "text/csv",
+                   body = body )
+         },
+         text = response(content_type = "text/plain",
+                         body = capture.output(print(x)) ),
+         stop("prairie: Invalid response format: ", format) )
+}
+
+#' @rdname as.response
+#' @export
+as.response.matrix <- function(x, ...) {
+  as.response.data.frame(as.data.frame(x), ...)
 }
 
 #' @rdname as.response
